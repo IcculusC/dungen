@@ -6,7 +6,7 @@
 #include <godot_cpp/core/defs.hpp>
 
 #include <godot_cpp/classes/engine.hpp>
-#include <godot_cpp/classes/node2d.hpp>
+#include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/random_number_generator.hpp>
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/timer.hpp>
@@ -24,9 +24,9 @@
 namespace godot
 {
 
-	class Dungen : public Node2D
+	class Dungen : public Node
 	{
-		GDCLASS(Dungen, Node2D)
+		GDCLASS(Dungen, Node)
 
 	private:
 		Ref<DungenConfig> config;
@@ -43,11 +43,15 @@ namespace godot
 		Vector2i generate_random_point_in_rectangle(Vector2i &spawn_area_dimensions);
 
 		void _reset();
+	
 		Ref<DungenRoom> _generate_room();
 		void _generate_rooms();
+
 		int _smart_has_overlapping_rooms();
 		bool _has_overlapping_rooms();
+		
 		void _separate_rooms();
+
 		bool _should_trim_room(const Ref<DungenRoom> &room, double minimum_area) const;
 		void _trim_rooms();
 

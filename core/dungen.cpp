@@ -270,7 +270,7 @@ void Dungen::_separate_rooms()
                     break;
                 }
 
-                movement_vector += center_distance * 2;
+                movement_vector += center_distance;
                 neighbors++;
             }
 
