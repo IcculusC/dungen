@@ -5,6 +5,7 @@
 
 #include <godot_cpp/classes/button.hpp>
 #include <godot_cpp/classes/canvas_item.hpp>
+#include <godot_cpp/classes/check_button.hpp>
 #include <godot_cpp/classes/color_rect.hpp>
 #include <godot_cpp/classes/control.hpp>
 #include <godot_cpp/classes/editor_interface.hpp>
@@ -61,6 +62,11 @@ namespace godot
     
         DungenPreviewer *dungen_previewer;
 
+        VBoxContainer *dungen_preview_sidebar_vbox;
+
+        bool show_trimmed_rooms;
+        CheckButton *show_trimmed_rooms_btn;
+
         void _config_changed();
 
         void _new_config();
@@ -77,6 +83,8 @@ namespace godot
         void _reset_zoom();
         void _update_zoom_reset_button();
         void _zoom_editor(Vector2 amount);
+
+        void _show_trimmed_rooms(bool p_show);
 
         void _redraw();
 
