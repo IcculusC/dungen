@@ -53,9 +53,7 @@ namespace godot
 
         HSplitContainer *hsc;
 
-        PanelContainer *dungen_texture_panel;
-
-        VBoxContainer *side_bar_vbox;
+        VBoxContainer *dungen_preview_vbox;
 
         Button *zoom_less_btn;
         Button *zoom_reset_btn;

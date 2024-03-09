@@ -66,21 +66,15 @@ DungenEditor::DungenEditor()
     hsc->set_focus_mode(FOCUS_NONE);
     vbox->add_child(hsc);
 
-    dungen_texture_panel = memnew(PanelContainer);
-    dungen_texture_panel->set_h_size_flags(SIZE_EXPAND_FILL);
-    dungen_texture_panel->set_v_size_flags(SIZE_EXPAND_FILL);
-//  dungen_texture_panel->set_stretch_ratio(3.0);
-    hsc->add_child(dungen_texture_panel);
-
-    side_bar_vbox = memnew(VBoxContainer);
-    side_bar_vbox->set_h_size_flags(SIZE_EXPAND_FILL);
-    side_bar_vbox->set_v_size_flags(SIZE_EXPAND_FILL);
+    dungen_preview_vbox = memnew(VBoxContainer);
+    dungen_preview_vbox->set_h_size_flags(SIZE_EXPAND_FILL);
+    dungen_preview_vbox->set_v_size_flags(SIZE_EXPAND_FILL);
 //  side_bar_menu_panel->set_stretch_ratio(1.0);
-    hsc->add_child(side_bar_vbox);
+    hsc->add_child(dungen_preview_vbox);
 
     HBoxContainer *nav = memnew(HBoxContainer);
     nav->set_h_size_flags(SIZE_EXPAND);
-    side_bar_vbox->add_child(nav);
+    dungen_preview_vbox->add_child(nav);
 
     zoom_less_btn = memnew(Button);
 	zoom_less_btn->set_text("");
@@ -116,7 +110,7 @@ DungenEditor::DungenEditor()
     preview_wrapper->set_h_size_flags(SIZE_EXPAND_FILL);
     preview_wrapper->set_v_size_flags(SIZE_EXPAND_FILL); 
     preview_wrapper->set_clip_contents(true);
-    side_bar_vbox->add_child(preview_wrapper);
+    dungen_preview_vbox->add_child(preview_wrapper);
 
     dungen_previewer = memnew(DungenPreviewer); 
     dungen_previewer->set_h_size_flags(SIZE_EXPAND_FILL);
