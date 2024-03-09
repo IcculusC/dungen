@@ -70,7 +70,7 @@ DungenEditor::DungenEditor()
     dungen_texture_panel = memnew(PanelContainer);
     dungen_texture_panel->set_h_size_flags(SIZE_EXPAND_FILL);
     dungen_texture_panel->set_v_size_flags(SIZE_EXPAND_FILL);
-    dungen_texture_panel->set_stretch_ratio(3.0);
+//  dungen_texture_panel->set_stretch_ratio(3.0);
     hsc->add_child(dungen_texture_panel);
 
     dungen_texture_rect = memnew(TextureRect);
@@ -83,8 +83,14 @@ DungenEditor::DungenEditor()
     side_bar_menu_panel = memnew(PanelContainer);
     side_bar_menu_panel->set_h_size_flags(SIZE_EXPAND_FILL);
     side_bar_menu_panel->set_v_size_flags(SIZE_EXPAND_FILL);
-    side_bar_menu_panel->set_stretch_ratio(1.0);
+//  side_bar_menu_panel->set_stretch_ratio(1.0);
     hsc->add_child(side_bar_menu_panel);
+
+    dungen_previewer = memnew(DungenPreviewer); 
+    dungen_previewer->set_h_size_flags(SIZE_EXPAND_FILL);
+    dungen_previewer->set_v_size_flags(SIZE_EXPAND_FILL);
+    dungen_previewer->set_dungen_instance(dungen_instance);
+    side_bar_menu_panel->add_child(dungen_previewer);
 }
 
 DungenEditor::~DungenEditor() {}
@@ -199,6 +205,7 @@ void DungenEditor::_redraw()
     dungen_texture_rect->set_texture(dungen_image_texture);
 
     queue_redraw();
+    dungen_previewer->queue_redraw();
 }
 
 void DungenEditor::_notification(int p_what)

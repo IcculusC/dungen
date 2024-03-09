@@ -6,6 +6,7 @@
 
 #ifdef TOOLS_ENABLED
 #include "editor/dungen_editor_plugin.h"
+#include "editor/dungen_previewer.h"
 #endif // TOOLS_ENABLED
 
 #include <gdextension_interface.h>
@@ -25,6 +26,7 @@ void initialize_dungen_module(ModuleInitializationLevel p_level) {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
 		UtilityFunctions::print("EDITOR INITIALIZED");
 
+		GDREGISTER_CLASS(DungenPreviewer)
 		GDREGISTER_CLASS(DungenEditor)
 		GDREGISTER_CLASS(DungenEditorPlugin)
 

@@ -28,6 +28,7 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include "../core/dungen.h"
+#include "dungen_previewer.h"
 
 namespace godot
 {
@@ -61,6 +62,8 @@ namespace godot
         TextureRect *dungen_texture_rect;
 
         PanelContainer *side_bar_menu_panel;
+
+        DungenPreviewer *dungen_previewer;
 
         void _config_changed();
 
