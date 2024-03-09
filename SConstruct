@@ -17,23 +17,25 @@ env.Append(CPPPATH=["."])
 sources = Glob("./*.cpp")
 sources += Glob("./editor/*.cpp")
 
+env.Command("bin/libdungen.gdextension", "gdextension/libdungen.gdextension", Copy("$TARGET", "$SOURCE"))
+
 for s in sources:
     print(s)
 
-print("../bin/libdungen.{}.{}.framework/libdungen.{}.{}".format(
+print("./demo/bin/libdungen.{}.{}.framework/libdungen.{}.{}".format(
     env["platform"], env["target"], env["platform"], env["target"]
 ))
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        "../bin/libdungen.{}.{}.framework/libdungen.{}.{}".format(
+        "./demo/bin/libdungen.{}.{}.framework/libdungen.{}.{}".format(
             env["platform"], env["target"], env["platform"], env["target"]
         ),
         source=sources,
     )
 else:
     library = env.SharedLibrary(
-        "../bin/libdungen{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+        "./demo/bin/libdungen{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
         source=sources,
     )
 

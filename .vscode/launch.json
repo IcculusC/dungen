@@ -1,0 +1,40 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "editor",
+            "type": "cppdbg",
+            "MIMode": "lldb",
+            "request": "launch",
+            "osx": {
+                "program": "${workspaceFolder}/extern/godot-engine/bin/godot.macos.editor.dev.x86_64"
+            },
+            "args": [
+                "--editor",
+                "--debug",
+                "--verbose",
+                "--path",
+                "${workspaceFolder}/demo",
+                "--rendering-driver",
+                "opengl3"
+            ],
+            "cwd": "${workspaceFolder}",
+            "internalConsoleOptions": "openOnSessionStart",
+            "launchCompleteCommand": "exec-run",
+            "symbolLoadInfo": {
+                "loadAll": true,
+                "exceptionList": ""
+            },
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
