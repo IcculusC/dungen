@@ -11,7 +11,6 @@ DungenEditor::DungenEditor()
     dungen_instance = memnew(Dungen());
 
     dungen_image_source = Image::create(128, 128, false, Image::Format::FORMAT_RGBA8);
-    dungen_image_source->fill(Color::named("SILVER"));
     dungen_image_texture = ImageTexture::create_from_image(dungen_image_source);
 
     save_dialog = memnew(FileDialog);
@@ -178,20 +177,22 @@ void DungenEditor::_redraw()
         bounds.expand_to(Ref<DungenRoom>(all_rooms[i])->get_center());
     }
 
-    bounds.grow_by(50.0);
+    bounds.grow_by(Math::max(bounds.size.x, bounds.size.y) / 2);
 
     dungen_image_source->resize(bounds.size.x, bounds.size.y);
-    dungen_image_source->fill(Color::named("SILVER"));
+    // dungen_image_source->fill(Color::named("GRAY"));
 
-    Vector2 center = bounds.size / 2;
+    Vector2 center = bounds.get_size() / 2;
 
     for (int i = 0; i < all_rooms.size(); i++)
     {
         Ref<DungenRoom> current_room = Ref<DungenRoom>(all_rooms[i]);
         Rect2 rect_copy_hopefully = Rect2(current_room->get_rectangle());
-        rect_copy_hopefully.set_position(rect_copy_hopefully.get_position() + center);
+        rect_copy_hopefully.set_position((rect_copy_hopefully.get_position() + center));
         dungen_image_source->fill_rect(rect_copy_hopefully, current_room->get_color());
     }
+
+    dungen_image_source->fill_rect(Rect2(center - Vector2(1, 1), Vector2(2, 2)), Color::named("BLUE"));
 
     // TODO: investiate - dungen_image_texture->update(dungen_image_source);
     dungen_image_texture->set_image(dungen_image_source); // = ImageTexture::create_from_image(dungen_image_source);

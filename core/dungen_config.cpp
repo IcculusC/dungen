@@ -73,7 +73,7 @@ DungenConfig::DungenConfig() : seed(-1),
                                room_dimensions_trim_sigma(2.0),
                                room_minimum_dimensions(Vector2i(3, 3)),
 
-                               spawn_area_dimensions(Vector2i(50, 50)),
+                               spawn_area_dimensions(Vector2i(10, 10)),
                                spawn_area_shape(ELLIPSE)
 {
 }
