@@ -1,7 +1,12 @@
 #include "register_types.h"
 
+#include "core/dungen_config.h"
+#include "core/dungen_room.h"
+#include "core/dungen.h"
+
 #ifdef TOOLS_ENABLED
 #include "editor/dungen_editor_plugin.h"
+#include "editor/dungen_previewer.h"
 #endif // TOOLS_ENABLED
 
 #include <gdextension_interface.h>
@@ -12,12 +17,16 @@ using namespace godot;
 
 void initialize_dungen_module(ModuleInitializationLevel p_level) {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
+		GDREGISTER_CLASS(DungenConfig);
+		GDREGISTER_CLASS(DungenRoom);
+		GDREGISTER_CLASS(Dungen);
 	}
 
 #ifdef TOOLS_ENABLED
 	if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
 		UtilityFunctions::print("EDITOR INITIALIZED");
 
+		GDREGISTER_CLASS(DungenPreviewer)
 		GDREGISTER_CLASS(DungenEditor)
 		GDREGISTER_CLASS(DungenEditorPlugin)
 
