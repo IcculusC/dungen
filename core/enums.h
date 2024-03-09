@@ -3,12 +3,14 @@
 
 #include <godot_cpp/core/class_db.hpp>
 
-namespace godot {
+namespace godot
+{
 
-enum DungenShape {
-	ELLIPSE,
-	RECTANGLE
-};
+	enum DungenShape
+	{
+		ELLIPSE,
+		RECTANGLE
+	};
 
 }
 

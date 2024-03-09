@@ -4,7 +4,8 @@
 
 using namespace godot;
 
-void DungenRoom::_bind_methods() {
+void DungenRoom::_bind_methods()
+{
     ClassDB::bind_method(D_METHOD("get_area"), &DungenRoom::get_area);
     ClassDB::bind_method(D_METHOD("get_center"), &DungenRoom::get_center);
     ClassDB::bind_method(D_METHOD("get_rectangle"), &DungenRoom::get_rectangle);
@@ -13,79 +14,94 @@ void DungenRoom::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_color", "p_color"), &DungenRoom::set_color);
 }
 
-DungenRoom::DungenRoom() :
-    color(Color::named("RED")),
-    rectangle(Rect2(Vector2(0, 0), Vector2(1, 1))) {
-    }
-
-DungenRoom::DungenRoom(Vector2 _vector) :
-    color(Color::named("RED")),
-    rectangle(Rect2(_vector - Vector2(1, 1), Vector2(2, 2))) {
-    }
-
-DungenRoom::DungenRoom(Rect2 _rectangle) : 
-    color(Color::named("RED")),
-    rectangle(_rectangle) {
-    }
-
-DungenRoom::~DungenRoom() {
+DungenRoom::DungenRoom() : color(Color::named("RED")),
+                           rectangle(Rect2(Vector2(0, 0), Vector2(1, 1)))
+{
 }
 
-double DungenRoom::get_area() const {
+DungenRoom::DungenRoom(Vector2 _vector) : color(Color::named("RED")),
+                                          rectangle(Rect2(_vector - Vector2(1, 1), Vector2(2, 2)))
+{
+}
+
+DungenRoom::DungenRoom(Rect2 _rectangle) : color(Color::named("RED")),
+                                           rectangle(_rectangle)
+{
+}
+
+DungenRoom::~DungenRoom()
+{
+}
+
+double DungenRoom::get_area() const
+{
     return rectangle.get_area();
 }
 
-Vector2 DungenRoom::get_center() const {
+Vector2 DungenRoom::get_center() const
+{
     return rectangle.get_center();
 }
 
-Vector2 DungenRoom::get_size() const {
+Vector2 DungenRoom::get_size() const
+{
     return rectangle.get_size();
 }
 
-void DungenRoom::set_position(const Vector2 p_position) {
+void DungenRoom::set_position(const Vector2 p_position)
+{
     rectangle.set_position(p_position);
 }
-    
-Vector2 DungenRoom::get_position() const {
+
+Vector2 DungenRoom::get_position() const
+{
     return rectangle.position;
 }
 
-void DungenRoom::set_color(const Color p_color) {
+void DungenRoom::set_color(const Color p_color)
+{
     color = p_color;
 }
 
-Color DungenRoom::get_color() const {
+Color DungenRoom::get_color() const
+{
     return color;
 }
 
-void DungenRoom::set_rectangle(const Rect2 p_rectangle) {
+void DungenRoom::set_rectangle(const Rect2 p_rectangle)
+{
     rectangle = p_rectangle;
 }
-Rect2 DungenRoom::get_rectangle() const {
+Rect2 DungenRoom::get_rectangle() const
+{
     return rectangle;
 }
 
-bool DungenRoom::intersects(const Ref<DungenRoom> &other) {
+bool DungenRoom::intersects(const Ref<DungenRoom> &other)
+{
     return rectangle.intersects(other->get_rectangle());
 }
 
-bool DungenRoom::operator==(const Ref<DungenRoom> &other) const {
+bool DungenRoom::operator==(const Ref<DungenRoom> &other) const
+{
     return rectangle == other->get_rectangle();
 }
 
-bool DungenRoom::operator!=(const Ref<DungenRoom> &other) const {
+bool DungenRoom::operator!=(const Ref<DungenRoom> &other) const
+{
     return rectangle != other->get_rectangle();
 }
 
-DungenRoom::operator Variant() const {
+DungenRoom::operator Variant() const
+{
     Dictionary result;
     result["color"] = color;
     result["rectangle"] = rectangle;
     return result;
 }
 
-DungenRoom::operator Variant() {
+DungenRoom::operator Variant()
+{
     Dictionary result;
     result["color"] = color;
     result["rectangle"] = rectangle;

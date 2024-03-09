@@ -29,92 +29,90 @@
 
 #include "../core/dungen.h"
 
-namespace godot {
+namespace godot
+{
 
-class DungenEditor : public Control {
-    GDCLASS(DungenEditor, Control)
+    class DungenEditor : public Control
+    {
+        GDCLASS(DungenEditor, Control)
 
-    friend class DungenEditorPlugin;
+        friend class DungenEditorPlugin;
 
-private:
-    EditorPlugin *plugin;
-    Dungen* dungen_instance;
+    private:
+        EditorPlugin *plugin;
+        Dungen *dungen_instance;
 
-    Ref<Image> dungen_image_source;
-    Ref<ImageTexture> dungen_image_texture;
+        Ref<Image> dungen_image_source;
+        Ref<ImageTexture> dungen_image_texture;
 
-    VBoxContainer *vbox;
-    Button *header;
+        VBoxContainer *vbox;
+        Button *header;
 
-    FileDialog *save_dialog;
-	FileDialog *load_dialog;
+        FileDialog *save_dialog;
+        FileDialog *load_dialog;
 
-    Button *new_btn;
-	Button *load_btn;
-	Button *save_btn;
+        Button *new_btn;
+        Button *load_btn;
+        Button *save_btn;
 
-    HSplitContainer *hsc;
+        HSplitContainer *hsc;
 
-    PanelContainer *dungen_texture_panel;
-    TextureRect *dungen_texture_rect;
+        PanelContainer *dungen_texture_panel;
+        TextureRect *dungen_texture_rect;
 
-    PanelContainer *side_bar_menu_panel;
+        PanelContainer *side_bar_menu_panel;
 
-    void _config_changed();
+        void _config_changed();
 
-    void _new_config();
-    void _save_config(String p_path);
-    void _on_save_pressed();
-	void _load_config(String p_path);
-    void _show_file_dialog(FileDialog *p_dialog) { p_dialog->popup_centered_ratio(); } // { p_dialog->popup_centered_clamped(Size2i(700, 500), 0.8f); };
+        void _new_config();
+        void _save_config(String p_path);
+        void _on_save_pressed();
+        void _load_config(String p_path);
+        void _show_file_dialog(FileDialog *p_dialog) { p_dialog->popup_centered_ratio(); } // { p_dialog->popup_centered_clamped(Size2i(700, 500), 0.8f); };
 
-    void _edit_dungen_config(Ref<DungenConfig> config);
-    void _regenerate();
+        void _edit_dungen_config(Ref<DungenConfig> config);
+        void _regenerate();
 
-    void _generation_complete(double p_time);
+        void _generation_complete(double p_time);
 
+        void _redraw();
 
-    void _redraw();
+    protected:
+        static void _bind_methods();
 
+        void _notification(int p_what);
 
-protected:
-    static void _bind_methods();
+    public:
+        DungenEditor();
+        ~DungenEditor();
 
-    void _notification(int p_what);
+        void set_plugin(EditorPlugin *p_plugin) { plugin = p_plugin; };
+    };
 
+    class DungenEditorPlugin : public EditorPlugin
+    {
+        GDCLASS(DungenEditorPlugin, EditorPlugin)
 
-public:
-	DungenEditor();
-	~DungenEditor();
+    private:
+        DungenEditor *dungen_editor;
 
-	void set_plugin(EditorPlugin *p_plugin) { plugin = p_plugin; };
-};
+    protected:
+        static void _bind_methods();
 
-class DungenEditorPlugin : public EditorPlugin {
-    GDCLASS(DungenEditorPlugin, EditorPlugin)
+        void _notification(int p_what);
 
-private:
-    DungenEditor *dungen_editor;
+    public:
+        bool _has_main_screen() const override { return true; }
+        virtual String _get_plugin_name() const override { return "Dungen"; };
+        virtual void _make_visible(bool p_visible) override;
+        virtual void _apply_changes() override;
+        virtual void _edit(Object *p_object) override;
+        virtual bool _handles(Object *p_object) const override;
+        virtual Ref<Texture2D> _get_plugin_icon() const override;
 
-
-protected:
-    static void _bind_methods();
-
-    void _notification(int p_what);
-
-
-public:
-	bool _has_main_screen() const override { return true; }
-    virtual String _get_plugin_name() const override { return "Dungen"; };
-    virtual void _make_visible(bool p_visible) override;
-    virtual void _apply_changes() override;
-	virtual void _edit(Object *p_object) override;
-	virtual bool _handles(Object *p_object) const override;
-	virtual Ref<Texture2D> _get_plugin_icon() const override;
-
-    DungenEditorPlugin();
-    ~DungenEditorPlugin();
-};
+        DungenEditorPlugin();
+        ~DungenEditorPlugin();
+    };
 
 }
 #endif // DUNGEN_EDITOR_PLUGIN_H

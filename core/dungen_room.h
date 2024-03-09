@@ -6,45 +6,47 @@
 #include <godot_cpp/variant/rect2.hpp>
 #include <godot_cpp/variant/vector2.hpp>
 
-namespace godot {
+namespace godot
+{
 
-class DungenRoom : public RefCounted {
-    GDCLASS(DungenRoom, RefCounted)
+    class DungenRoom : public RefCounted
+    {
+        GDCLASS(DungenRoom, RefCounted)
 
-private:
-    Color color;
-    Rect2 rectangle;
+    private:
+        Color color;
+        Rect2 rectangle;
 
-protected:
-    static void _bind_methods();
+    protected:
+        static void _bind_methods();
 
-public:
-    DungenRoom();
-    DungenRoom(Vector2 _vector);
-    DungenRoom(Rect2 _rectangle);
-    ~DungenRoom();
+    public:
+        DungenRoom();
+        DungenRoom(Vector2 _vector);
+        DungenRoom(Rect2 _rectangle);
+        ~DungenRoom();
 
-    double get_area() const;
-    Vector2 get_center() const;
-    Vector2 get_size() const;
+        double get_area() const;
+        Vector2 get_center() const;
+        Vector2 get_size() const;
 
-    void set_position(const Vector2 p_position);
-    Vector2 get_position() const;
-    
-    void set_color(const Color p_color);
-    Color get_color() const;
+        void set_position(const Vector2 p_position);
+        Vector2 get_position() const;
 
-    void set_rectangle(const Rect2 p_rectangle);
-    Rect2 get_rectangle() const;
+        void set_color(const Color p_color);
+        Color get_color() const;
 
-    bool intersects(const Ref<DungenRoom> &other);
+        void set_rectangle(const Rect2 p_rectangle);
+        Rect2 get_rectangle() const;
 
-    bool operator==(const Ref<DungenRoom> &other) const;
-    bool operator!=(const Ref<DungenRoom> &other) const;
+        bool intersects(const Ref<DungenRoom> &other);
 
-    operator Variant() const;
-    operator Variant();
-};
+        bool operator==(const Ref<DungenRoom> &other) const;
+        bool operator!=(const Ref<DungenRoom> &other) const;
+
+        operator Variant() const;
+        operator Variant();
+    };
 
 }
 
