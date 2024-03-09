@@ -66,11 +66,16 @@ DungenEditor::DungenEditor()
     hsc->set_focus_mode(FOCUS_NONE);
     vbox->add_child(hsc);
 
+    PanelContainer *dungen_preview_panel = memnew(PanelContainer);
+    dungen_preview_panel->set_h_size_flags(SIZE_EXPAND_FILL);
+    dungen_preview_panel->set_v_size_flags(SIZE_EXPAND_FILL);
+    dungen_preview_panel->set_stretch_ratio(4);
+    hsc->add_child(dungen_preview_panel);
+
     dungen_preview_vbox = memnew(VBoxContainer);
     dungen_preview_vbox->set_h_size_flags(SIZE_EXPAND_FILL);
     dungen_preview_vbox->set_v_size_flags(SIZE_EXPAND_FILL);
-//  side_bar_menu_panel->set_stretch_ratio(1.0);
-    hsc->add_child(dungen_preview_vbox);
+    dungen_preview_panel->add_child(dungen_preview_vbox);
 
     HBoxContainer *nav = memnew(HBoxContainer);
     nav->set_h_size_flags(SIZE_EXPAND);
@@ -117,6 +122,23 @@ DungenEditor::DungenEditor()
     dungen_previewer->set_v_size_flags(SIZE_EXPAND_FILL);
     dungen_previewer->set_dungen_instance(dungen_instance);
     preview_wrapper->add_child(dungen_previewer);
+
+    PanelContainer *dungen_preview_sidebar_panel = memnew(PanelContainer);
+    dungen_preview_sidebar_panel->set_h_size_flags(SIZE_EXPAND_FILL);
+    dungen_preview_sidebar_panel->set_v_size_flags(SIZE_EXPAND_FILL);
+    dungen_preview_sidebar_panel->add_theme_color_override("panel", Color(0.1, 0.1, 0.1, 0.6)); 
+    dungen_preview_sidebar_panel->set_stretch_ratio(1);
+    hsc->add_child(dungen_preview_sidebar_panel);
+
+    dungen_preview_sidebar_vbox = memnew(VBoxContainer);
+    dungen_preview_sidebar_vbox->set_h_size_flags(SIZE_EXPAND_FILL);
+    dungen_preview_sidebar_vbox->set_v_size_flags(SIZE_EXPAND_FILL);
+    dungen_preview_sidebar_panel->add_child(dungen_preview_sidebar_vbox); 
+
+    show_trimmed_rooms_btn = memnew(CheckButton);
+    show_trimmed_rooms_btn->set_text("Show Trimmed Rooms");
+    show_trimmed_rooms_btn->set_toggle_mode(true);
+    dungen_preview_sidebar_vbox->add_child(show_trimmed_rooms_btn);
 }
 
 DungenEditor::~DungenEditor() {}
@@ -204,6 +226,10 @@ void DungenEditor::_zoom_editor(Vector2 amount) {
     _update_zoom_reset_button();
 }
 
+void DungenEditor::_show_trimmed_rooms(bool p_show) {
+    dungen_previewer->set_show_trimmed_rooms(p_show);
+}
+
 void DungenEditor::_notification(int p_what)
 {
     if (p_what == NOTIFICATION_READY)
@@ -217,6 +243,8 @@ void DungenEditor::_notification(int p_what)
         zoom_less_btn->connect("pressed", callable_mp(this, &DungenEditor::_zoom_editor).bind(Vector2(-0.5, -0.5)));
         zoom_reset_btn->connect("pressed", callable_mp(this, &DungenEditor::_reset_zoom));
         zoom_more_btn->connect("pressed", callable_mp(this, &DungenEditor::_zoom_editor).bind(Vector2(0.5, 0.5)));
+
+        show_trimmed_rooms_btn->connect("toggled", callable_mp(this, &DungenEditor::_show_trimmed_rooms));
     }
     if (p_what == NOTIFICATION_THEME_CHANGED)
     {
