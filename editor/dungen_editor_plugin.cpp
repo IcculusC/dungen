@@ -126,6 +126,7 @@ DungenEditor::DungenEditor()
     PanelContainer *dungen_preview_sidebar_panel = memnew(PanelContainer);
     dungen_preview_sidebar_panel->set_h_size_flags(SIZE_EXPAND_FILL);
     dungen_preview_sidebar_panel->set_v_size_flags(SIZE_EXPAND_FILL);
+    dungen_preview_sidebar_panel->add_theme_color_override("panel", Color(0.1, 0.1, 0.1, 0.6)); 
     dungen_preview_sidebar_panel->set_stretch_ratio(1);
     hsc->add_child(dungen_preview_sidebar_panel);
 
