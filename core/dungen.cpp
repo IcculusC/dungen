@@ -93,6 +93,7 @@ void Dungen::generate()
     double generation_start = (double)clock();
     _generate_rooms();
     _separate_rooms();
+    _trim_rooms();
 
     // TODO: trimming
     // TODO: build triangulated graph
@@ -286,27 +287,37 @@ void Dungen::_separate_rooms()
     emit_signal("separate_rooms", ((double)clock() - separate_start) / CLOCKS_PER_SEC);
 }
 
+bool Dungen::_should_trim_room(const Ref<DungenRoom> &room, double minimum_area) const
+{
+    Vector2i room_minimum_dimensions = config->get_room_minimum_dimensions();
+    Rect2 rectangle = room->get_rectangle();
+
+    if (
+        rectangle.size.x < room_minimum_dimensions.x ||
+        rectangle.size.y < room_minimum_dimensions.y ||
+        rectangle.get_area() < minimum_area
+    )
+    {
+        return true;
+    }
+
+    return false;
+}
+
 // TODO: figure out some less random logic for this because it's quiet unpredictable
 void Dungen::_trim_rooms()
 {
     double room_dimensions_trim_sigma = config->get_room_dimensions_trim_sigma();
-    Vector2i room_minimum_dimensions = config->get_room_dimensions();
 
     double average_area = get_average_area();
+    double minimum_area = rng.randfn(average_area, room_dimensions_trim_sigma);
     int new_area = 0;
-
-    double trim_rate = rng.randfn(average_area, room_dimensions_trim_sigma) * 0.5;
 
     for (int i = 0; i < all_rooms.size(); i++)
     {
         Ref<DungenRoom> rect = all_rooms[i];
 
-        if (rect->get_size().x < room_minimum_dimensions.x || rect->get_size().y < room_minimum_dimensions.y)
-        {
-            trimmed_rooms.push_back(rect);
-            continue;
-        }
-        if (rect->get_area() < trim_rate)
+        if (_should_trim_room(rect, minimum_area))
         {
             trimmed_rooms.push_back(rect);
             continue;

@@ -48,6 +48,7 @@ namespace godot
 		int _smart_has_overlapping_rooms();
 		bool _has_overlapping_rooms();
 		void _separate_rooms();
+		bool _should_trim_room(const Ref<DungenRoom> &room, double minimum_area) const;
 		void _trim_rooms();
 
 	protected:
