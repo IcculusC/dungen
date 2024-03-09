@@ -1,6 +1,7 @@
 #ifdef TOOLS_ENABLED
 
 #include "dungen_editor_plugin.h"
+
 #include "../core/dungen_config.h"
 
 using namespace godot;
@@ -175,6 +176,7 @@ void DungenEditor::_redraw() {
         dungen_image_source->fill_rect(rect_copy_hopefully, current_room->get_color());
     }
 
+    // TODO: investiate - dungen_image_texture->update(dungen_image_source);
     dungen_image_texture->set_image(dungen_image_source); // = ImageTexture::create_from_image(dungen_image_source);
     dungen_texture_rect->set_texture(dungen_image_texture);
 

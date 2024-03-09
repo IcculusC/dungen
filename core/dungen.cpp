@@ -1,5 +1,5 @@
 #include "dungen.h"
-//#include "maprect.h"
+
 #include <godot_cpp/core/class_db.hpp>
 
 using namespace godot;
@@ -15,14 +15,12 @@ void Dungen::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_map"), &Dungen::get_map);
     ClassDB::bind_method(D_METHOD("get_trimmed_rooms"), &Dungen::get_trimmed_rooms);
 
-    // ClassDB::bind_method(D_METHOD("get_path_edges"), &Dungen::get_path_edges);
-
     ClassDB::bind_method(D_METHOD("get_config"), &Dungen::get_config);
 	ClassDB::bind_method(D_METHOD("set_config", "p_config"), &Dungen::set_config);
 
     ClassDB::add_property("Dungen", PropertyInfo(Variant::OBJECT, "config", PROPERTY_HINT_RESOURCE_TYPE, "DungenConfig", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_EDITOR_INSTANTIATE_OBJECT), "set_config", "get_config");
 
-    ADD_SIGNAL(MethodInfo("geneate_rooms", PropertyInfo(Variant::FLOAT, "time_elapsed")));
+    ADD_SIGNAL(MethodInfo("generate_rooms", PropertyInfo(Variant::FLOAT, "time_elapsed")));
     ADD_SIGNAL(MethodInfo("separate_rooms", PropertyInfo(Variant::FLOAT, "time_elapsed")));
 
     ADD_SIGNAL(MethodInfo("generation_complete", PropertyInfo(Variant::FLOAT, "time_elapsed")));
@@ -84,6 +82,11 @@ void Dungen::generate() {
     double generation_start = (double)clock();
     _generate_rooms();
     _separate_rooms();
+
+    // TODO: trimming
+    // TODO: build triangulated graph
+    // TODO: generate minimum spanning tree
+    // TODO: path rectangles
 
     emit_signal("generation_complete", ((double)clock() - generation_start) / CLOCKS_PER_SEC);
 }
@@ -193,6 +196,7 @@ bool Dungen::_has_overlapping_rooms() {
     return false;
 }
 
+// TODO: make this faster, start at first overlapping room with _smart_has_overlapping_rooms function, test other optimizations
 void Dungen::_separate_rooms() {
     clock_t separate_start = clock();
     while (_has_overlapping_rooms()) {
@@ -242,7 +246,8 @@ void Dungen::_separate_rooms() {
     emit_signal("separate_rooms", ((double)clock() - separate_start) / CLOCKS_PER_SEC);
 }
 
-void Dungen::trim_rectangles() {
+// TODO: figure out some less random logic for this because it's quiet unpredictable
+void Dungen::_trim_rooms() {
     double room_dimensions_trim_sigma = config->get_room_dimensions_trim_sigma();
     Vector2i room_minimum_dimensions = config->get_room_dimensions();
 
@@ -250,9 +255,6 @@ void Dungen::trim_rectangles() {
     int new_area = 0;
 
     double trim_rate = rng.randfn(average_area, room_dimensions_trim_sigma) * 0.5;
-
-    UtilityFunctions::print("TRIM RATE ", trim_rate);
-    UtilityFunctions::print("AVERAGE AREA ", average_area);
 
     for (int i = 0; i < all_rooms.size(); i++) {
         Ref<DungenRoom> rect = all_rooms[i];
@@ -272,44 +274,4 @@ void Dungen::trim_rectangles() {
     }
 
     total_area = new_area;
-}
-
-bool intersects(Vector2i a, Vector2i b, Rect2i rect) {
-    Vector2 corner0 = rect.position;
-    Vector2 corner1 = rect.position + Vector2(1, 0) * rect.size;
-    Vector2 corner2 = rect.position + rect.size;
-    Vector2 corner3 = rect.position + Vector2(0, 1) * rect.size;
-    Vector2 edge = b - a;
-    double length = edge.length();
-    edge /= length;
-    double distance_edge = edge.dot(a);
-
-    Vector2 perpendicular = Vector2(-edge.y, edge.x);
-    double distance_perpendicular = perpendicular.dot(a);
-
-    double distance_corner0 = perpendicular.dot(corner0) - distance_perpendicular;
-    double distance_corner1 = perpendicular.dot(corner1) - distance_perpendicular;
-    double distance_corner2 = perpendicular.dot(corner2) - distance_perpendicular;
-    double distance_corner3 = perpendicular.dot(corner3) - distance_perpendicular;
-
-    double perpendicular_min = Math::min(distance_corner0, Math::min(distance_corner1, Math::min(distance_corner2, distance_corner3)));
-    double perpendicular_max = Math::max(distance_corner0, Math::max(distance_corner1, Math::max(distance_corner2, distance_corner3)));
-
-    if ((perpendicular_min <= 0.0 && perpendicular_max <= 0) || (perpendicular_min >= 0.0 && perpendicular_max >= 0)) {
-        return false;
-    }
-
-    distance_corner0 = edge.dot(corner0) - distance_edge;
-    distance_corner1 = edge.dot(corner1) - distance_edge;
-    distance_corner2 = edge.dot(corner2) - distance_edge;
-    distance_corner3 = edge.dot(corner3) - distance_edge;
-
-    double edge_min = Math::min(distance_corner0, Math::min(distance_corner1, Math::min(distance_corner2, distance_corner3)));
-    double edge_max = Math::max(distance_corner0, Math::max(distance_corner1, Math::max(distance_corner2, distance_corner3)));
-    
-    if (edge_max <= 0.0 && edge_min >= length) {
-        return false;
-    }
-
-    return true;
 }

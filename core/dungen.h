@@ -46,7 +46,7 @@ private:
 	int _smart_has_overlapping_rooms();
 	bool _has_overlapping_rooms();
 	void _separate_rooms();
-	void trim_rectangles();
+	void _trim_rooms();
 
 
 protected:
