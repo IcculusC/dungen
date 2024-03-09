@@ -16,8 +16,7 @@ env = SConscript("extern/godot-cpp/SConstruct")
 env.Append(CPPPATH=["."])
 sources = Glob("./*.cpp")
 sources += Glob("./editor/*.cpp")
-
-env.Command("bin/libdungen.gdextension", "gdextension/libdungen.gdextension", Copy("$TARGET", "$SOURCE"))
+sources += Glob("./core/*.cpp")
 
 for s in sources:
     print(s)

@@ -3,12 +3,23 @@
 #ifndef DUNGEN_EDITOR_PLUGIN_H
 #define DUNGEN_EDITOR_PLUGIN_H
 
+#include <godot_cpp/classes/button.hpp>
+#include <godot_cpp/classes/canvas_item.hpp>
+#include <godot_cpp/classes/color_rect.hpp>
 #include <godot_cpp/classes/control.hpp>
 #include <godot_cpp/classes/editor_interface.hpp>
 #include <godot_cpp/classes/editor_plugin.hpp>
+#include <godot_cpp/classes/file_dialog.hpp>
+#include <godot_cpp/classes/h_box_container.hpp>
+#include <godot_cpp/classes/h_split_container.hpp>
+#include <godot_cpp/classes/image.hpp>
+#include <godot_cpp/classes/image_texture.hpp>
+#include <godot_cpp/classes/panel_container.hpp>
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
+#include <godot_cpp/classes/resource_saver.hpp>
 #include <godot_cpp/classes/texture2d.hpp>
+#include <godot_cpp/classes/texture_rect.hpp>
 #include <godot_cpp/classes/v_box_container.hpp>
 
 #include <godot_cpp/core/error_macros.hpp>
@@ -16,18 +27,61 @@
 #include <godot_cpp/variant/string.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
+#include "../core/dungen.h"
+
 namespace godot {
 
 class DungenEditor : public Control {
     GDCLASS(DungenEditor, Control)
 
+    friend class DungenEditorPlugin;
+
 private:
     EditorPlugin *plugin;
+    Dungen* dungen_instance;
+
+    Ref<Image> dungen_image_source;
+    Ref<ImageTexture> dungen_image_texture;
+
+    VBoxContainer *vbox;
+    Button *header;
+
+    FileDialog *save_dialog;
+	FileDialog *load_dialog;
+
+    Button *new_btn;
+	Button *load_btn;
+	Button *save_btn;
+
+    HSplitContainer *hsc;
+
+    PanelContainer *dungen_texture_panel;
+    TextureRect *dungen_texture_rect;
+
+    PanelContainer *side_bar_menu_panel;
+
+    void _config_changed();
+
+    void _new_config();
+    void _save_config(String p_path);
+    void _on_save_pressed();
+	void _load_config(String p_path);
+    void _show_file_dialog(FileDialog *p_dialog) { p_dialog->popup_centered_ratio(); } // { p_dialog->popup_centered_clamped(Size2i(700, 500), 0.8f); };
+
+    void _edit_dungen_config(Ref<DungenConfig> config);
+    void _regenerate();
+
+    void _generation_complete(double p_time);
+
+
+    void _redraw();
+
 
 protected:
     static void _bind_methods();
 
     void _notification(int p_what);
+
 
 public:
 	DungenEditor();
@@ -42,10 +96,12 @@ class DungenEditorPlugin : public EditorPlugin {
 private:
     DungenEditor *dungen_editor;
 
+
 protected:
     static void _bind_methods();
 
     void _notification(int p_what);
+
 
 public:
 	bool _has_main_screen() const override { return true; }
