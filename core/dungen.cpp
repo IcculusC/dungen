@@ -164,8 +164,8 @@ Ref<DungenRoom> Dungen::_generate_room()
         room_position += Vector2i(rng.randi_range(-5, 5), rng.randi_range(-5, 5));
     }
 
-    double w = rng.randfn(room_dimensions.x, room_dimensions_sigma.x);
-    double h = rng.randfn(room_dimensions.y, room_dimensions_sigma.y);
+    double w = Math::abs(rng.randfn(room_dimensions.x, room_dimensions_sigma.x));
+    double h = Math::abs(rng.randfn(room_dimensions.y, room_dimensions_sigma.y));
     Vector2i size = Vector2i(w, h);
     Rect2i rect = Rect2i(room_position - (size / 2), size);
 
@@ -277,11 +277,9 @@ void Dungen::_separate_rooms()
             if (movement_vector != Vector2i(0, 0) && neighbors > 0)
             {
                 Vector2 direction =
-                    Vector2(
-                        Math::ceil(movement_vector.x / neighbors),
-                        Math::ceil(movement_vector.y / neighbors))
+                    Vector2(movement_vector / neighbors)
                         .normalized()
-                        .round();
+                        .snapped(Vector2(1, 1));
 
                 rect_a->set_position(rect_a->get_position() + Vector2i(direction));
             }
