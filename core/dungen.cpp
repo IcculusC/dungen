@@ -105,9 +105,13 @@ void Dungen::generate()
 
 Vector2i Dungen::generate_random_point_in_rectangle(Vector2i &dimensions)
 {
+    // ASSUMING ORIGIN IS Vector2(0, 0)
+
+    Vector2i half_size = dimensions / 2;
+
     return Vector2i(
-        rng.randi_range(0, dimensions.x),
-        rng.randi_range(0, dimensions.y));
+        rng.randi_range(-half_size.x, half_size.x),
+        rng.randi_range(-half_size.y, half_size.y));
 }
 
 Vector2i Dungen::generate_random_point_in_ellipse(Vector2i &dimensions)
@@ -295,8 +299,7 @@ bool Dungen::_should_trim_room(const Ref<DungenRoom> &room, double minimum_area)
     if (
         rectangle.size.x < room_minimum_dimensions.x ||
         rectangle.size.y < room_minimum_dimensions.y ||
-        rectangle.get_area() < minimum_area
-    )
+        rectangle.get_area() < minimum_area)
     {
         return true;
     }
