@@ -9,7 +9,7 @@ DungenEditor::DungenEditor() {
     dungen_instance = memnew(Dungen());
 
     dungen_image_source = Image::create(128, 128, false, Image::Format::FORMAT_RGBA8);
-    dungen_image_source->fill(Color::named("BLACK"));
+    dungen_image_source->fill(Color::named("SILVER"));
     dungen_image_texture = ImageTexture::create_from_image(dungen_image_source);
 
 	save_dialog = memnew(FileDialog);
@@ -69,17 +69,20 @@ DungenEditor::DungenEditor() {
     dungen_texture_panel = memnew(PanelContainer);
     dungen_texture_panel->set_h_size_flags(SIZE_EXPAND_FILL);
 	dungen_texture_panel->set_v_size_flags(SIZE_EXPAND_FILL);
+    dungen_texture_panel->set_stretch_ratio(3.0);
     hsc->add_child(dungen_texture_panel);
 
     dungen_texture_rect = memnew(TextureRect);
     dungen_texture_rect->set_h_size_flags(SIZE_EXPAND_FILL);
 	dungen_texture_rect->set_v_size_flags(SIZE_EXPAND_FILL);
+    dungen_texture_rect->set_stretch_mode(TextureRect::STRETCH_KEEP_ASPECT_CENTERED);
     dungen_texture_panel->add_child(dungen_texture_rect);
     dungen_texture_rect->set_texture(dungen_image_texture);
 
     side_bar_menu_panel = memnew(PanelContainer);
     side_bar_menu_panel->set_h_size_flags(SIZE_EXPAND_FILL);
 	side_bar_menu_panel->set_v_size_flags(SIZE_EXPAND_FILL);
+    side_bar_menu_panel->set_stretch_ratio(1.0);
     hsc->add_child(side_bar_menu_panel);
 }
 
@@ -161,13 +164,21 @@ void DungenEditor::_redraw() {
     bounds.grow_by(50.0);
 
     dungen_image_source->resize(bounds.size.x, bounds.size.y);
-    dungen_image_source->fill(Color::named("BLACK"));
+    dungen_image_source->fill(Color::named("SILVER"));
+
+    Vector2 center = bounds.size / 2;
 
     for (int i = 0; i < all_rooms.size(); i++) {
-        dungen_image_source->fill_rect(Ref<DungenRoom>(all_rooms[i])->get_rectangle(), Color::named("RED"));
+        Ref<DungenRoom> current_room = Ref<DungenRoom>(all_rooms[i]);
+        Rect2 rect_copy_hopefully = Rect2(current_room->get_rectangle());
+        rect_copy_hopefully.set_position(rect_copy_hopefully.get_position() + center);
+        dungen_image_source->fill_rect(rect_copy_hopefully, current_room->get_color());
     }
 
-    dungen_texture_rect->queue_redraw();
+    dungen_image_texture->set_image(dungen_image_source); // = ImageTexture::create_from_image(dungen_image_source);
+    dungen_texture_rect->set_texture(dungen_image_texture);
+
+    queue_redraw();
 }
 
 void DungenEditor::_notification(int p_what) {
