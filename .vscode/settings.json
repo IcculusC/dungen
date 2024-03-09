@@ -24,6 +24,7 @@
         "vector": "cpp",
         "__bit_reference": "cpp",
         "algorithm": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "__node_handle": "cpp"
     }
 }

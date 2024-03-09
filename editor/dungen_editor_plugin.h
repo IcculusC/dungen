@@ -12,14 +12,12 @@
 #include <godot_cpp/classes/file_dialog.hpp>
 #include <godot_cpp/classes/h_box_container.hpp>
 #include <godot_cpp/classes/h_split_container.hpp>
-#include <godot_cpp/classes/image.hpp>
-#include <godot_cpp/classes/image_texture.hpp>
 #include <godot_cpp/classes/panel_container.hpp>
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/resource_saver.hpp>
+#include <godot_cpp/classes/style_box_empty.hpp>
 #include <godot_cpp/classes/texture2d.hpp>
-#include <godot_cpp/classes/texture_rect.hpp>
 #include <godot_cpp/classes/v_box_container.hpp>
 
 #include <godot_cpp/core/error_macros.hpp>
@@ -43,9 +41,6 @@ namespace godot
         EditorPlugin *plugin;
         Dungen *dungen_instance;
 
-        Ref<Image> dungen_image_source;
-        Ref<ImageTexture> dungen_image_texture;
-
         VBoxContainer *vbox;
         Button *header;
 
@@ -59,10 +54,13 @@ namespace godot
         HSplitContainer *hsc;
 
         PanelContainer *dungen_texture_panel;
-        TextureRect *dungen_texture_rect;
 
-        PanelContainer *side_bar_menu_panel;
+        VBoxContainer *side_bar_vbox;
 
+        Button *zoom_less_btn;
+        Button *zoom_reset_btn;
+        Button *zoom_more_btn;
+    
         DungenPreviewer *dungen_previewer;
 
         void _config_changed();
@@ -77,6 +75,10 @@ namespace godot
         void _regenerate();
 
         void _generation_complete(double p_time);
+
+        void _reset_zoom();
+        void _update_zoom_reset_button();
+        void _zoom_editor(Vector2 amount);
 
         void _redraw();
 

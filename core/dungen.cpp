@@ -326,7 +326,7 @@ void Dungen::_trim_rooms()
             continue;
         }
 
-        rect->set_color(Color::named("BLUE"));
+        rect->set_color(Color::named("POWDERBLUE"));
         map_rooms.push_back(rect);
         new_area += rect->get_area();
     }

@@ -14,17 +14,17 @@ void DungenRoom::_bind_methods()
     ClassDB::bind_method(D_METHOD("set_color", "p_color"), &DungenRoom::set_color);
 }
 
-DungenRoom::DungenRoom() : color(Color::named("RED")),
+DungenRoom::DungenRoom() : color(Color::named("ORANGERED")),
                            rectangle(Rect2(Vector2(0, 0), Vector2(1, 1)))
 {
 }
 
-DungenRoom::DungenRoom(Vector2 _vector) : color(Color::named("RED")),
+DungenRoom::DungenRoom(Vector2 _vector) : color(Color::named("ORANGERED")),
                                           rectangle(Rect2(_vector - Vector2(1, 1), Vector2(2, 2)))
 {
 }
 
-DungenRoom::DungenRoom(Rect2 _rectangle) : color(Color::named("RED")),
+DungenRoom::DungenRoom(Rect2 _rectangle) : color(Color::named("ORANGERED")),
                                            rectangle(_rectangle)
 {
 }

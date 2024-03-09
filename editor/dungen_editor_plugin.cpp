@@ -8,10 +8,9 @@ using namespace godot;
 
 DungenEditor::DungenEditor()
 {
-    dungen_instance = memnew(Dungen());
+    set_clip_contents(true);
 
-    dungen_image_source = Image::create(128, 128, false, Image::Format::FORMAT_RGBA8);
-    dungen_image_texture = ImageTexture::create_from_image(dungen_image_source);
+    dungen_instance = memnew(Dungen());
 
     save_dialog = memnew(FileDialog);
     save_dialog->set_file_mode(FileDialog::FILE_MODE_SAVE_FILE);
@@ -73,24 +72,57 @@ DungenEditor::DungenEditor()
 //  dungen_texture_panel->set_stretch_ratio(3.0);
     hsc->add_child(dungen_texture_panel);
 
-    dungen_texture_rect = memnew(TextureRect);
-    dungen_texture_rect->set_h_size_flags(SIZE_EXPAND_FILL);
-    dungen_texture_rect->set_v_size_flags(SIZE_EXPAND_FILL);
-    dungen_texture_rect->set_stretch_mode(TextureRect::STRETCH_KEEP_ASPECT_CENTERED);
-    dungen_texture_panel->add_child(dungen_texture_rect);
-    dungen_texture_rect->set_texture(dungen_image_texture);
-
-    side_bar_menu_panel = memnew(PanelContainer);
-    side_bar_menu_panel->set_h_size_flags(SIZE_EXPAND_FILL);
-    side_bar_menu_panel->set_v_size_flags(SIZE_EXPAND_FILL);
+    side_bar_vbox = memnew(VBoxContainer);
+    side_bar_vbox->set_h_size_flags(SIZE_EXPAND_FILL);
+    side_bar_vbox->set_v_size_flags(SIZE_EXPAND_FILL);
 //  side_bar_menu_panel->set_stretch_ratio(1.0);
-    hsc->add_child(side_bar_menu_panel);
+    hsc->add_child(side_bar_vbox);
+
+    HBoxContainer *nav = memnew(HBoxContainer);
+    nav->set_h_size_flags(SIZE_EXPAND);
+    side_bar_vbox->add_child(nav);
+
+    zoom_less_btn = memnew(Button);
+	zoom_less_btn->set_text("");
+	zoom_less_btn->set_tooltip_text("Zoom Out");
+	zoom_less_btn->set_flat(true);
+	zoom_less_btn->set_focus_mode(Control::FOCUS_NONE);
+	nav->add_child(zoom_less_btn);
+
+    Ref<StyleBoxEmpty> empty_stylebox = memnew(StyleBoxEmpty);
+
+    zoom_reset_btn = memnew(Button);
+    zoom_reset_btn->set_text("100 %");
+    zoom_reset_btn->set_flat(true);
+	zoom_reset_btn->set_focus_mode(FOCUS_NONE);
+	zoom_reset_btn->set_text_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+    zoom_reset_btn->add_theme_stylebox_override("normal", empty_stylebox);
+	zoom_reset_btn->add_theme_stylebox_override("hover", empty_stylebox);
+	zoom_reset_btn->add_theme_stylebox_override("focus", empty_stylebox);
+	zoom_reset_btn->add_theme_stylebox_override("pressed", empty_stylebox);
+    zoom_reset_btn->add_theme_constant_override("outline_size", 1);
+    zoom_reset_btn->add_theme_color_override("font_outline_color", Color(0, 0, 0));
+	zoom_reset_btn->add_theme_color_override("font_color", Color(1, 1, 1));
+    nav->add_child(zoom_reset_btn);
+
+    zoom_more_btn = memnew(Button);
+	zoom_more_btn->set_text("");
+	zoom_more_btn->set_tooltip_text("Zoom In");
+	zoom_more_btn->set_flat(true);
+	zoom_more_btn->set_focus_mode(Control::FOCUS_NONE);
+	nav->add_child(zoom_more_btn);
+
+    PanelContainer *preview_wrapper = memnew(PanelContainer);
+    preview_wrapper->set_h_size_flags(SIZE_EXPAND_FILL);
+    preview_wrapper->set_v_size_flags(SIZE_EXPAND_FILL); 
+    preview_wrapper->set_clip_contents(true);
+    side_bar_vbox->add_child(preview_wrapper);
 
     dungen_previewer = memnew(DungenPreviewer); 
     dungen_previewer->set_h_size_flags(SIZE_EXPAND_FILL);
     dungen_previewer->set_v_size_flags(SIZE_EXPAND_FILL);
     dungen_previewer->set_dungen_instance(dungen_instance);
-    side_bar_menu_panel->add_child(dungen_previewer);
+    preview_wrapper->add_child(dungen_previewer);
 }
 
 DungenEditor::~DungenEditor() {}
@@ -159,53 +191,23 @@ void DungenEditor::_regenerate()
 
 void DungenEditor::_generation_complete(double p_time)
 {
-    _redraw();
+    dungen_previewer->queue_redraw();
 }
 
-void DungenEditor::_redraw()
-{
-    dungen_image_source->fill(Color(0, 0, 0, 0));
+void DungenEditor::_update_zoom_reset_button() {
+    String zoom_factor = rtos((dungen_previewer->get_scale().x / 1.0) * 100);
+    zoom_reset_btn->set_text(zoom_factor + " %");
+}
 
-    Array rooms = dungen_instance->get_map();
-    Array trimmed_rooms = dungen_instance->get_trimmed_rooms();
+void DungenEditor::_reset_zoom() {
+    dungen_previewer->set_scale(Vector2(1, 1)); 
+    _update_zoom_reset_button();
+}
 
-    Array all_rooms = dungen_instance->get_all_rooms();
-
-    if (all_rooms.size() == 0)
-    {
-        return;
-    }
-
-    Rect2 bounds = Rect2();
-
-    for (int i = 0; i < all_rooms.size(); i++)
-    {
-        bounds.expand_to(Ref<DungenRoom>(all_rooms[i])->get_center());
-    }
-
-    bounds.grow_by(Math::max(bounds.size.x, bounds.size.y) / 2);
-
-    dungen_image_source->resize(bounds.size.x, bounds.size.y);
-    // dungen_image_source->fill(Color::named("GRAY"));
-
-    Vector2 center = bounds.get_size() / 2;
-
-    for (int i = 0; i < all_rooms.size(); i++)
-    {
-        Ref<DungenRoom> current_room = Ref<DungenRoom>(all_rooms[i]);
-        Rect2 rect_copy_hopefully = Rect2(current_room->get_rectangle());
-        rect_copy_hopefully.set_position((rect_copy_hopefully.get_position() + center));
-        dungen_image_source->fill_rect(rect_copy_hopefully, current_room->get_color());
-    }
-
-    dungen_image_source->fill_rect(Rect2(center - Vector2(1, 1), Vector2(2, 2)), Color::named("BLUE"));
-
-    // TODO: investiate - dungen_image_texture->update(dungen_image_source);
-    dungen_image_texture->set_image(dungen_image_source); // = ImageTexture::create_from_image(dungen_image_source);
-    dungen_texture_rect->set_texture(dungen_image_texture);
-
-    queue_redraw();
-    dungen_previewer->queue_redraw();
+void DungenEditor::_zoom_editor(Vector2 amount) {
+    Vector2 zoom = (dungen_previewer->get_scale() + amount).clamp(Vector2(1, 1), Vector2(10, 10));
+    dungen_previewer->set_scale(zoom);
+    _update_zoom_reset_button();
 }
 
 void DungenEditor::_notification(int p_what)
@@ -217,12 +219,19 @@ void DungenEditor::_notification(int p_what)
         new_btn->connect("pressed", callable_mp(this, &DungenEditor::_new_config));
         load_btn->connect("pressed", callable_mp(this, &DungenEditor::_show_file_dialog).bind(load_dialog));
         save_btn->connect("pressed", callable_mp(this, &DungenEditor::_on_save_pressed));
+
+        zoom_less_btn->connect("pressed", callable_mp(this, &DungenEditor::_zoom_editor).bind(Vector2(-0.5, -0.5)));
+        zoom_reset_btn->connect("pressed", callable_mp(this, &DungenEditor::_reset_zoom));
+        zoom_more_btn->connect("pressed", callable_mp(this, &DungenEditor::_zoom_editor).bind(Vector2(0.5, 0.5)));
     }
     if (p_what == NOTIFICATION_THEME_CHANGED)
     {
         new_btn->set_button_icon(get_theme_icon("New", "EditorIcons"));
         load_btn->set_button_icon(get_theme_icon("Load", "EditorIcons"));
         save_btn->set_button_icon(get_theme_icon("Save", "EditorIcons"));
+
+        zoom_less_btn->set_button_icon(get_theme_icon("ZoomLess", "EditorIcons"));
+        zoom_more_btn->set_button_icon(get_theme_icon("ZoomMore", "EditorIcons"));
     }
 }
 
