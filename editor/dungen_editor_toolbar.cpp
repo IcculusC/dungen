@@ -31,7 +31,8 @@ DungenEditorToolbar::DungenEditorToolbar()
 }
 DungenEditorToolbar::~DungenEditorToolbar() {}
 
-void DungenEditorToolbar::_emit_pressed(String p_which) {
+void DungenEditorToolbar::_emit_pressed(String p_which)
+{
     emit_signal(p_which);
 }
 

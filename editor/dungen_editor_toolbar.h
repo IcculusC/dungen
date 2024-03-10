@@ -19,8 +19,8 @@ namespace godot
         Button *new_btn;
         Button *load_btn;
         Button *save_btn;
-    
-    void _emit_pressed(String p_which);
+
+        void _emit_pressed(String p_which);
 
     protected:
         static void _bind_methods();

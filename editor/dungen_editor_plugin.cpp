@@ -33,16 +33,13 @@ DungenEditor::DungenEditor()
     vbox->set_anchor(SIDE_BOTTOM, ANCHOR_END);
     add_child(vbox);
 
-
     dungen_editor_toolbar = memnew(DungenEditorToolbar);
     vbox->add_child(dungen_editor_toolbar);
-
 
     header = memnew(Button);
     header->set_text_alignment(HORIZONTAL_ALIGNMENT_LEFT);
     header->add_theme_constant_override("hseparation", 8);
     vbox->add_child(header);
-
 
     hsc = memnew(HSplitContainer);
     hsc->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -67,15 +64,41 @@ DungenEditor::DungenEditor()
     dungen_preview_sidebar_vbox = memnew(VBoxContainer);
     dungen_preview_sidebar_vbox->set_h_size_flags(SIZE_EXPAND_FILL);
     dungen_preview_sidebar_vbox->set_v_size_flags(SIZE_EXPAND_FILL);
-    dungen_preview_sidebar_panel->add_child(dungen_preview_sidebar_vbox); 
+    dungen_preview_sidebar_panel->add_child(dungen_preview_sidebar_vbox);
 
     show_trimmed_rooms_btn = memnew(CheckButton);
-    show_trimmed_rooms_btn->set_text("Show Trimmed Rooms");
+    show_trimmed_rooms_btn->set_text("Trimmed Rooms");
     show_trimmed_rooms_btn->set_toggle_mode(true);
+    show_trimmed_rooms_btn->set_pressed(false);
+    dungen_preview_panel->set_show_trimmed_rooms(false);
     dungen_preview_sidebar_vbox->add_child(show_trimmed_rooms_btn);
+
+    show_triangulation_btn = memnew(CheckButton);
+    show_triangulation_btn->set_text("Triangulation");
+    show_triangulation_btn->set_toggle_mode(true);
+    show_triangulation_btn->set_pressed(false);
+    dungen_preview_panel->set_show_triangulation(false);
+    dungen_preview_sidebar_vbox->add_child(show_triangulation_btn);
+
+    show_minimum_spanning_tree_btn = memnew(CheckButton);
+    show_minimum_spanning_tree_btn->set_text("Minimum Spanning Tree");
+    show_minimum_spanning_tree_btn->set_toggle_mode(true);
+    show_minimum_spanning_tree_btn->set_pressed(false);
+    dungen_preview_panel->set_show_minimum_spanning_tree(false);
+    dungen_preview_sidebar_vbox->add_child(show_minimum_spanning_tree_btn);
+
+    show_path_edges_btn = memnew(CheckButton);
+    show_path_edges_btn->set_text("Path Edges");
+    show_path_edges_btn->set_toggle_mode(true);
+    show_path_edges_btn->set_pressed(false);
+    dungen_preview_panel->set_show_path_edges(false);
+    dungen_preview_sidebar_vbox->add_child(show_path_edges_btn);
 }
 
-DungenEditor::~DungenEditor() {}
+DungenEditor::~DungenEditor()
+{
+    memdelete(dungen_instance);
+}
 
 void DungenEditor::_new_config()
 {
@@ -134,10 +157,6 @@ void DungenEditor::_regenerate()
     dungen_instance->generate();
 }
 
-void DungenEditor::_show_trimmed_rooms(bool p_show) {
-    dungen_preview_panel->set_show_trimmed_rooms(p_show);
-}
-
 void DungenEditor::_notification(int p_what)
 {
     if (p_what == NOTIFICATION_READY)
@@ -145,8 +164,11 @@ void DungenEditor::_notification(int p_what)
         save_dialog->connect("file_selected", callable_mp(this, &DungenEditor::_save_config));
         load_dialog->connect("file_selected", callable_mp(this, &DungenEditor::_load_config));
 
-        show_trimmed_rooms_btn->connect("toggled", callable_mp(this, &DungenEditor::_show_trimmed_rooms));
-    
+        show_trimmed_rooms_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_trimmed_rooms));
+        show_triangulation_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_triangulation));
+        show_minimum_spanning_tree_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_minimum_spanning_tree));
+        show_path_edges_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_path_edges));
+
         dungen_editor_toolbar->connect("new_pressed", callable_mp(this, &DungenEditor::_new_config));
         dungen_editor_toolbar->connect("load_pressed", callable_mp(this, &DungenEditor::_show_file_dialog).bind(load_dialog));
         dungen_editor_toolbar->connect("save_pressed", callable_mp(this, &DungenEditor::_on_save_pressed));
@@ -203,8 +225,6 @@ void DungenEditorPlugin::_notification(int p_what)
     }
     else if (p_what == NOTIFICATION_EXIT_TREE)
     {
-        memdelete(dungen_editor);
-        // dungen_editor = nullptr;
     }
 }
 #endif // TOOLS_ENABLED

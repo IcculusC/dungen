@@ -14,6 +14,7 @@
 #include <godot_cpp/classes/h_box_container.hpp>
 #include <godot_cpp/classes/h_split_container.hpp>
 #include <godot_cpp/classes/panel_container.hpp>
+#include <godot_cpp/classes/panel.hpp>
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/resource_saver.hpp>
@@ -58,8 +59,10 @@ namespace godot
 
         VBoxContainer *dungen_preview_sidebar_vbox;
 
-        bool show_trimmed_rooms;
         CheckButton *show_trimmed_rooms_btn;
+        CheckButton *show_triangulation_btn;
+        CheckButton *show_minimum_spanning_tree_btn;
+        CheckButton *show_path_edges_btn;
 
         void _config_changed();
 
@@ -71,8 +74,6 @@ namespace godot
 
         void _edit_dungen_config(Ref<DungenConfig> config);
         void _regenerate();
-
-        void _show_trimmed_rooms(bool p_show);
 
         void _redraw();
 

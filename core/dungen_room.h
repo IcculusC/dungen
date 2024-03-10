@@ -1,51 +1,64 @@
 #ifndef DUNGEN_ROOM_H
 #define DUNGEN_ROOM_H
 
+#include <godot_cpp/classes/object.hpp>
+
 #include <godot_cpp/variant/color.hpp>
-#include <godot_cpp/classes/ref_counted.hpp>
-#include <godot_cpp/variant/rect2.hpp>
+#include <godot_cpp/variant/dictionary.hpp>
+#include <godot_cpp/variant/rect2i.hpp>
 #include <godot_cpp/variant/vector2.hpp>
+#include <godot_cpp/variant/vector2i.hpp>
 
 namespace godot
 {
 
-    class DungenRoom : public RefCounted
+    class DungenRoom : public Object
     {
-        GDCLASS(DungenRoom, RefCounted)
+        GDCLASS(DungenRoom, Object)
 
     private:
         Color color;
-        Rect2 rectangle;
+        Rect2i rectangle;
 
     protected:
         static void _bind_methods();
 
     public:
         DungenRoom();
-        DungenRoom(Vector2 _vector);
-        DungenRoom(Rect2 _rectangle);
+        DungenRoom(Vector2i _vector);
+        DungenRoom(Rect2i _rectangle);
         ~DungenRoom();
 
         double get_area() const;
         Vector2 get_center() const;
         Vector2 get_size() const;
 
-        void set_position(const Vector2 p_position);
+        void set_position(const Vector2i p_position);
         Vector2 get_position() const;
 
         void set_color(const Color p_color);
         Color get_color() const;
 
-        void set_rectangle(const Rect2 p_rectangle);
-        Rect2 get_rectangle() const;
+        void set_rectangle(const Rect2i p_rectangle);
+        Rect2i get_rectangle() const;
 
-        bool intersects(const Ref<DungenRoom> &other);
+        bool intersects(DungenRoom *other);
 
-        bool operator==(const Ref<DungenRoom> &other) const;
-        bool operator!=(const Ref<DungenRoom> &other) const;
+        bool operator==(DungenRoom *other) const;
+        bool operator!=(DungenRoom *other) const;
 
-        operator Variant() const;
-        operator Variant();
+        operator Variant() const
+        {
+            Dictionary result;
+            result["color"] = color;
+            result["rectangle"] = rectangle;
+            return result;
+        }
+
+        operator Vector2i() const
+        {
+            return rectangle.get_center();
+        }
     };
 
 }

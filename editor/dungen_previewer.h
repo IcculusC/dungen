@@ -5,6 +5,10 @@
 
 #include <godot_cpp/classes/control.hpp>
 
+#include <godot_cpp/templates/vector.hpp>
+
+#include <godot_cpp/variant/vector2.hpp>
+
 #include "../core/dungen.h"
 
 namespace godot
@@ -18,9 +22,12 @@ namespace godot
         Dungen *dungen_instance;
 
         bool show_trimmed_rooms;
-        
+        bool show_triangulation;
+        bool show_minimum_spanning_tree;
+        bool show_paths;
+
         void _generation_complete(double p_time);
-    
+
     protected:
         static void _bind_methods();
 
@@ -30,9 +37,10 @@ namespace godot
 
         void set_dungen_instance(Dungen *dungen);
 
-        void set_show_trimmed_rooms(bool p_show_trimmed_rooms);
-        bool get_show_trimmed_rooms() const { return show_trimmed_rooms; };
-
+        void set_show_trimmed_rooms(bool s_show);
+        void set_show_triangulation(bool s_show);
+        void set_show_minimum_spanning_tree(bool s_show);
+        void set_show_path_edges(bool s_show);
         virtual void _draw() override;
     };
 
