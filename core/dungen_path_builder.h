@@ -16,15 +16,15 @@ namespace godot
 {
     struct DungenEdge
     {
-        Ref<DungenRoom> a;
-        Ref<DungenRoom> b;
+        DungenRoom *a;
+        DungenRoom *b;
 
         const Vector2i get_center() const { return (a->get_center() + b->get_center()) / 2.0; }
         const double get_length() const { return Vector2(a->get_center()).distance_squared_to(b->get_center()); }
 
         DungenEdge() {}
-        DungenEdge(const Ref<DungenRoom> &a, const Ref<DungenRoom> &b) : a(a),
-                                                                         b(b)
+        DungenEdge(DungenRoom *a, DungenRoom *b) : a(a),
+                                                   b(b)
         {
         }
 
@@ -53,9 +53,9 @@ namespace godot
 
     struct DungenTriangle
     {
-        Ref<DungenRoom> a;
-        Ref<DungenRoom> b;
-        Ref<DungenRoom> c;
+        DungenRoom *a;
+        DungenRoom *b;
+        DungenRoom *c;
 
         DungenEdge ab;
         DungenEdge bc;
@@ -66,9 +66,9 @@ namespace godot
 
         const Vector2 get_center() const { return center; };
 
-        inline Ref<DungenRoom> get_a() const { return a; }
-        inline Ref<DungenRoom> get_b() const { return b; }
-        inline Ref<DungenRoom> get_c() const { return c; }
+        inline DungenRoom *get_a() const { return a; }
+        inline DungenRoom *get_b() const { return b; }
+        inline DungenRoom *get_c() const { return c; }
 
         void recalculate_circumfrence()
         {
@@ -98,15 +98,15 @@ namespace godot
 
         DungenTriangle() {}
         DungenTriangle(const Vector2i &a, const Vector2i &b, const Vector2i &c) : DungenTriangle(
-                                                                                   Ref<DungenRoom>(memnew(DungenRoom(a))),
-                                                                                   Ref<DungenRoom>(memnew(DungenRoom(b))),
-                                                                                   Ref<DungenRoom>(memnew(DungenRoom(c)))) {}
-        DungenTriangle(const Ref<DungenRoom> &a, const Ref<DungenRoom> &b, const Ref<DungenRoom> &c) : a(a),
-                                                                                                       b(b),
-                                                                                                       c(c),
-                                                                                                       ab(DungenEdge(a, b)),
-                                                                                                       bc(DungenEdge(b, c)),
-                                                                                                       ca(DungenEdge(c, a))
+                                                                                      (memnew(DungenRoom(a))),
+                                                                                      (memnew(DungenRoom(b))),
+                                                                                      (memnew(DungenRoom(c)))) {}
+        DungenTriangle(DungenRoom *a, DungenRoom *b, DungenRoom *c) : a(a),
+                                                                      b(b),
+                                                                      c(c),
+                                                                      ab(DungenEdge(a, b)),
+                                                                      bc(DungenEdge(b, c)),
+                                                                      ca(DungenEdge(c, a))
         {
             recalculate_circumfrence();
         };
@@ -134,11 +134,11 @@ namespace godot
 
     struct DungenDisjoinSet
     {
-        Ref<DungenRoom> parent;
+        DungenRoom *parent;
         int rank;
-        
-        DungenDisjoinSet(const Ref<DungenRoom> &parent) : parent(parent),
-                                                          rank(0)
+
+        DungenDisjoinSet(DungenRoom *parent) : parent(parent),
+                                               rank(0)
         {
         }
     };
@@ -146,21 +146,21 @@ namespace godot
     class DungenPathBuilder
     {
     private:
-        Vector<Ref<DungenRoom>> rooms;
-        Vector<Ref<DungenRoom>> corners;
+        Vector<DungenRoom *> rooms;
+        Vector<DungenRoom *> corners;
         Rect2 super_rect;
         Vector<DungenTriangle> triangulation;
         Vector<DungenEdge> minimum_spanning_tree;
 
-        Ref<DungenRoom> _find_edge_parent(HashMap<Ref<DungenRoom>, DungenDisjoinSet> &subsets, Ref<DungenRoom> &room);
-        void _union_subsets(HashMap<Ref<DungenRoom>, DungenDisjoinSet> &subsets, Ref<DungenRoom> &room_a, Ref<DungenRoom> &room_b);
+        DungenRoom *_find_edge_parent(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom *room);
+        void _union_subsets(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom *room_a, DungenRoom *room_b);
 
     public:
         DungenPathBuilder();
         ~DungenPathBuilder();
 
-        void add_rooms(const Vector<Ref<DungenRoom>> &p_rooms);
-        void add_room(const Ref<DungenRoom> &p_room);
+        void add_rooms(const Vector<DungenRoom *> &p_rooms);
+        void add_room(DungenRoom *p_room);
         void clear_rooms();
 
         void triangulate();

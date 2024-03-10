@@ -35,10 +35,10 @@ void DungenPreviewer::_generation_complete(double p_time)
 void DungenPreviewer::_draw() {
     set_pivot_offset(get_size() / 2);
 
-    Array rooms = dungen_instance->get_map();
-    Array trimmed_rooms = dungen_instance->get_trimmed_rooms();
+    Vector<DungenRoom *> rooms = dungen_instance->get_map();
+    Vector<DungenRoom *> trimmed_rooms = dungen_instance->get_trimmed_rooms();
 
-    Array all_rooms = dungen_instance->get_all_rooms();
+    Vector<DungenRoom *> all_rooms = dungen_instance->get_all_rooms();
 
     if (all_rooms.size() == 0)
     {
@@ -49,7 +49,7 @@ void DungenPreviewer::_draw() {
 
     for (int i = 0; i < all_rooms.size(); i++)
     {
-        bounds.expand_to(Ref<DungenRoom>(all_rooms[i])->get_center());
+        bounds.expand_to((all_rooms[i])->get_center());
     }
 
     bounds.grow_by(Math::max(bounds.size.x, bounds.size.y) / 2);
@@ -62,7 +62,7 @@ void DungenPreviewer::_draw() {
 
     for (int i = 0; i < rooms.size(); i++)
     {
-        Ref<DungenRoom> current_room = Ref<DungenRoom>(rooms[i]);
+        DungenRoom * current_room = (rooms[i]);
         Rect2 rect_copy_hopefully = Rect2(current_room->get_rectangle());
         rect_copy_hopefully.set_position(rect_copy_hopefully.get_position() + center);
         draw_rect(rect_copy_hopefully, current_room->get_color());
@@ -73,7 +73,7 @@ void DungenPreviewer::_draw() {
     if (show_trimmed_rooms) {
          for (int i = 0; i < trimmed_rooms.size(); i++)
         {
-            Ref<DungenRoom> current_room = Ref<DungenRoom>(trimmed_rooms[i]);
+            DungenRoom * current_room = (trimmed_rooms[i]);
             Rect2 rect_copy_hopefully = Rect2(current_room->get_rectangle());
             rect_copy_hopefully.set_position(rect_copy_hopefully.get_position() + center);
             draw_rect(rect_copy_hopefully, current_room->get_color());

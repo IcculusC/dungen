@@ -5,12 +5,12 @@ using namespace godot;
 DungenPathBuilder::DungenPathBuilder() : super_rect(Rect2(0, 0, 1, 1)) {}
 DungenPathBuilder::~DungenPathBuilder() {}
 
-void DungenPathBuilder::add_rooms(const Vector<Ref<DungenRoom>> &p_rooms)
+void DungenPathBuilder::add_rooms(const Vector<DungenRoom *> &p_rooms)
 {
     rooms.append_array(p_rooms);
 }
 
-void DungenPathBuilder::add_room(const Ref<DungenRoom> &p_room)
+void DungenPathBuilder::add_room(DungenRoom * p_room)
 {
     rooms.push_back(p_room);
 }
@@ -53,7 +53,7 @@ void DungenPathBuilder::triangulate()
     // MAIN LOOP
     for (int room_number = 0; room_number < rooms.size(); room_number++)
     {
-        Ref<DungenRoom> room = rooms[room_number];
+        DungenRoom * room = rooms[room_number];
         Vector<DungenTriangle> bad_triangles;
 
         // find triangles whos circumcircle contains the rooms center
@@ -148,7 +148,7 @@ void DungenPathBuilder::triangulate()
     UtilityFunctions::print("TRIANGULATION TIME ELAPSED ", (float)(clock() - triangulate_start) / CLOCKS_PER_SEC);
 }
 
-Ref<DungenRoom> DungenPathBuilder::_find_edge_parent(HashMap<Ref<DungenRoom>, DungenDisjoinSet> &subsets, Ref<DungenRoom> &room) {
+DungenRoom * DungenPathBuilder::_find_edge_parent(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom * room) {
     if (subsets.get(room).parent == room) {
         return subsets.get(room).parent;
     }
@@ -158,9 +158,9 @@ Ref<DungenRoom> DungenPathBuilder::_find_edge_parent(HashMap<Ref<DungenRoom>, Du
     return subsets.get(room).parent;
 }
 
-void DungenPathBuilder::_union_subsets(HashMap<Ref<DungenRoom>, DungenDisjoinSet> &subsets, Ref<DungenRoom> &room_a, Ref<DungenRoom> &room_b) {
-    Ref<DungenRoom> parent_a = _find_edge_parent(subsets, room_a);
-    Ref<DungenRoom> parent_b = _find_edge_parent(subsets, room_b);
+void DungenPathBuilder::_union_subsets(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom * room_a, DungenRoom * room_b) {
+    DungenRoom * parent_a = _find_edge_parent(subsets, room_a);
+    DungenRoom * parent_b = _find_edge_parent(subsets, room_b);
 
     if (subsets.get(parent_b).rank < subsets.get(parent_a).rank) {
         subsets.get(parent_b).parent = parent_a;
@@ -175,7 +175,7 @@ void DungenPathBuilder::_union_subsets(HashMap<Ref<DungenRoom>, DungenDisjoinSet
 void DungenPathBuilder::find_minimum_spanning_tree() {
     minimum_spanning_tree.clear();
 
-    HashMap<Ref<DungenRoom>, DungenDisjoinSet> subsets;
+    HashMap<DungenRoom *, DungenDisjoinSet> subsets;
     Vector<DungenEdge> all_edges;
 
     for (int i = 0; i < triangulation.size(); i++) {
@@ -203,8 +203,8 @@ void DungenPathBuilder::find_minimum_spanning_tree() {
             continue;
         }
 
-        Ref<DungenRoom> room_a = _find_edge_parent(subsets, next_edge.a);
-        Ref<DungenRoom> room_b = _find_edge_parent(subsets, next_edge.b);
+        DungenRoom * room_a = _find_edge_parent(subsets, next_edge.a);
+        DungenRoom * room_b = _find_edge_parent(subsets, next_edge.b);
 
         if (room_a != room_b) {
             minimum_spanning_tree.push_back(next_edge);

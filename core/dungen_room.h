@@ -2,7 +2,7 @@
 #define DUNGEN_ROOM_H
 
 #include <godot_cpp/variant/color.hpp>
-#include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/classes/object.hpp>
 #include <godot_cpp/variant/rect2i.hpp>
 #include <godot_cpp/variant/vector2.hpp>
 #include <godot_cpp/variant/vector2i.hpp>
@@ -10,9 +10,9 @@
 namespace godot
 {
 
-    class DungenRoom : public RefCounted
+    class DungenRoom : public Object
     {
-        GDCLASS(DungenRoom, RefCounted)
+        GDCLASS(DungenRoom, Object)
 
     private:
         Color color;
@@ -40,10 +40,10 @@ namespace godot
         void set_rectangle(const Rect2i p_rectangle);
         Rect2i get_rectangle() const;
 
-        bool intersects(const Ref<DungenRoom> &other);
+        bool intersects(DungenRoom * other);
 
-        bool operator==(const Ref<DungenRoom> &other) const;
-        bool operator!=(const Ref<DungenRoom> &other) const;
+        bool operator==(DungenRoom * other) const;
+        bool operator!=(DungenRoom * other) const;
 
         operator Variant() const;
         operator Variant();

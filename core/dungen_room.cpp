@@ -6,12 +6,6 @@ using namespace godot;
 
 void DungenRoom::_bind_methods()
 {
-    ClassDB::bind_method(D_METHOD("get_area"), &DungenRoom::get_area);
-    ClassDB::bind_method(D_METHOD("get_center"), &DungenRoom::get_center);
-    ClassDB::bind_method(D_METHOD("get_rectangle"), &DungenRoom::get_rectangle);
-
-    ClassDB::bind_method(D_METHOD("get_color"), &DungenRoom::get_color);
-    ClassDB::bind_method(D_METHOD("set_color", "p_color"), &DungenRoom::set_color);
 }
 
 DungenRoom::DungenRoom() : color(Color::named("ORANGERED")),
@@ -78,17 +72,17 @@ Rect2i DungenRoom::get_rectangle() const
     return rectangle;
 }
 
-bool DungenRoom::intersects(const Ref<DungenRoom> &other)
+bool DungenRoom::intersects(DungenRoom * other)
 {
     return rectangle.intersects(other->get_rectangle());
 }
 
-bool DungenRoom::operator==(const Ref<DungenRoom> &other) const
+bool DungenRoom::operator==(DungenRoom * other) const
 {
     return rectangle == other->get_rectangle();
 }
 
-bool DungenRoom::operator!=(const Ref<DungenRoom> &other) const
+bool DungenRoom::operator!=(DungenRoom * other) const
 {
     return rectangle != other->get_rectangle();
 }

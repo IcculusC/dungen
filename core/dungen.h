@@ -39,9 +39,9 @@ namespace godot
 
 		RandomNumberGenerator rng;
 
-		Vector<Ref<DungenRoom>> all_rooms;
-		Vector<Ref<DungenRoom>> map_rooms;
-		Vector<Ref<DungenRoom>> trimmed_rooms;
+		Vector<DungenRoom *> all_rooms;
+		Vector<DungenRoom *> map_rooms;
+		Vector<DungenRoom *> trimmed_rooms;
 
 		DungenPathBuilder path_builder;
 		Triangulation triangulation_builder;
@@ -51,7 +51,7 @@ namespace godot
 
 		void _reset();
 	
-		Ref<DungenRoom> _generate_room();
+		DungenRoom * _generate_room();
 		void _generate_rooms();
 
 		int _smart_has_overlapping_rooms();
@@ -59,7 +59,7 @@ namespace godot
 		
 		void _separate_rooms();
 
-		bool _should_trim_room(const Ref<DungenRoom> &room, double minimum_area) const;
+		bool _should_trim_room(DungenRoom * room, double minimum_area) const;
 		void _trim_rooms();
 
 	protected:
@@ -80,9 +80,9 @@ namespace godot
 		double get_average_area() const { return all_rooms.size() > 0 ? total_area / all_rooms.size() : 0; };
 		double get_total_area() const { return total_area; };
 
-		Array get_all_rooms() const;
-		Array get_map() const;
-		Array get_trimmed_rooms() const;
+		Vector<DungenRoom *> get_all_rooms() const;
+		Vector<DungenRoom *> get_map() const;
+		Vector<DungenRoom *> get_trimmed_rooms() const;
 	};
 
 }
