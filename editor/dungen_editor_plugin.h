@@ -73,11 +73,7 @@ namespace godot
 
         void _edit_dungen_config(Ref<DungenConfig> config);
         void _regenerate();
-
-        void _show_trimmed_rooms(bool p_show);
-        void _show_triangulation(bool p_show);
-        void _show_minimum_spanning_tree(bool p_show);
-            
+        
         void _redraw();
 
     protected:

@@ -77,8 +77,8 @@ void DungenPreviewer::_draw() {
 
     for (int i = 0; i < rooms.size(); i++)
     {
-        DungenRoom * current_room = (rooms[i]);
-        Rect2 rect_copy_hopefully = Rect2(current_room->get_rectangle());
+        DungenRoom *current_room = (rooms[i]);
+        Rect2 rect_copy_hopefully = Rect2i(current_room->get_rectangle());
         rect_copy_hopefully.set_position(rect_copy_hopefully.get_position() + center);
         draw_rect(rect_copy_hopefully, current_room->get_color());
         draw_rect(rect_copy_hopefully, Color::named("STEELBLUE"), false, 1.0);
