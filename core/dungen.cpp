@@ -32,7 +32,8 @@ Dungen::Dungen() : config(Ref<DungenConfig>(memnew(DungenConfig))),
                    map_rooms(Vector<Ref<DungenRoom>>()),
                    trimmed_rooms(Vector<Ref<DungenRoom>>()),
                    rng(RandomNumberGenerator()),
-                   total_area(0)
+                   total_area(0),
+                   path_builder(DungenPathBuilder())
 {
     rng.set_seed(config->get_seed());
 }
@@ -95,8 +96,9 @@ void Dungen::generate()
     _separate_rooms();
     _trim_rooms();
 
-    // TODO: trimming
-    // TODO: build triangulated graph
+    path_builder.clear_rooms();
+    path_builder.add_rooms(map_rooms);
+    path_builder.triangulate();
     // TODO: generate minimum spanning tree
     // TODO: path rectangles
 

@@ -5,6 +5,10 @@
 
 #include <godot_cpp/classes/control.hpp>
 
+#include <godot_cpp/templates/vector.hpp>
+
+#include <godot_cpp/variant/vector2.hpp>
+
 #include "../core/dungen.h"
 
 namespace godot

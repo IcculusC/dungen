@@ -46,6 +46,9 @@ namespace godot
 
         operator Variant() const;
         operator Variant();
+
+        operator Vector2() const;
+        operator Vector2();
     };
 
 }

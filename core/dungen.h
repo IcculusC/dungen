@@ -18,6 +18,7 @@
 #include <godot_cpp/variant/vector2i.hpp>
 
 #include "dungen_config.h"
+#include "dungen_path_builder.h"
 #include "dungen_room.h"
 #include "enums.h"
 
@@ -38,6 +39,8 @@ namespace godot
 		Vector<Ref<DungenRoom>> all_rooms;
 		Vector<Ref<DungenRoom>> map_rooms;
 		Vector<Ref<DungenRoom>> trimmed_rooms;
+
+		DungenPathBuilder path_builder;
 
 		Vector2i generate_random_point_in_ellipse(Vector2i &spawn_area_dimensions);
 		Vector2i generate_random_point_in_rectangle(Vector2i &spawn_area_dimensions);
@@ -66,6 +69,8 @@ namespace godot
 
 		void set_config(const Ref<DungenConfig> &p_config);
 		Ref<DungenConfig> get_config() const { return config; };
+
+		DungenPathBuilder get_path_builder() { return path_builder; }
 
 		double get_average_area() const { return all_rooms.size() > 0 ? total_area / all_rooms.size() : 0; };
 		double get_total_area() const { return total_area; };

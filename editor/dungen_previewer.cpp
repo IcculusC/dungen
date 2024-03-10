@@ -66,6 +66,7 @@ void DungenPreviewer::_draw() {
         rect_copy_hopefully.set_position(rect_copy_hopefully.get_position() + center);
         draw_rect(rect_copy_hopefully, current_room->get_color());
         draw_rect(rect_copy_hopefully, Color::named("STEELBLUE"), false, 1.0);
+        draw_circle(rect_copy_hopefully.get_center(), 1.0, Color::named("BLUE"));
     }
 
     if (show_trimmed_rooms) {
@@ -77,6 +78,19 @@ void DungenPreviewer::_draw() {
             draw_rect(rect_copy_hopefully, current_room->get_color());
             draw_rect(rect_copy_hopefully, Color::named("STEELBLUE"), false, 1.0);
         }   
+    }
+
+    Vector<DungenTriangle> triangulation = dungen_instance->get_path_builder().get_triangulation();
+    for (int i = 0; i < triangulation.size(); i++)
+    {
+        DungenTriangle t = triangulation[i];
+        Vector2 a = t.get_a()->get_center() + center;
+        Vector2 b = t.get_b()->get_center() + center;
+        Vector2 c = t.get_c()->get_center() + center;
+
+        draw_line(a, b, Color::named("BLACK"), 1.0, false);
+        draw_line(b, c, Color::named("BLACK"), 1.0, false);
+        draw_line(c, a, Color::named("BLACK"), 1.0, false);
     }
 }
 

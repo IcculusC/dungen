@@ -14,6 +14,7 @@
 #include <godot_cpp/classes/h_box_container.hpp>
 #include <godot_cpp/classes/h_split_container.hpp>
 #include <godot_cpp/classes/panel_container.hpp>
+#include <godot_cpp/classes/panel.hpp>
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/resource_saver.hpp>

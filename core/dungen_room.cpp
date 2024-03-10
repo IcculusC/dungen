@@ -72,6 +72,7 @@ void DungenRoom::set_rectangle(const Rect2 p_rectangle)
 {
     rectangle = p_rectangle;
 }
+
 Rect2 DungenRoom::get_rectangle() const
 {
     return rectangle;
@@ -106,4 +107,11 @@ DungenRoom::operator Variant()
     result["color"] = color;
     result["rectangle"] = rectangle;
     return result;
+}
+
+DungenRoom::operator Vector2() const {
+    return rectangle.get_center();
+}
+DungenRoom::operator Vector2() {
+    return rectangle.get_center();
 }
