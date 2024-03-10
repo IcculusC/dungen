@@ -100,6 +100,7 @@ void Dungen::generate()
     path_builder.clear_rooms();
     path_builder.add_rooms(map_rooms);
     path_builder.triangulate();
+    path_builder.find_minimum_spanning_tree();
 
     triangulation_builder.clear_points();
     for (int i = 0; i < map_rooms.size(); i++) {

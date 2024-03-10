@@ -92,22 +92,16 @@ void DungenPreviewer::_draw() {
         draw_line(a, b, Color::named("LIGHTCYAN"), 1.0, false);
         draw_line(b, c, Color::named("LIGHTCYAN"), 1.0, false);
         draw_line(c, a, Color::named("LIGHTCYAN"), 1.0, false);
-    }    
-    
-    /*
-    Vector<Triangle> other_triangulation = dungen_instance->get_triangulation_builder().get_triangulation();
-    for (int i = 0; i < other_triangulation.size(); i++)
-    {
-        Triangle t = other_triangulation[i];
-        Vector2 a = t.a + center;
-        Vector2 b = t.b + center;
-        Vector2 c = t.c + center;
-
-        draw_line(a, b, Color::named("BLACK"), 1.0, false);
-        draw_line(b, c, Color::named("BLACK"), 1.0, false);
-        draw_line(c, a, Color::named("BLACK"), 1.0, false);
     }
-    */
+
+    Vector<DungenEdge> minimum_spanning_tree = dungen_instance->get_path_builder().get_minimum_spanning_tree();
+    for (int i = 0; i < minimum_spanning_tree.size(); i++) {
+        DungenEdge e = minimum_spanning_tree[i];
+        Vector2 a = e.a->get_center() + center;
+        Vector2 b = e.b->get_center() + center;
+
+        draw_line(a, b, Color::named("DARKORANGE"), 1.0, false); 
+    }
 }
 
 void DungenPreviewer::_bind_methods() {}

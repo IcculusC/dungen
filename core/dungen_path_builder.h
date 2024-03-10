@@ -3,6 +3,7 @@
 
 #include <godot_cpp/classes/ref.hpp>
 
+#include <godot_cpp/templates/hash_map.hpp>
 #include <godot_cpp/templates/vector.hpp>
 
 #include <godot_cpp/variant/utility_functions.hpp>
@@ -131,11 +132,11 @@ namespace godot
         }
     };
 
-    class DungenDisjoinSet
+    struct DungenDisjoinSet
     {
         Ref<DungenRoom> parent;
         int rank;
-
+        
         DungenDisjoinSet(const Ref<DungenRoom> &parent) : parent(parent),
                                                           rank(0)
         {
@@ -149,6 +150,10 @@ namespace godot
         Vector<Ref<DungenRoom>> corners;
         Rect2 super_rect;
         Vector<DungenTriangle> triangulation;
+        Vector<DungenEdge> minimum_spanning_tree;
+
+        Ref<DungenRoom> _find_edge_parent(HashMap<Ref<DungenRoom>, DungenDisjoinSet> &subsets, Ref<DungenRoom> &room);
+        void _union_subsets(HashMap<Ref<DungenRoom>, DungenDisjoinSet> &subsets, Ref<DungenRoom> &room_a, Ref<DungenRoom> &room_b);
 
     public:
         DungenPathBuilder();
@@ -159,8 +164,10 @@ namespace godot
         void clear_rooms();
 
         void triangulate();
+        void find_minimum_spanning_tree();
 
         Vector<DungenTriangle> get_triangulation() { return triangulation; };
+        Vector<DungenEdge> get_minimum_spanning_tree() { return minimum_spanning_tree; };
     };
 }
 

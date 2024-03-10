@@ -25,7 +25,6 @@ void DungenPathBuilder::triangulate()
     triangulation.clear();
     corners.clear();
 
-    clock_t triangulate_start = clock();
     // CREATE INITIAL GEOMETRY
     super_rect = Rect2(-1, -1, 1, 1);
     for (int i = 0; i < rooms.size(); i++)
@@ -44,6 +43,8 @@ void DungenPathBuilder::triangulate()
     corners.push_back(memnew(DungenRoom(corner1)));
     corners.push_back(memnew(DungenRoom(corner2)));
     corners.push_back(memnew(DungenRoom(corner3)));
+
+    clock_t triangulate_start = clock();
 
     triangulation.push_back(DungenTriangle(corners[0], corners[1], corners[2]));
     triangulation.push_back(DungenTriangle(corners[2], corners[3], corners[0]));
@@ -145,4 +146,78 @@ void DungenPathBuilder::triangulate()
     // MAIN LOOP
 
     UtilityFunctions::print("TRIANGULATION TIME ELAPSED ", (float)(clock() - triangulate_start) / CLOCKS_PER_SEC);
+}
+
+Ref<DungenRoom> DungenPathBuilder::_find_edge_parent(HashMap<Ref<DungenRoom>, DungenDisjoinSet> &subsets, Ref<DungenRoom> &room) {
+    if (subsets.get(room).parent == room) {
+        return subsets.get(room).parent;
+    }
+
+    subsets.get(room).parent = _find_edge_parent(subsets, subsets.get(room).parent);
+
+    return subsets.get(room).parent;
+}
+
+void DungenPathBuilder::_union_subsets(HashMap<Ref<DungenRoom>, DungenDisjoinSet> &subsets, Ref<DungenRoom> &room_a, Ref<DungenRoom> &room_b) {
+    Ref<DungenRoom> parent_a = _find_edge_parent(subsets, room_a);
+    Ref<DungenRoom> parent_b = _find_edge_parent(subsets, room_b);
+
+    if (subsets.get(parent_b).rank < subsets.get(parent_a).rank) {
+        subsets.get(parent_b).parent = parent_a;
+    } else if (subsets.get(parent_a).rank < subsets.get(parent_b).rank) {
+        subsets.get(parent_a).parent = parent_b;
+    } else {
+        subsets.get(parent_b).parent = parent_a;
+        subsets.get(parent_a).rank++;
+    }   
+}
+
+void DungenPathBuilder::find_minimum_spanning_tree() {
+    minimum_spanning_tree.clear();
+
+    HashMap<Ref<DungenRoom>, DungenDisjoinSet> subsets;
+    Vector<DungenEdge> all_edges;
+
+    for (int i = 0; i < triangulation.size(); i++) {
+        DungenTriangle t = triangulation[i];
+        all_edges.push_back(t.ab);
+        subsets.insert(t.ab.a, DungenDisjoinSet(t.ab.a));
+        all_edges.push_back(t.bc);
+        subsets.insert(t.bc.a, DungenDisjoinSet(t.bc.a));
+        all_edges.push_back(t.ca);
+        subsets.insert(t.ca.a, DungenDisjoinSet(t.ca.a));
+    }
+
+    all_edges.sort();
+
+    int V = rooms.size();
+    int j = 0;
+
+    clock_t start_mst = clock();
+
+    while (minimum_spanning_tree.size() < V - 1) {
+        DungenEdge next_edge = all_edges[j];
+        
+        if (minimum_spanning_tree.has(next_edge)) {
+            j++;
+            continue;
+        }
+
+        Ref<DungenRoom> room_a = _find_edge_parent(subsets, next_edge.a);
+        Ref<DungenRoom> room_b = _find_edge_parent(subsets, next_edge.b);
+
+        if (room_a != room_b) {
+            minimum_spanning_tree.push_back(next_edge);
+            _union_subsets(subsets, room_a, room_b);
+        }
+        /*
+        else if (!discarded_mst_edges.has(next_edge)) {
+            discarded_mst_edges.push_back(next_edge);
+        }
+        */
+
+        j++;
+    }
+
+    UtilityFunctions::print("MINIMUM SPANNING TREE TIME ELAPSED ", (float)(clock() - start_mst) / CLOCKS_PER_SEC);
 }
