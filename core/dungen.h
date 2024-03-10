@@ -15,6 +15,7 @@
 
 #include <godot_cpp/variant/rect2i.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
+#include <godot_cpp/variant/vector2.hpp>
 #include <godot_cpp/variant/vector2i.hpp>
 
 #include "dungen_config.h"

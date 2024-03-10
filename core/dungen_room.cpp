@@ -15,16 +15,16 @@ void DungenRoom::_bind_methods()
 }
 
 DungenRoom::DungenRoom() : color(Color::named("ORANGERED")),
-                           rectangle(Rect2(Vector2(0, 0), Vector2(1, 1)))
+                           rectangle(Rect2(Vector2i(0, 0), Vector2i(1, 1)))
 {
 }
 
-DungenRoom::DungenRoom(Vector2 _vector) : color(Color::named("ORANGERED")),
-                                          rectangle(Rect2(_vector - Vector2(1, 1), Vector2(2, 2)))
+DungenRoom::DungenRoom(Vector2i _vector) : color(Color::named("ORANGERED")),
+                                          rectangle(Rect2i(_vector - Vector2i(1, 1), Vector2(2, 2)))
 {
 }
 
-DungenRoom::DungenRoom(Rect2 _rectangle) : color(Color::named("ORANGERED")),
+DungenRoom::DungenRoom(Rect2i _rectangle) : color(Color::named("ORANGERED")),
                                            rectangle(_rectangle)
 {
 }
@@ -48,7 +48,7 @@ Vector2 DungenRoom::get_size() const
     return rectangle.get_size();
 }
 
-void DungenRoom::set_position(const Vector2 p_position)
+void DungenRoom::set_position(const Vector2i p_position)
 {
     rectangle.set_position(p_position);
 }
@@ -68,12 +68,12 @@ Color DungenRoom::get_color() const
     return color;
 }
 
-void DungenRoom::set_rectangle(const Rect2 p_rectangle)
+void DungenRoom::set_rectangle(const Rect2i p_rectangle)
 {
     rectangle = p_rectangle;
 }
 
-Rect2 DungenRoom::get_rectangle() const
+Rect2i DungenRoom::get_rectangle() const
 {
     return rectangle;
 }
@@ -109,9 +109,9 @@ DungenRoom::operator Variant()
     return result;
 }
 
-DungenRoom::operator Vector2() const {
+DungenRoom::operator Vector2i() const {
     return rectangle.get_center();
 }
-DungenRoom::operator Vector2() {
+DungenRoom::operator Vector2i() {
     return rectangle.get_center();
 }

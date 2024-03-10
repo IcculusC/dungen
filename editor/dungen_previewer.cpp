@@ -94,6 +94,7 @@ void DungenPreviewer::_draw() {
         draw_line(c, a, Color::named("LIGHTCYAN"), 1.0, false);
     }    
     
+    /*
     Vector<Triangle> other_triangulation = dungen_instance->get_triangulation_builder().get_triangulation();
     for (int i = 0; i < other_triangulation.size(); i++)
     {
@@ -106,6 +107,7 @@ void DungenPreviewer::_draw() {
         draw_line(b, c, Color::named("BLACK"), 1.0, false);
         draw_line(c, a, Color::named("BLACK"), 1.0, false);
     }
+    */
 }
 
 void DungenPreviewer::_bind_methods() {}

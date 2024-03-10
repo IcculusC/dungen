@@ -301,7 +301,7 @@ void Dungen::_separate_rooms()
 bool Dungen::_should_trim_room(const Ref<DungenRoom> &room, double minimum_area) const
 {
     Vector2i room_minimum_dimensions = config->get_room_minimum_dimensions();
-    Rect2 rectangle = room->get_rectangle();
+    Rect2i rectangle = room->get_rectangle();
 
     if (
         rectangle.size.x < room_minimum_dimensions.x ||

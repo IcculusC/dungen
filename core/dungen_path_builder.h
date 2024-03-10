@@ -6,6 +6,8 @@
 #include <godot_cpp/templates/vector.hpp>
 
 #include <godot_cpp/variant/utility_functions.hpp>
+#include <godot_cpp/variant/vector2.hpp>
+#include <godot_cpp/variant/vector2i.hpp>
 
 #include "dungen_room.h"
 
@@ -16,7 +18,7 @@ namespace godot
         Ref<DungenRoom> a;
         Ref<DungenRoom> b;
 
-        const Vector2 get_center() const { return (a->get_center() + b->get_center()) / 2.0; }
+        const Vector2i get_center() const { return (a->get_center() + b->get_center()) / 2.0; }
         const double get_length() const { return Vector2(a->get_center()).distance_squared_to(b->get_center()); }
 
         DungenEdge() {}
@@ -94,7 +96,7 @@ namespace godot
         }
 
         DungenTriangle() {}
-        DungenTriangle(const Vector2 &a, const Vector2 &b, const Vector2 &c) : DungenTriangle(
+        DungenTriangle(const Vector2i &a, const Vector2i &b, const Vector2i &c) : DungenTriangle(
                                                                                    Ref<DungenRoom>(memnew(DungenRoom(a))),
                                                                                    Ref<DungenRoom>(memnew(DungenRoom(b))),
                                                                                    Ref<DungenRoom>(memnew(DungenRoom(c)))) {}

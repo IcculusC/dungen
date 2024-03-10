@@ -35,10 +35,10 @@ void DungenPathBuilder::triangulate()
 
     super_rect.grow_by(Math::max(super_rect.size.x, super_rect.size.y) / 2);
 
-    Vector2 corner0 = super_rect.position;
-    Vector2 corner1 = super_rect.position + (Vector2(1, 0) * super_rect.size);
-    Vector2 corner2 = super_rect.position + super_rect.size;
-    Vector2 corner3 = super_rect.position + (Vector2(0, 1) * super_rect.size);
+    Vector2i corner0 = super_rect.position;
+    Vector2i corner1 = super_rect.position + (Vector2i(1, 0) * super_rect.size);
+    Vector2i corner2 = super_rect.position + super_rect.size;
+    Vector2i corner3 = super_rect.position + (Vector2i(0, 1) * super_rect.size);
 
     corners.push_back(memnew(DungenRoom(corner0)));
     corners.push_back(memnew(DungenRoom(corner1)));
