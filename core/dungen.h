@@ -47,16 +47,16 @@ namespace godot
 		Vector2i generate_random_point_in_rectangle(Vector2i &spawn_area_dimensions);
 
 		void _reset();
-	
-		DungenRoom * _generate_room();
+
+		DungenRoom *_generate_room();
 		void _generate_rooms();
 
 		int _smart_has_overlapping_rooms();
 		bool _has_overlapping_rooms();
-		
+
 		void _separate_rooms();
 
-		bool _should_trim_room(DungenRoom * room, double minimum_area) const;
+		bool _should_trim_room(DungenRoom *room, double minimum_area) const;
 		void _trim_rooms();
 
 	protected:

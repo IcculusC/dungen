@@ -33,16 +33,13 @@ DungenEditor::DungenEditor()
     vbox->set_anchor(SIDE_BOTTOM, ANCHOR_END);
     add_child(vbox);
 
-
     dungen_editor_toolbar = memnew(DungenEditorToolbar);
     vbox->add_child(dungen_editor_toolbar);
-
 
     header = memnew(Button);
     header->set_text_alignment(HORIZONTAL_ALIGNMENT_LEFT);
     header->add_theme_constant_override("hseparation", 8);
     vbox->add_child(header);
-
 
     hsc = memnew(HSplitContainer);
     hsc->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -67,7 +64,7 @@ DungenEditor::DungenEditor()
     dungen_preview_sidebar_vbox = memnew(VBoxContainer);
     dungen_preview_sidebar_vbox->set_h_size_flags(SIZE_EXPAND_FILL);
     dungen_preview_sidebar_vbox->set_v_size_flags(SIZE_EXPAND_FILL);
-    dungen_preview_sidebar_panel->add_child(dungen_preview_sidebar_vbox); 
+    dungen_preview_sidebar_panel->add_child(dungen_preview_sidebar_vbox);
 
     show_trimmed_rooms_btn = memnew(CheckButton);
     show_trimmed_rooms_btn->set_text("Trimmed Rooms");
@@ -87,11 +84,12 @@ DungenEditor::DungenEditor()
     show_minimum_spanning_tree_btn->set_text("Minimum Spanning Tree");
     show_minimum_spanning_tree_btn->set_toggle_mode(true);
     show_minimum_spanning_tree_btn->set_pressed(false);
-    dungen_preview_panel->set_show_minimum_spanning_tree(false); 
+    dungen_preview_panel->set_show_minimum_spanning_tree(false);
     dungen_preview_sidebar_vbox->add_child(show_minimum_spanning_tree_btn);
 }
 
-DungenEditor::~DungenEditor() {
+DungenEditor::~DungenEditor()
+{
     memdelete(dungen_instance);
 }
 
@@ -159,7 +157,7 @@ void DungenEditor::_notification(int p_what)
         save_dialog->connect("file_selected", callable_mp(this, &DungenEditor::_save_config));
         load_dialog->connect("file_selected", callable_mp(this, &DungenEditor::_load_config));
 
-        show_trimmed_rooms_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_trimmed_rooms)); 
+        show_trimmed_rooms_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_trimmed_rooms));
         show_triangulation_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_triangulation));
         show_minimum_spanning_tree_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_minimum_spanning_tree));
 

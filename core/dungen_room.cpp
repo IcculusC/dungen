@@ -14,12 +14,12 @@ DungenRoom::DungenRoom() : color(Color::named("ORANGERED")),
 }
 
 DungenRoom::DungenRoom(Vector2i _vector) : color(Color::named("ORANGERED")),
-                                          rectangle(Rect2i(_vector - Vector2i(1, 1), Vector2(2, 2)))
+                                           rectangle(Rect2i(_vector - Vector2i(1, 1), Vector2(2, 2)))
 {
 }
 
 DungenRoom::DungenRoom(Rect2i _rectangle) : color(Color::named("ORANGERED")),
-                                           rectangle(_rectangle)
+                                            rectangle(_rectangle)
 {
 }
 
@@ -72,40 +72,17 @@ Rect2i DungenRoom::get_rectangle() const
     return rectangle;
 }
 
-bool DungenRoom::intersects(DungenRoom * other)
+bool DungenRoom::intersects(DungenRoom *other)
 {
     return rectangle.intersects(other->get_rectangle());
 }
 
-bool DungenRoom::operator==(DungenRoom * other) const
+bool DungenRoom::operator==(DungenRoom *other) const
 {
     return rectangle == other->get_rectangle();
 }
 
-bool DungenRoom::operator!=(DungenRoom * other) const
+bool DungenRoom::operator!=(DungenRoom *other) const
 {
     return rectangle != other->get_rectangle();
-}
-
-DungenRoom::operator Variant() const
-{
-    Dictionary result;
-    result["color"] = color;
-    result["rectangle"] = rectangle;
-    return result;
-}
-
-DungenRoom::operator Variant()
-{
-    Dictionary result;
-    result["color"] = color;
-    result["rectangle"] = rectangle;
-    return result;
-}
-
-DungenRoom::operator Vector2i() const {
-    return rectangle.get_center();
-}
-DungenRoom::operator Vector2i() {
-    return rectangle.get_center();
 }

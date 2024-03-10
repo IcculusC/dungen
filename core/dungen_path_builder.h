@@ -28,6 +28,14 @@ namespace godot
         {
         }
 
+        operator Variant() const
+        {
+            Dictionary results;
+            results["a"] = *a;
+            results["b"] = *b;
+            return results;
+        };
+
         bool operator==(const DungenEdge &other) const
         {
             return (a == other.a && b == other.b) ||
@@ -111,6 +119,15 @@ namespace godot
             recalculate_circumfrence();
         };
 
+        operator Variant() const
+        {
+            Dictionary results;
+            results["a"] = *a;
+            results["b"] = *b;
+            results["c"] = *c;
+            return results;
+        };
+
         bool operator==(const DungenTriangle &other) const
         {
             return (a == other.a && b == other.b && c == other.c) ||
@@ -168,6 +185,8 @@ namespace godot
 
         Vector<DungenTriangle> get_triangulation() { return triangulation; };
         Vector<DungenEdge> get_minimum_spanning_tree() { return minimum_spanning_tree; };
+
+        operator Variant() const;
     };
 }
 

@@ -24,9 +24,9 @@ namespace godot
         bool show_trimmed_rooms;
         bool show_triangulation;
         bool show_minimum_spanning_tree;
-        
+
         void _generation_complete(double p_time);
-    
+
     protected:
         static void _bind_methods();
 

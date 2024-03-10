@@ -40,7 +40,8 @@ Dungen::Dungen() : config(Ref<DungenConfig>(memnew(DungenConfig))),
 
 Dungen::~Dungen()
 {
-    for (int i = 0; i < all_rooms.size(); i++) {
+    for (int i = 0; i < all_rooms.size(); i++)
+    {
         memdelete(all_rooms[i]);
     }
 }
@@ -122,7 +123,8 @@ Vector2i Dungen::generate_random_point_in_ellipse(Vector2i &dimensions)
 
 void Dungen::_reset()
 {
-    for (int i = 0; i < all_rooms.size(); i++) {
+    for (int i = 0; i < all_rooms.size(); i++)
+    {
         memdelete(all_rooms[i]);
     }
     all_rooms.clear();
@@ -132,7 +134,7 @@ void Dungen::_reset()
     total_area = 0;
 }
 
-DungenRoom * Dungen::_generate_room()
+DungenRoom *Dungen::_generate_room()
 {
     DungenShape spawn_area_shape = config->get_spawn_area_shape();
     Vector2i spawn_area_dimensions = config->get_spawn_area_dimensions();
@@ -171,7 +173,7 @@ void Dungen::_generate_rooms()
 
     for (int i = 0; i < room_count; i++)
     {
-        DungenRoom * room = _generate_room();
+        DungenRoom *room = _generate_room();
         total_area += room->get_area();
         all_rooms.push_back(room);
     }
@@ -184,7 +186,7 @@ int Dungen::_smart_has_overlapping_rooms()
 {
     for (int i = 0; i < all_rooms.size(); i += 1)
     {
-        DungenRoom * rect_a = all_rooms[i];
+        DungenRoom *rect_a = all_rooms[i];
         for (int j = 0; j < all_rooms.size(); j += 1)
         {
             if (i == j)
@@ -192,7 +194,7 @@ int Dungen::_smart_has_overlapping_rooms()
                 continue;
             }
 
-            DungenRoom * rect_b = all_rooms[j];
+            DungenRoom *rect_b = all_rooms[j];
             if (rect_a->intersects(rect_b))
             {
                 return i;
@@ -206,7 +208,7 @@ bool Dungen::_has_overlapping_rooms()
 {
     for (int i = 0; i < all_rooms.size(); i += 1)
     {
-        DungenRoom * rect_a = all_rooms[i];
+        DungenRoom *rect_a = all_rooms[i];
         for (int j = 0; j < all_rooms.size(); j += 1)
         {
             if (i == j)
@@ -214,7 +216,7 @@ bool Dungen::_has_overlapping_rooms()
                 continue;
             }
 
-            DungenRoom * rect_b = all_rooms[j];
+            DungenRoom *rect_b = all_rooms[j];
             if (rect_a->intersects(rect_b))
             {
                 return true;
@@ -234,7 +236,7 @@ void Dungen::_separate_rooms()
         {
             Vector2 movement_vector = Vector2(0, 0);
             int neighbors = 0;
-            DungenRoom * rect_a = all_rooms[i];
+            DungenRoom *rect_a = all_rooms[i];
             for (int j = 0; j < all_rooms.size(); j += 1)
             {
                 if (i == j)
@@ -242,15 +244,15 @@ void Dungen::_separate_rooms()
                     continue;
                 }
 
-                DungenRoom * rect_b = all_rooms[j];
+                DungenRoom *rect_b = all_rooms[j];
 
                 if (!rect_a->intersects(rect_b))
                 {
                     continue;
                 }
-                    
+
                 neighbors++;
-                
+
                 Vector2 center_distance = rect_a->get_center() - rect_b->get_center();
 
                 if (center_distance.is_zero_approx())
@@ -283,7 +285,7 @@ void Dungen::_separate_rooms()
     emit_signal("separate_rooms", ((double)clock() - separate_start) / CLOCKS_PER_SEC);
 }
 
-bool Dungen::_should_trim_room(DungenRoom * room, double minimum_area) const
+bool Dungen::_should_trim_room(DungenRoom *room, double minimum_area) const
 {
     Vector2i room_minimum_dimensions = config->get_room_minimum_dimensions();
     Rect2i rectangle = room->get_rectangle();
@@ -310,7 +312,7 @@ void Dungen::_trim_rooms()
 
     for (int i = 0; i < all_rooms.size(); i++)
     {
-        DungenRoom * rect = all_rooms[i];
+        DungenRoom *rect = all_rooms[i];
 
         if (_should_trim_room(rect, minimum_area))
         {

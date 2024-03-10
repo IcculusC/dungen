@@ -60,9 +60,9 @@ namespace godot
         VBoxContainer *dungen_preview_sidebar_vbox;
 
         CheckButton *show_trimmed_rooms_btn;
-        CheckButton *show_triangulation_btn;        
+        CheckButton *show_triangulation_btn;
         CheckButton *show_minimum_spanning_tree_btn;
-        
+
         void _config_changed();
 
         void _new_config();
@@ -73,7 +73,7 @@ namespace godot
 
         void _edit_dungen_config(Ref<DungenConfig> config);
         void _regenerate();
-        
+
         void _redraw();
 
     protected:

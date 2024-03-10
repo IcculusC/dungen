@@ -10,7 +10,7 @@ void DungenPathBuilder::add_rooms(const Vector<DungenRoom *> &p_rooms)
     rooms.append_array(p_rooms);
 }
 
-void DungenPathBuilder::add_room(DungenRoom * p_room)
+void DungenPathBuilder::add_room(DungenRoom *p_room)
 {
     rooms.push_back(p_room);
 }
@@ -53,7 +53,7 @@ void DungenPathBuilder::triangulate()
     // MAIN LOOP
     for (int room_number = 0; room_number < rooms.size(); room_number++)
     {
-        DungenRoom * room = rooms[room_number];
+        DungenRoom *room = rooms[room_number];
         Vector<DungenTriangle> bad_triangles;
 
         // find triangles whos circumcircle contains the rooms center
@@ -148,8 +148,10 @@ void DungenPathBuilder::triangulate()
     UtilityFunctions::print("TRIANGULATION TIME ELAPSED ", (float)(clock() - triangulate_start) / CLOCKS_PER_SEC);
 }
 
-DungenRoom * DungenPathBuilder::_find_edge_parent(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom * room) {
-    if (subsets.get(room).parent == room) {
+DungenRoom *DungenPathBuilder::_find_edge_parent(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom *room)
+{
+    if (subsets.get(room).parent == room)
+    {
         return subsets.get(room).parent;
     }
 
@@ -158,27 +160,35 @@ DungenRoom * DungenPathBuilder::_find_edge_parent(HashMap<DungenRoom *, DungenDi
     return subsets.get(room).parent;
 }
 
-void DungenPathBuilder::_union_subsets(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom * room_a, DungenRoom * room_b) {
-    DungenRoom * parent_a = _find_edge_parent(subsets, room_a);
-    DungenRoom * parent_b = _find_edge_parent(subsets, room_b);
+void DungenPathBuilder::_union_subsets(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom *room_a, DungenRoom *room_b)
+{
+    DungenRoom *parent_a = _find_edge_parent(subsets, room_a);
+    DungenRoom *parent_b = _find_edge_parent(subsets, room_b);
 
-    if (subsets.get(parent_b).rank < subsets.get(parent_a).rank) {
+    if (subsets.get(parent_b).rank < subsets.get(parent_a).rank)
+    {
         subsets.get(parent_b).parent = parent_a;
-    } else if (subsets.get(parent_a).rank < subsets.get(parent_b).rank) {
+    }
+    else if (subsets.get(parent_a).rank < subsets.get(parent_b).rank)
+    {
         subsets.get(parent_a).parent = parent_b;
-    } else {
+    }
+    else
+    {
         subsets.get(parent_b).parent = parent_a;
         subsets.get(parent_a).rank++;
-    }   
+    }
 }
 
-void DungenPathBuilder::find_minimum_spanning_tree() {
+void DungenPathBuilder::find_minimum_spanning_tree()
+{
     minimum_spanning_tree.clear();
 
     HashMap<DungenRoom *, DungenDisjoinSet> subsets;
     Vector<DungenEdge> all_edges;
 
-    for (int i = 0; i < triangulation.size(); i++) {
+    for (int i = 0; i < triangulation.size(); i++)
+    {
         DungenTriangle t = triangulation[i];
         all_edges.push_back(t.ab);
         subsets.insert(t.ab.a, DungenDisjoinSet(t.ab.a));
@@ -195,18 +205,21 @@ void DungenPathBuilder::find_minimum_spanning_tree() {
 
     clock_t start_mst = clock();
 
-    while (minimum_spanning_tree.size() < V - 1) {
+    while (minimum_spanning_tree.size() < V - 1)
+    {
         DungenEdge next_edge = all_edges[j];
-        
-        if (minimum_spanning_tree.has(next_edge)) {
+
+        if (minimum_spanning_tree.has(next_edge))
+        {
             j++;
             continue;
         }
 
-        DungenRoom * room_a = _find_edge_parent(subsets, next_edge.a);
-        DungenRoom * room_b = _find_edge_parent(subsets, next_edge.b);
+        DungenRoom *room_a = _find_edge_parent(subsets, next_edge.a);
+        DungenRoom *room_b = _find_edge_parent(subsets, next_edge.b);
 
-        if (room_a != room_b) {
+        if (room_a != room_b)
+        {
             minimum_spanning_tree.push_back(next_edge);
             _union_subsets(subsets, room_a, room_b);
         }
@@ -220,4 +233,22 @@ void DungenPathBuilder::find_minimum_spanning_tree() {
     }
 
     UtilityFunctions::print("MINIMUM SPANNING TREE TIME ELAPSED ", (float)(clock() - start_mst) / CLOCKS_PER_SEC);
+}
+
+DungenPathBuilder::operator Variant() const
+{
+    Array result_triangulation = Array();
+    for (int i = 0; i < triangulation.size(); i++)
+    {
+        result_triangulation.push_back(triangulation[i]);
+    }
+    Array result_mst = Array();
+    for (int i = 0; i < minimum_spanning_tree.size(); i++)
+    {
+        result_mst.push_back(minimum_spanning_tree[i]);
+    }
+    Dictionary result;
+    result["triangulation"] = result_triangulation;
+    result["minimum_spanning_tree"] = result_mst;
+    return result;
 }

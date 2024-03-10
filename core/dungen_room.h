@@ -1,8 +1,10 @@
 #ifndef DUNGEN_ROOM_H
 #define DUNGEN_ROOM_H
 
-#include <godot_cpp/variant/color.hpp>
 #include <godot_cpp/classes/object.hpp>
+
+#include <godot_cpp/variant/color.hpp>
+#include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/rect2i.hpp>
 #include <godot_cpp/variant/vector2.hpp>
 #include <godot_cpp/variant/vector2i.hpp>
@@ -40,16 +42,23 @@ namespace godot
         void set_rectangle(const Rect2i p_rectangle);
         Rect2i get_rectangle() const;
 
-        bool intersects(DungenRoom * other);
+        bool intersects(DungenRoom *other);
 
-        bool operator==(DungenRoom * other) const;
-        bool operator!=(DungenRoom * other) const;
+        bool operator==(DungenRoom *other) const;
+        bool operator!=(DungenRoom *other) const;
 
-        operator Variant() const;
-        operator Variant();
+        operator Variant() const
+        {
+            Dictionary result;
+            result["color"] = color;
+            result["rectangle"] = rectangle;
+            return result;
+        }
 
-        operator Vector2i() const;
-        operator Vector2i();
+        operator Vector2i() const
+        {
+            return rectangle.get_center();
+        }
     };
 
 }
