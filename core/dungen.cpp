@@ -281,6 +281,7 @@ void Dungen::_separate_rooms()
         }
     }
 
+    UtilityFunctions::print("SEPARATION TIME ELAPSED ", (float)(clock() - separate_start) / CLOCKS_PER_SEC);
     emit_signal("separate_rooms", ((double)clock() - separate_start) / CLOCKS_PER_SEC);
 }
 

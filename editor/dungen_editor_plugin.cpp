@@ -75,7 +75,9 @@ DungenEditor::DungenEditor()
     dungen_preview_sidebar_vbox->add_child(show_trimmed_rooms_btn);
 }
 
-DungenEditor::~DungenEditor() {}
+DungenEditor::~DungenEditor() {
+    memdelete(dungen_instance);
+}
 
 void DungenEditor::_new_config()
 {
