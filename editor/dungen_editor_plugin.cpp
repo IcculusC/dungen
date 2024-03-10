@@ -86,6 +86,13 @@ DungenEditor::DungenEditor()
     show_minimum_spanning_tree_btn->set_pressed(false);
     dungen_preview_panel->set_show_minimum_spanning_tree(false);
     dungen_preview_sidebar_vbox->add_child(show_minimum_spanning_tree_btn);
+
+    show_path_edges_btn = memnew(CheckButton);
+    show_path_edges_btn->set_text("Path Edges");
+    show_path_edges_btn->set_toggle_mode(true);
+    show_path_edges_btn->set_pressed(false);
+    dungen_preview_panel->set_show_path_edges(false);
+    dungen_preview_sidebar_vbox->add_child(show_path_edges_btn);
 }
 
 DungenEditor::~DungenEditor()
@@ -160,6 +167,7 @@ void DungenEditor::_notification(int p_what)
         show_trimmed_rooms_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_trimmed_rooms));
         show_triangulation_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_triangulation));
         show_minimum_spanning_tree_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_minimum_spanning_tree));
+        show_path_edges_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_path_edges));
 
         dungen_editor_toolbar->connect("new_pressed", callable_mp(this, &DungenEditor::_new_config));
         dungen_editor_toolbar->connect("load_pressed", callable_mp(this, &DungenEditor::_show_file_dialog).bind(load_dialog));

@@ -183,6 +183,9 @@ void DungenPathBuilder::_union_subsets(HashMap<DungenRoom *, DungenDisjoinSet> &
 void DungenPathBuilder::find_minimum_spanning_tree()
 {
     minimum_spanning_tree.clear();
+    non_spanning_edges.clear();
+
+    if (triangulation.size() == 0) { return; }
 
     HashMap<DungenRoom *, DungenDisjoinSet> subsets;
     Vector<DungenEdge> all_edges;
@@ -207,6 +210,10 @@ void DungenPathBuilder::find_minimum_spanning_tree()
 
     while (minimum_spanning_tree.size() < V - 1)
     {
+        if (j >= all_edges.size()) {
+            break;
+        }
+
         DungenEdge next_edge = all_edges[j];
 
         if (minimum_spanning_tree.has(next_edge))
@@ -223,16 +230,32 @@ void DungenPathBuilder::find_minimum_spanning_tree()
             minimum_spanning_tree.push_back(next_edge);
             _union_subsets(subsets, room_a, room_b);
         }
-        /*
-        else if (!discarded_mst_edges.has(next_edge)) {
-            discarded_mst_edges.push_back(next_edge);
+        else if (!non_spanning_edges.has(next_edge))
+        {
+            non_spanning_edges.push_back(next_edge);
         }
-        */
 
         j++;
     }
 
     UtilityFunctions::print("MINIMUM SPANNING TREE TIME ELAPSED ", (float)(clock() - start_mst) / CLOCKS_PER_SEC);
+}
+
+Vector<DungenEdge> DungenPathBuilder::get_path_edges()
+{
+    Vector<DungenEdge> path_edges = minimum_spanning_tree.duplicate();
+
+    if (non_spanning_edges.size() == 0)
+    {
+        return path_edges;
+    }
+
+    for (int i = 0; i < Math::max(1, non_spanning_edges.size() / 6); i++)
+    {
+        path_edges.push_back(non_spanning_edges[i]);
+    }
+
+    return path_edges;
 }
 
 DungenPathBuilder::operator Variant() const

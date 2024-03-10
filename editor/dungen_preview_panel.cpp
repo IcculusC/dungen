@@ -80,6 +80,11 @@ void DungenPreviewPanel::set_show_minimum_spanning_tree(bool s_show)
     dungen_previewer->set_show_minimum_spanning_tree(s_show);
 }
 
+void DungenPreviewPanel::set_show_path_edges(bool s_show)
+{
+    dungen_previewer->set_show_path_edges(s_show);
+}
+
 void DungenPreviewPanel::refresh()
 {
     dungen_previewer->queue_redraw();

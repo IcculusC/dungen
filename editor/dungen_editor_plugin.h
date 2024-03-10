@@ -62,6 +62,7 @@ namespace godot
         CheckButton *show_trimmed_rooms_btn;
         CheckButton *show_triangulation_btn;
         CheckButton *show_minimum_spanning_tree_btn;
+        CheckButton *show_path_edges_btn;
 
         void _config_changed();
 

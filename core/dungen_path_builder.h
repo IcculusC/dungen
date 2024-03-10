@@ -168,6 +168,7 @@ namespace godot
         Rect2 super_rect;
         Vector<DungenTriangle> triangulation;
         Vector<DungenEdge> minimum_spanning_tree;
+        Vector<DungenEdge> non_spanning_edges;
 
         DungenRoom *_find_edge_parent(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom *room);
         void _union_subsets(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom *room_a, DungenRoom *room_b);
@@ -185,6 +186,7 @@ namespace godot
 
         Vector<DungenTriangle> get_triangulation() { return triangulation; };
         Vector<DungenEdge> get_minimum_spanning_tree() { return minimum_spanning_tree; };
+        Vector<DungenEdge> get_path_edges();
 
         operator Variant() const;
     };

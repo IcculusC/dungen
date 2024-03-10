@@ -24,6 +24,7 @@ namespace godot
         bool show_trimmed_rooms;
         bool show_triangulation;
         bool show_minimum_spanning_tree;
+        bool show_paths;
 
         void _generation_complete(double p_time);
 
@@ -39,7 +40,7 @@ namespace godot
         void set_show_trimmed_rooms(bool s_show);
         void set_show_triangulation(bool s_show);
         void set_show_minimum_spanning_tree(bool s_show);
-
+        void set_show_path_edges(bool s_show);
         virtual void _draw() override;
     };
 

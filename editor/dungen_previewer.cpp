@@ -50,6 +50,16 @@ void DungenPreviewer::set_show_minimum_spanning_tree(bool s_show)
     queue_redraw();
 }
 
+void DungenPreviewer::set_show_path_edges(bool s_show)
+{
+    if (show_paths == s_show)
+    {
+        return;
+    }
+    show_paths = s_show;
+    queue_redraw();
+}
+
 void DungenPreviewer::_generation_complete(double p_time)
 {
     queue_redraw();
@@ -57,6 +67,8 @@ void DungenPreviewer::_generation_complete(double p_time)
 
 void DungenPreviewer::_draw()
 {
+    if (is_queued_for_deletion()) { return; }
+
     set_pivot_offset(get_size() / 2);
 
     Vector<DungenRoom *> rooms = dungen_instance->get_map();
@@ -129,6 +141,19 @@ void DungenPreviewer::_draw()
             Vector2 b = e.b->get_center() + center;
 
             draw_line(a, b, Color::named("DARKORANGE"), 1.0, false);
+        }
+    }
+
+    if (show_paths)
+    {
+        Vector<DungenEdge> paths = dungen_instance->get_path_builder().get_path_edges();
+        for (int i = 0; i < paths.size(); i++)
+        {
+            DungenEdge e = paths[i];
+            Vector2 a = e.a->get_center() + center;
+            Vector2 b = e.b->get_center() + center;
+
+            draw_line(a, b, Color::named("GOLD"), 1.0, false);
         }
     }
 }
