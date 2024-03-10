@@ -18,7 +18,9 @@ namespace godot
         Dungen *dungen_instance;
 
         bool show_trimmed_rooms;
-
+        
+        void _generation_complete(double p_time);
+    
     protected:
         static void _bind_methods();
 

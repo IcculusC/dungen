@@ -27,6 +27,8 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include "../core/dungen.h"
+#include "dungen_editor_toolbar.h"
+#include "dungen_preview_panel.h"
 #include "dungen_previewer.h"
 
 namespace godot
@@ -48,19 +50,11 @@ namespace godot
         FileDialog *save_dialog;
         FileDialog *load_dialog;
 
-        Button *new_btn;
-        Button *load_btn;
-        Button *save_btn;
+        DungenEditorToolbar *dungen_editor_toolbar;
 
         HSplitContainer *hsc;
 
-        VBoxContainer *dungen_preview_vbox;
-
-        Button *zoom_less_btn;
-        Button *zoom_reset_btn;
-        Button *zoom_more_btn;
-    
-        DungenPreviewer *dungen_previewer;
+        DungenPreviewPanel *dungen_preview_panel;
 
         VBoxContainer *dungen_preview_sidebar_vbox;
 
@@ -77,12 +71,6 @@ namespace godot
 
         void _edit_dungen_config(Ref<DungenConfig> config);
         void _regenerate();
-
-        void _generation_complete(double p_time);
-
-        void _reset_zoom();
-        void _update_zoom_reset_button();
-        void _zoom_editor(Vector2 amount);
 
         void _show_trimmed_rooms(bool p_show);
 
