@@ -84,13 +84,13 @@ void DungenPreviewer::_draw() {
     for (int i = 0; i < triangulation.size(); i++)
     {
         DungenTriangle t = triangulation[i];
-        Vector2 a = t.get_a()->get_center() + center;
-        Vector2 b = t.get_b()->get_center() + center;
-        Vector2 c = t.get_c()->get_center() + center;
+        Vector2 a = t.a->get_center() + center;
+        Vector2 b = t.b->get_center() + center;
+        Vector2 c = t.c->get_center() + center;
 
-        draw_line(a, b, Color::named("BLACK"), 1.0, false);
-        draw_line(b, c, Color::named("BLACK"), 1.0, false);
-        draw_line(c, a, Color::named("BLACK"), 1.0, false);
+        draw_line(a, b, Color::named("LIGHTCYAN"), 1.0, false);
+        draw_line(b, c, Color::named("LIGHTCYAN"), 1.0, false);
+        draw_line(c, a, Color::named("LIGHTCYAN"), 1.0, false);
     }
 }
 
