@@ -11,24 +11,19 @@
 
 namespace godot
 {
-    class DungenEdge
+    struct DungenEdge
     {
-        friend class DungenTriangle;
-        friend class DungenPathBuilder;
-
-    private:
         Ref<DungenRoom> a;
         Ref<DungenRoom> b;
 
-    public:
+        const Vector2 get_center() const { return (a->get_center() + b->get_center()) / 2.0; }
+        const double get_length() const { return Vector2(a->get_center()).distance_squared_to(b->get_center()); }
+
         DungenEdge() {}
         DungenEdge(const Ref<DungenRoom> &a, const Ref<DungenRoom> &b) : a(a),
                                                                          b(b)
         {
         }
-
-        const Vector2 get_center() const { return (a->get_center() + b->get_center()) / 2.0; }
-        const double get_length() const { return Vector2(a->get_center()).distance_squared_to(b->get_center()); }
 
         bool operator==(const DungenEdge &other) const
         {
@@ -53,11 +48,8 @@ namespace godot
         }
     };
 
-    class DungenTriangle
+    struct DungenTriangle
     {
-        friend class DungenPathBuilder;
-
-    private:
         Ref<DungenRoom> a;
         Ref<DungenRoom> b;
         Ref<DungenRoom> c;
@@ -69,13 +61,12 @@ namespace godot
         Vector2 center;
         double radius_squared;
 
-    public:
         const Vector2 get_center() const { return center; };
 
         inline Ref<DungenRoom> get_a() const { return a; }
         inline Ref<DungenRoom> get_b() const { return b; }
         inline Ref<DungenRoom> get_c() const { return c; }
-    
+
         void recalculate_circumfrence()
         {
             Vector2 _a = a->get_center();
@@ -149,7 +140,8 @@ namespace godot
         }
     };
 
-    class DungenPathBuilder {
+    class DungenPathBuilder
+    {
     private:
         Vector<Ref<DungenRoom>> rooms;
         Vector<Ref<DungenRoom>> corners;
@@ -159,7 +151,7 @@ namespace godot
     public:
         DungenPathBuilder();
         ~DungenPathBuilder();
-        
+
         void add_rooms(const Vector<Ref<DungenRoom>> &p_rooms);
         void add_room(const Ref<DungenRoom> &p_room);
         void clear_rooms();
