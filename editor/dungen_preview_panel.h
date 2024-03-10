@@ -50,7 +50,8 @@ namespace godot
         void set_dungen_instance(Dungen *dungen);
 
         void set_show_trimmed_rooms(bool p_show_trimmed_rooms);
-        bool get_show_trimmed_rooms() const { return dungen_previewer->get_show_trimmed_rooms(); };
+        void set_show_triangulation(bool p_show_triangulation);
+        void set_show_minimum_spanning_tree(bool p_show_minimum_spanning_tree);
 
         void refresh();
     };

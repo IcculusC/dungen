@@ -22,6 +22,8 @@ namespace godot
         Dungen *dungen_instance;
 
         bool show_trimmed_rooms;
+        bool show_triangulation;
+        bool show_minimum_spanning_tree;
         
         void _generation_complete(double p_time);
     
@@ -34,8 +36,9 @@ namespace godot
 
         void set_dungen_instance(Dungen *dungen);
 
-        void set_show_trimmed_rooms(bool p_show_trimmed_rooms);
-        bool get_show_trimmed_rooms() const { return show_trimmed_rooms; };
+        void set_show_trimmed_rooms(bool s_show);
+        void set_show_triangulation(bool s_show);
+        void set_show_minimum_spanning_tree(bool s_show);
 
         virtual void _draw() override;
     };

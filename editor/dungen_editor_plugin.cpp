@@ -70,9 +70,25 @@ DungenEditor::DungenEditor()
     dungen_preview_sidebar_panel->add_child(dungen_preview_sidebar_vbox); 
 
     show_trimmed_rooms_btn = memnew(CheckButton);
-    show_trimmed_rooms_btn->set_text("Show Trimmed Rooms");
+    show_trimmed_rooms_btn->set_text("Trimmed Rooms");
     show_trimmed_rooms_btn->set_toggle_mode(true);
+    show_trimmed_rooms_btn->set_pressed(false);
+    dungen_preview_panel->set_show_trimmed_rooms(false);
     dungen_preview_sidebar_vbox->add_child(show_trimmed_rooms_btn);
+
+    show_triangulation_btn = memnew(CheckButton);
+    show_triangulation_btn->set_text("Triangulation");
+    show_triangulation_btn->set_toggle_mode(true);
+    show_triangulation_btn->set_pressed(false);
+    dungen_preview_panel->set_show_triangulation(false);
+    dungen_preview_sidebar_vbox->add_child(show_triangulation_btn);
+
+    show_minimum_spanning_tree_btn = memnew(CheckButton);
+    show_minimum_spanning_tree_btn->set_text("Minimum Spanning Tree");
+    show_minimum_spanning_tree_btn->set_toggle_mode(true);
+    show_minimum_spanning_tree_btn->set_pressed(false);
+    dungen_preview_panel->set_show_minimum_spanning_tree(false); 
+    dungen_preview_sidebar_vbox->add_child(show_minimum_spanning_tree_btn);
 }
 
 DungenEditor::~DungenEditor() {
@@ -140,6 +156,15 @@ void DungenEditor::_show_trimmed_rooms(bool p_show) {
     dungen_preview_panel->set_show_trimmed_rooms(p_show);
 }
 
+void DungenEditor::_show_triangulation(bool s_show) {
+    dungen_preview_panel->set_show_triangulation(s_show);
+}
+
+void DungenEditor::_show_minimum_spanning_tree(bool s_show) {
+    dungen_preview_panel->set_show_minimum_spanning_tree(s_show);
+}
+
+
 void DungenEditor::_notification(int p_what)
 {
     if (p_what == NOTIFICATION_READY)
@@ -148,7 +173,9 @@ void DungenEditor::_notification(int p_what)
         load_dialog->connect("file_selected", callable_mp(this, &DungenEditor::_load_config));
 
         show_trimmed_rooms_btn->connect("toggled", callable_mp(this, &DungenEditor::_show_trimmed_rooms));
-    
+        show_triangulation_btn->connect("toggled", callable_mp(this, &DungenEditor::_show_triangulation));
+        show_minimum_spanning_tree_btn->connect("toggled", callable_mp(this, &DungenEditor::_show_minimum_spanning_tree));
+       
         dungen_editor_toolbar->connect("new_pressed", callable_mp(this, &DungenEditor::_new_config));
         dungen_editor_toolbar->connect("load_pressed", callable_mp(this, &DungenEditor::_show_file_dialog).bind(load_dialog));
         dungen_editor_toolbar->connect("save_pressed", callable_mp(this, &DungenEditor::_on_save_pressed));

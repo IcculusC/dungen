@@ -64,6 +64,18 @@ void DungenPreviewPanel::set_dungen_instance(Dungen *dungen) {
     dungen_previewer->set_dungen_instance(dungen);
 }
 
+void DungenPreviewPanel::set_show_trimmed_rooms(bool s_show) {
+    dungen_previewer->set_show_trimmed_rooms(s_show);
+}
+ 
+void DungenPreviewPanel::set_show_triangulation(bool s_show) {
+    dungen_previewer->set_show_triangulation(s_show);
+}
+
+void DungenPreviewPanel::set_show_minimum_spanning_tree(bool s_show) {
+    dungen_previewer->set_show_minimum_spanning_tree(s_show);
+}
+
 void DungenPreviewPanel::refresh() {
     dungen_previewer->queue_redraw();
 }
@@ -82,10 +94,6 @@ void DungenPreviewPanel::_update_previewer_zoom(Vector2 amount) {
     Vector2 zoom = (dungen_previewer->get_scale() + amount).clamp(Vector2(1, 1), Vector2(10, 10));
     dungen_previewer->set_scale(zoom);
     _update_zoom_reset_button();
-}
-
-void DungenPreviewPanel::set_show_trimmed_rooms(bool p_show_trimmed_rooms) {
-    dungen_previewer->set_show_trimmed_rooms(p_show_trimmed_rooms);
 }
 
 void DungenPreviewPanel::_notification(int p_what)

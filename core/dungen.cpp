@@ -33,8 +33,7 @@ Dungen::Dungen() : config(Ref<DungenConfig>(memnew(DungenConfig))),
                    trimmed_rooms(Vector<DungenRoom *>()),
                    rng(RandomNumberGenerator()),
                    total_area(0),
-                   path_builder(DungenPathBuilder()),
-                   triangulation_builder(Triangulation())
+                   path_builder(DungenPathBuilder())
 {
     rng.set_seed(config->get_seed());
 }
@@ -84,11 +83,6 @@ void Dungen::generate()
     path_builder.triangulate();
     path_builder.find_minimum_spanning_tree();
 
-    triangulation_builder.clear_points();
-    for (int i = 0; i < map_rooms.size(); i++) {
-        triangulation_builder.add_point(map_rooms[i]->get_center());
-    }
-    triangulation_builder.triangulate(-1);
     // TODO: generate minimum spanning tree
     // TODO: path rectangles
 
@@ -134,6 +128,7 @@ void Dungen::_reset()
     all_rooms.clear();
     map_rooms.clear();
     trimmed_rooms.clear();
+    path_builder.clear_rooms();
     total_area = 0;
 }
 
@@ -253,20 +248,23 @@ void Dungen::_separate_rooms()
                 {
                     continue;
                 }
-
+                    
+                neighbors++;
+                
                 Vector2 center_distance = rect_a->get_center() - rect_b->get_center();
 
                 if (center_distance.is_zero_approx())
                 {
-                    movement_vector += Vector2(rng.randi_range(-5, 5), rng.randi_range(-5, 5));
-                    neighbors++;
+                    movement_vector += Vector2(rng.randi_range(-1, 1), rng.randi_range(-1, 1));
+                    // neighbors++;
                     // movement_vector = Vector2(rng.randi_range(-5, 5), rng.randi_range(-5, 5));
                     // neighbors = 1;
-                    break;
+                    continue;
                 }
 
+                // movement_vector += center_distance;
+                // neighbors++;
                 movement_vector += center_distance;
-                neighbors++;
             }
 
             if (movement_vector != Vector2i(0, 0) && neighbors > 0)

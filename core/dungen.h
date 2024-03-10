@@ -23,8 +23,6 @@
 #include "dungen_room.h"
 #include "enums.h"
 
-#include "triangulate.h"
-
 namespace godot
 {
 
@@ -44,7 +42,6 @@ namespace godot
 		Vector<DungenRoom *> trimmed_rooms;
 
 		DungenPathBuilder path_builder;
-		Triangulation triangulation_builder;
 
 		Vector2i generate_random_point_in_ellipse(Vector2i &spawn_area_dimensions);
 		Vector2i generate_random_point_in_rectangle(Vector2i &spawn_area_dimensions);
@@ -75,7 +72,6 @@ namespace godot
 		Ref<DungenConfig> get_config() const { return config; };
 
 		DungenPathBuilder get_path_builder() { return path_builder; }
-		Triangulation get_triangulation_builder() { return triangulation_builder; }
 
 		double get_average_area() const { return all_rooms.size() > 0 ? total_area / all_rooms.size() : 0; };
 		double get_total_area() const { return total_area; };

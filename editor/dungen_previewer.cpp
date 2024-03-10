@@ -1,7 +1,6 @@
 #ifdef TOOLS_ENABLED
 
 #include "dungen_previewer.h"
-#include "../core/triangulate.h"
 
 using namespace godot;
 
@@ -19,11 +18,27 @@ void DungenPreviewer::set_dungen_instance(Dungen *dungen) {
     }
 }
 
-void DungenPreviewer::set_show_trimmed_rooms(bool p_show_trimmed_rooms) {
-    if (show_trimmed_rooms == p_show_trimmed_rooms) {
+void DungenPreviewer::set_show_trimmed_rooms(bool s_show) {
+    if (show_trimmed_rooms == s_show) {
         return;
     }
-    show_trimmed_rooms = p_show_trimmed_rooms;
+    show_trimmed_rooms = s_show;
+    queue_redraw();
+}
+
+void DungenPreviewer::set_show_triangulation(bool s_show) {
+    if (show_triangulation == s_show) {
+        return;
+    }
+    show_triangulation = s_show;
+    queue_redraw();
+}
+
+void DungenPreviewer::set_show_minimum_spanning_tree(bool s_show) {
+    if (show_minimum_spanning_tree == s_show) {
+        return;
+    }
+    show_minimum_spanning_tree = s_show;
     queue_redraw();
 }
 
@@ -81,26 +96,30 @@ void DungenPreviewer::_draw() {
         }   
     }
 
-    Vector<DungenTriangle> triangulation = dungen_instance->get_path_builder().get_triangulation();
-    for (int i = 0; i < triangulation.size(); i++)
-    {
-        DungenTriangle t = triangulation[i];
-        Vector2 a = t.a->get_center() + center;
-        Vector2 b = t.b->get_center() + center;
-        Vector2 c = t.c->get_center() + center;
+    if (show_triangulation) {
+        Vector<DungenTriangle> triangulation = dungen_instance->get_path_builder().get_triangulation();
+        for (int i = 0; i < triangulation.size(); i++)
+        {
+            DungenTriangle t = triangulation[i];
+            Vector2 a = t.a->get_center() + center;
+            Vector2 b = t.b->get_center() + center;
+            Vector2 c = t.c->get_center() + center;
 
-        draw_line(a, b, Color::named("LIGHTCYAN"), 1.0, false);
-        draw_line(b, c, Color::named("LIGHTCYAN"), 1.0, false);
-        draw_line(c, a, Color::named("LIGHTCYAN"), 1.0, false);
+            draw_line(a, b, Color::named("LIGHTCYAN"), 1.0, false);
+            draw_line(b, c, Color::named("LIGHTCYAN"), 1.0, false);
+            draw_line(c, a, Color::named("LIGHTCYAN"), 1.0, false);
+        }
     }
 
-    Vector<DungenEdge> minimum_spanning_tree = dungen_instance->get_path_builder().get_minimum_spanning_tree();
-    for (int i = 0; i < minimum_spanning_tree.size(); i++) {
-        DungenEdge e = minimum_spanning_tree[i];
-        Vector2 a = e.a->get_center() + center;
-        Vector2 b = e.b->get_center() + center;
+    if (show_minimum_spanning_tree) {
+        Vector<DungenEdge> minimum_spanning_tree = dungen_instance->get_path_builder().get_minimum_spanning_tree();
+        for (int i = 0; i < minimum_spanning_tree.size(); i++) {
+            DungenEdge e = minimum_spanning_tree[i];
+            Vector2 a = e.a->get_center() + center;
+            Vector2 b = e.b->get_center() + center;
 
-        draw_line(a, b, Color::named("DARKORANGE"), 1.0, false); 
+            draw_line(a, b, Color::named("DARKORANGE"), 1.0, false); 
+        }
     }
 }
 
