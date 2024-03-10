@@ -217,8 +217,6 @@ void DungenEditorPlugin::_notification(int p_what)
     }
     else if (p_what == NOTIFICATION_EXIT_TREE)
     {
-        memdelete(dungen_editor);
-        // dungen_editor = nullptr;
     }
 }
 #endif // TOOLS_ENABLED

@@ -81,8 +81,6 @@ void DungenPreviewer::_draw()
 
     bounds.set_position(bounds.position + center);
 
-    draw_rect(bounds, Color::named("CORNFLOWER_BLUE"), false, 2.0);
-
     for (int i = 0; i < rooms.size(); i++)
     {
         DungenRoom *current_room = (rooms[i]);
