@@ -11,6 +11,11 @@ DungenPreviewer::~DungenPreviewer() {}
 
 void DungenPreviewer::set_dungen_instance(Dungen *dungen) {
     dungen_instance = dungen;
+
+    if (!dungen_instance->is_connected("generation_complete", callable_mp(this, &DungenPreviewer::_generation_complete)))
+    {
+        dungen_instance->connect("generation_complete", callable_mp(this, &DungenPreviewer::_generation_complete));
+    }
 }
 
 void DungenPreviewer::set_show_trimmed_rooms(bool p_show_trimmed_rooms) {
@@ -18,6 +23,11 @@ void DungenPreviewer::set_show_trimmed_rooms(bool p_show_trimmed_rooms) {
         return;
     }
     show_trimmed_rooms = p_show_trimmed_rooms;
+    queue_redraw();
+}
+
+void DungenPreviewer::_generation_complete(double p_time)
+{
     queue_redraw();
 }
 
