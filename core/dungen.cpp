@@ -11,11 +11,7 @@ void Dungen::_bind_methods()
 
     ClassDB::bind_method(D_METHOD("get_average_area"), &Dungen::get_average_area);
     ClassDB::bind_method(D_METHOD("get_total_area"), &Dungen::get_total_area);
-    /*
-    ClassDB::bind_method(D_METHOD("get_all_rooms"), &Dungen::get_all_rooms);
-    ClassDB::bind_method(D_METHOD("get_map"), &Dungen::get_map);
-    ClassDB::bind_method(D_METHOD("get_trimmed_rooms"), &Dungen::get_trimmed_rooms);
-    */
+
     ClassDB::bind_method(D_METHOD("get_config"), &Dungen::get_config);
     ClassDB::bind_method(D_METHOD("set_config", "p_config"), &Dungen::set_config);
 
