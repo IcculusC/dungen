@@ -9,8 +9,7 @@ void Dungen::_bind_methods()
     // generation
     ClassDB::bind_method(D_METHOD("generate"), &Dungen::generate);
 
-    ClassDB::bind_method(D_METHOD("get_average_area"), &Dungen::get_average_area);
-    ClassDB::bind_method(D_METHOD("get_total_area"), &Dungen::get_total_area);
+    ClassDB::bind_method(D_METHOD("get_all"), &Dungen::get_all);
 
     ClassDB::bind_method(D_METHOD("get_config"), &Dungen::get_config);
     ClassDB::bind_method(D_METHOD("set_config", "p_config"), &Dungen::set_config);
@@ -65,6 +64,26 @@ Vector<DungenRoom *> Dungen::get_map() const
 Vector<DungenRoom *> Dungen::get_trimmed_rooms() const
 {
     return trimmed_rooms;
+}
+
+Dictionary Dungen::get_all() {
+    Dictionary results;
+
+    Array room_rects_array;
+    for (int i = 0; i < map_rooms.size(); i++) {
+        room_rects_array.push_back(map_rooms[i]->get_rectangle());
+    }
+
+    Vector<Rect2i> path_rects = path_builder.get_path_rectangles();
+    Array path_rects_array;
+    for (int i = 0; i < path_rects.size(); i++) {
+        path_rects_array.push_back(path_rects[i]);
+    }
+
+    results["rooms"] = room_rects_array;
+    results["paths"] = path_rects_array;
+
+    return results;
 }
 
 void Dungen::generate()
