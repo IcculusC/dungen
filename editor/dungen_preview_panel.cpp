@@ -65,24 +65,29 @@ void DungenPreviewPanel::set_dungen_instance(Dungen *dungen)
     dungen_previewer->set_dungen_instance(dungen);
 }
 
-void DungenPreviewPanel::set_show_trimmed_rooms(bool s_show)
+void DungenPreviewPanel::set_show_trimmed_rooms(bool p_show)
 {
-    dungen_previewer->set_show_trimmed_rooms(s_show);
+    dungen_previewer->set_show_trimmed_rooms(p_show);
 }
 
-void DungenPreviewPanel::set_show_triangulation(bool s_show)
+void DungenPreviewPanel::set_show_triangulation(bool p_show)
 {
-    dungen_previewer->set_show_triangulation(s_show);
+    dungen_previewer->set_show_triangulation(p_show);
 }
 
-void DungenPreviewPanel::set_show_minimum_spanning_tree(bool s_show)
+void DungenPreviewPanel::set_show_minimum_spanning_tree(bool p_show)
 {
-    dungen_previewer->set_show_minimum_spanning_tree(s_show);
+    dungen_previewer->set_show_minimum_spanning_tree(p_show);
 }
 
-void DungenPreviewPanel::set_show_path_edges(bool s_show)
+void DungenPreviewPanel::set_show_path_edges(bool p_show)
 {
-    dungen_previewer->set_show_path_edges(s_show);
+    dungen_previewer->set_show_path_edges(p_show);
+}
+
+void DungenPreviewPanel::set_show_path_rectangles(bool p_show)
+{
+    dungen_previewer->set_show_path_rectangles(p_show);
 }
 
 void DungenPreviewPanel::refresh()
@@ -116,6 +121,7 @@ void DungenPreviewPanel::_notification(int p_what)
         zoom_out_btn->connect("pressed", callable_mp(this, &DungenPreviewPanel::_update_previewer_zoom).bind(Vector2(-0.25, -0.25)));
         zoom_reset_btn->connect("pressed", callable_mp(this, &DungenPreviewPanel::_reset_previewer_zoom));
         zoom_in_btn->connect("pressed", callable_mp(this, &DungenPreviewPanel::_update_previewer_zoom).bind(Vector2(0.25, 0.25)));
+        _update_previewer_zoom(Vector2(2, 2));
     }
     if (p_what == NOTIFICATION_THEME_CHANGED)
     {

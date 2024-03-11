@@ -66,6 +66,13 @@ DungenEditor::DungenEditor()
     dungen_preview_sidebar_vbox->set_v_size_flags(SIZE_EXPAND_FILL);
     dungen_preview_sidebar_panel->add_child(dungen_preview_sidebar_vbox);
 
+    show_path_rectangles_btn = memnew(CheckButton);
+    show_path_rectangles_btn->set_text("Path Rectangles");
+    show_path_rectangles_btn->set_toggle_mode(true);
+    show_path_rectangles_btn->set_pressed(true);
+    dungen_preview_panel->set_show_path_rectangles(true);
+    dungen_preview_sidebar_vbox->add_child(show_path_rectangles_btn);
+
     show_trimmed_rooms_btn = memnew(CheckButton);
     show_trimmed_rooms_btn->set_text("Trimmed Rooms");
     show_trimmed_rooms_btn->set_toggle_mode(true);
@@ -164,6 +171,7 @@ void DungenEditor::_notification(int p_what)
         save_dialog->connect("file_selected", callable_mp(this, &DungenEditor::_save_config));
         load_dialog->connect("file_selected", callable_mp(this, &DungenEditor::_load_config));
 
+        show_path_rectangles_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_path_rectangles));
         show_trimmed_rooms_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_trimmed_rooms));
         show_triangulation_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_triangulation));
         show_minimum_spanning_tree_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_minimum_spanning_tree));

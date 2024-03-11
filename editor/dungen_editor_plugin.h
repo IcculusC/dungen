@@ -59,6 +59,7 @@ namespace godot
 
         VBoxContainer *dungen_preview_sidebar_vbox;
 
+        CheckButton *show_path_rectangles_btn;
         CheckButton *show_trimmed_rooms_btn;
         CheckButton *show_triangulation_btn;
         CheckButton *show_minimum_spanning_tree_btn;

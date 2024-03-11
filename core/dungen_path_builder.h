@@ -7,6 +7,7 @@
 #include <godot_cpp/templates/vector.hpp>
 
 #include <godot_cpp/variant/utility_functions.hpp>
+#include <godot_cpp/variant/rect2i.hpp>
 #include <godot_cpp/variant/vector2.hpp>
 #include <godot_cpp/variant/vector2i.hpp>
 
@@ -187,7 +188,8 @@ namespace godot
         Vector<DungenTriangle> get_triangulation() { return triangulation; };
         Vector<DungenEdge> get_minimum_spanning_tree() { return minimum_spanning_tree; };
         Vector<DungenEdge> get_path_edges();
-
+        Vector<Rect2i> get_path_rectangles();
+        
         operator Variant() const;
     };
 }
