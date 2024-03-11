@@ -174,6 +174,16 @@ void DungenPreviewer::_draw()
             draw_line(a, b, Color::named("GOLD"), 1.0, false);
         }
     }
+
+    if (show_path_rectangles) {
+        Vector<Rect2i> path_rectangles = dungen_instance->get_path_builder().get_path_rectangles();
+        for (int i = 0; i < path_rectangles.size(); i++) {
+            Rect2 current_rect = Rect2(path_rectangles[i]);
+            current_rect.set_position(current_rect.get_position() + center);
+            draw_rect(current_rect, Color::named("GREEN"));
+        }
+    }
+
 }
 
 void DungenPreviewer::_bind_methods() {}
