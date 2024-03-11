@@ -13,6 +13,8 @@
 
 #include <godot_cpp/templates/vector.hpp>
 
+#include <godot_cpp/variant/array.hpp>
+#include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/rect2i.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/variant/vector2.hpp>
@@ -79,6 +81,8 @@ namespace godot
 		Vector<DungenRoom *> get_all_rooms() const;
 		Vector<DungenRoom *> get_map() const;
 		Vector<DungenRoom *> get_trimmed_rooms() const;
+
+		Dictionary get_all();
 	};
 
 }
