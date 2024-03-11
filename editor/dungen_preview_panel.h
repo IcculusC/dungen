@@ -53,6 +53,7 @@ namespace godot
         void set_show_triangulation(bool p_show);
         void set_show_minimum_spanning_tree(bool p_show);
         void set_show_path_edges(bool p_show);
+        void set_show_path_rectangles(bool p_show);
 
         void refresh();
     };

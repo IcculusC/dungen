@@ -20,43 +20,52 @@ void DungenPreviewer::set_dungen_instance(Dungen *dungen)
     }
 }
 
-void DungenPreviewer::set_show_trimmed_rooms(bool s_show)
+void DungenPreviewer::set_show_trimmed_rooms(bool p_show)
 {
-    if (show_trimmed_rooms == s_show)
+    if (show_trimmed_rooms == p_show)
     {
         return;
     }
-    show_trimmed_rooms = s_show;
+    show_trimmed_rooms = p_show;
     queue_redraw();
 }
 
-void DungenPreviewer::set_show_triangulation(bool s_show)
+void DungenPreviewer::set_show_triangulation(bool p_show)
 {
-    if (show_triangulation == s_show)
+    if (show_triangulation == p_show)
     {
         return;
     }
-    show_triangulation = s_show;
+    show_triangulation = p_show;
     queue_redraw();
 }
 
-void DungenPreviewer::set_show_minimum_spanning_tree(bool s_show)
+void DungenPreviewer::set_show_minimum_spanning_tree(bool p_show)
 {
-    if (show_minimum_spanning_tree == s_show)
+    if (show_minimum_spanning_tree == p_show)
     {
         return;
     }
-    show_minimum_spanning_tree = s_show;
+    show_minimum_spanning_tree = p_show;
     queue_redraw();
 }
 
-void DungenPreviewer::set_show_path_edges(bool s_show)
+void DungenPreviewer::set_show_path_edges(bool p_show)
 {
-    if (show_paths == s_show)
+    if (show_path_edges == p_show)
     {
         return;
     }
-    show_paths = s_show;
+    show_path_edges = p_show;
+    queue_redraw();
+}
+
+void DungenPreviewer::set_show_path_rectangles(bool p_show) {
+    if (show_path_rectangles == p_show)
+    {
+        return;
+    }
+    show_path_rectangles = p_show;
     queue_redraw();
 }
 
@@ -92,6 +101,15 @@ void DungenPreviewer::_draw()
     Vector2 center = get_size() / 2;
 
     bounds.set_position(bounds.position + center);
+
+    if (show_path_rectangles) {
+        Vector<Rect2i> path_rectangles = dungen_instance->get_path_builder().get_path_rectangles();
+        for (int i = 0; i < path_rectangles.size(); i++) {
+            Rect2 current_rect = Rect2(path_rectangles[i]);
+            current_rect.set_position(current_rect.get_position() + center);
+            draw_rect(current_rect, Color::named("DODGERBLUE"));
+        }
+    }
 
     for (int i = 0; i < rooms.size(); i++)
     {
@@ -144,7 +162,7 @@ void DungenPreviewer::_draw()
         }
     }
 
-    if (show_paths)
+    if (show_path_edges)
     {
         Vector<DungenEdge> paths = dungen_instance->get_path_builder().get_path_edges();
         for (int i = 0; i < paths.size(); i++)

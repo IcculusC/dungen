@@ -185,7 +185,10 @@ void DungenPathBuilder::find_minimum_spanning_tree()
     minimum_spanning_tree.clear();
     non_spanning_edges.clear();
 
-    if (triangulation.size() == 0) { return; }
+    if (triangulation.size() == 0)
+    {
+        return;
+    }
 
     HashMap<DungenRoom *, DungenDisjoinSet> subsets;
     Vector<DungenEdge> all_edges;
@@ -210,7 +213,8 @@ void DungenPathBuilder::find_minimum_spanning_tree()
 
     while (minimum_spanning_tree.size() < V - 1)
     {
-        if (j >= all_edges.size()) {
+        if (j >= all_edges.size())
+        {
             break;
         }
 
@@ -256,6 +260,68 @@ Vector<DungenEdge> DungenPathBuilder::get_path_edges()
     }
 
     return path_edges;
+}
+
+Vector<Rect2i> DungenPathBuilder::get_path_rectangles()
+{
+    Vector<Rect2i> path_rectangles;
+    Vector<DungenEdge> path_edges = get_path_edges();
+
+    for (int i = 0; i < path_edges.size(); i++)
+    {
+        DungenEdge current_edge = path_edges[i];
+        DungenRoom *room_a = current_edge.a;
+        DungenRoom *room_b = current_edge.b;
+
+        Rect2i rect_a = room_a->get_rectangle();
+        Rect2i rect_b = room_b->get_rectangle();
+        Vector2i edge_center = current_edge.get_center();
+
+        if (
+            ((edge_center.x > rect_a.position.x && edge_center.x < rect_a.get_end().x) &&
+             (edge_center.x > rect_b.position.x && edge_center.x < rect_b.get_end().x)) /* ||
+                                                                                         */
+        )
+        {
+            Rect2i rect = Rect2i();
+            rect.set_position(Vector2i(edge_center.x,
+                                       rect_a.get_center().y));
+            rect.set_end(Vector2i(edge_center.x,
+                                  rect_b.get_center().y));
+            path_rectangles.push_back(rect
+                                          .abs()
+                                          .grow_side(SIDE_RIGHT, 3.0));
+        }
+        else if ((edge_center.y > rect_a.position.y && edge_center.y < rect_a.get_end().y) &&
+                 (edge_center.y > rect_b.position.y && edge_center.y < rect_b.get_end().y))
+        {
+            Rect2i rect = Rect2i();
+            rect.set_position(Vector2i(rect_a.get_center().x,
+                                       edge_center.y));
+            rect.set_end(Vector2i(rect_b.get_center().x,
+                                  edge_center.y));
+            path_rectangles.push_back(rect
+                                          .abs()
+                                          .grow_side(SIDE_BOTTOM, 3.0));
+        }
+        else
+        {
+            Rect2i path_rect_a = Rect2i();
+            path_rect_a.set_position(rect_a.get_center());
+            path_rect_a.set_end(Vector2i(rect_a.get_center().x, rect_b.get_center().y));
+            path_rectangles.push_back(path_rect_a
+                                          .abs()
+                                          .grow_side(rect_a.get_center().y > rect_b.get_center().y ? SIDE_RIGHT : SIDE_LEFT, 3.0));
+            Rect2i path_rect_b = Rect2i();
+            path_rect_b.set_position(rect_b.get_center());
+            path_rect_b.set_end(Vector2i(rect_a.get_center().x, rect_b.get_center().y));
+            path_rectangles.push_back(path_rect_b
+                                          .abs()
+                                          .grow_side(rect_a.get_center().x > rect_b.get_center().x ? SIDE_BOTTOM : SIDE_TOP, 3.0));
+        }   
+    }
+
+    return path_rectangles;
 }
 
 DungenPathBuilder::operator Variant() const
