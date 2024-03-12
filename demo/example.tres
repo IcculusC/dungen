@@ -1,0 +1,5 @@
+[gd_resource type="DungenConfig" format=3 uid="uid://bmrvp40ehsho8"]
+
+[resource]
+seed = 3.22133e+06
+room_count = 13.0

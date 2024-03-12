@@ -1,8 +1,0 @@
-[gd_resource type="DungenConfig" format=3 uid="uid://cx0ar5e0sru1a"]
-
-[resource]
-room_count = 44.0
-room_dimensions = Vector2i(15, 15)
-room_dimensions_sigma = Vector2i(6, 3)
-spawn_area_dimensions = Vector2i(200, 20)
-spawn_area_shape = 1

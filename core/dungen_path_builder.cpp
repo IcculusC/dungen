@@ -283,42 +283,118 @@ Vector<Rect2i> DungenPathBuilder::get_path_rectangles()
                                                                                          */
         )
         {
+            Vector2i start_position;
+            Vector2i end_position;
+            if (rect_a.position.y > rect_b.position.y)
+            {
+                start_position = Vector2i(edge_center.x,
+                                          rect_a.position.y);
+                end_position = Vector2i(edge_center.x, rect_b.position.y + rect_b.size.y);
+            }
+            else
+            {
+                start_position = Vector2i(edge_center.x,
+                                          rect_b.position.y);
+                end_position = Vector2i(edge_center.x, rect_a.position.y + rect_a.size.y);
+            }
+
             Rect2i rect = Rect2i();
-            rect.set_position(Vector2i(edge_center.x,
-                                       rect_a.get_center().y));
-            rect.set_end(Vector2i(edge_center.x,
-                                  rect_b.get_center().y));
-            path_rectangles.push_back(rect
-                                          .abs()
-                                          .grow_side(SIDE_RIGHT, 3.0));
+            rect.set_position(start_position);
+            rect.set_end(end_position);
+            rect = rect
+                       .abs()
+                       .grow_side(SIDE_RIGHT, 3.0);
+
+            if (rect.has_area())
+            {
+                path_rectangles.push_back(rect);
+            }
         }
         else if ((edge_center.y > rect_a.position.y && edge_center.y < rect_a.get_end().y) &&
                  (edge_center.y > rect_b.position.y && edge_center.y < rect_b.get_end().y))
         {
+            Vector2i start_position;
+            Vector2i end_position;
+            if (rect_a.position.x > rect_b.position.x)
+            {
+                start_position = Vector2i(rect_a.position.x,
+                                          edge_center.y);
+                end_position = Vector2i(rect_b.position.x + rect_b.size.x, edge_center.y);
+            }
+            else
+            {
+                start_position = Vector2i(rect_b.position.x,
+                                          edge_center.y);
+                end_position = Vector2i(rect_a.position.x + rect_a.size.x, edge_center.y);
+            }
+
             Rect2i rect = Rect2i();
-            rect.set_position(Vector2i(rect_a.get_center().x,
-                                       edge_center.y));
-            rect.set_end(Vector2i(rect_b.get_center().x,
-                                  edge_center.y));
-            path_rectangles.push_back(rect
-                                          .abs()
-                                          .grow_side(SIDE_BOTTOM, 3.0));
+            rect.set_position(start_position);
+            rect.set_end(end_position);
+            rect = rect.abs().grow_side(SIDE_BOTTOM, 3.0);
+
+            if (rect.has_area())
+            {
+                path_rectangles.push_back(rect);
+            }
         }
         else
         {
+            Vector2i start_position_a = rect_a.get_center();
+            Vector2i start_position_b = rect_b.get_center();
+            Vector2 end_position = Vector2(rect_a.get_center().x, rect_b.get_center().y);
+
             Rect2i path_rect_a = Rect2i();
-            path_rect_a.set_position(rect_a.get_center());
-            path_rect_a.set_end(Vector2i(rect_a.get_center().x, rect_b.get_center().y));
-            path_rectangles.push_back(path_rect_a
-                                          .abs()
-                                          .grow_side(rect_a.get_center().y > rect_b.get_center().y ? SIDE_RIGHT : SIDE_LEFT, 3.0));
+
+            bool ax_bx = rect_a.get_center().x > rect_b.get_center().x;
+            bool ay_by = rect_a.get_center().y > rect_b.get_center().y;
+
+            if (ax_bx) {
+                //  [b] [a]
+                start_position_b = Vector2(rect_b.position.x + rect_b.size.x, rect_b.get_center().y);
+                if (ay_by) {
+                //  [b]  *
+                //      [a]
+                    start_position_a = Vector2(rect_a.get_center().x, rect_a.position.y);
+                } else {
+                //      [a]
+                //  [b]  *
+                    start_position_a = Vector2(rect_a.get_center().x, rect_a.position.y + rect_a.size.y);
+                }
+            } else {
+                // [a] [b]
+                start_position_b = Vector2(rect_b.position.x, rect_b.get_center().y);
+                if (ay_by) {
+                //  *  [b]
+                // [a] 
+                    start_position_a = Vector2(rect_a.get_center().x, rect_a.position.y);
+                } else {
+                //  [a] 
+                //   *  [b]
+                    start_position_a = Vector2(rect_a.get_center().x, rect_a.position.y + rect_a.size.y);
+
+                }
+            }
+
+            path_rect_a.set_position(start_position_a);
+            path_rect_a.set_end(end_position);
+            path_rect_a = path_rect_a.abs().grow_side(rect_a.get_center().y > rect_b.get_center().y ? SIDE_RIGHT : SIDE_LEFT, 3.0);
+            if (path_rect_a.has_area())
+            {
+                path_rectangles.push_back(path_rect_a);
+            }
+
             Rect2i path_rect_b = Rect2i();
-            path_rect_b.set_position(rect_b.get_center());
-            path_rect_b.set_end(Vector2i(rect_a.get_center().x, rect_b.get_center().y));
-            path_rectangles.push_back(path_rect_b
-                                          .abs()
-                                          .grow_side(rect_a.get_center().x > rect_b.get_center().x ? SIDE_BOTTOM : SIDE_TOP, 3.0));
-        }   
+
+            // path_rect_b.set_position(rect_b.get_center());
+            path_rect_b.set_position(start_position_b);
+            path_rect_b.set_end(end_position);
+            path_rect_b = path_rect_b.abs().grow_side(rect_a.get_center().x > rect_b.get_center().x ? SIDE_BOTTOM : SIDE_TOP, 3.0);
+            if (path_rect_b.has_area())
+            {
+                path_rectangles.push_back(path_rect_b);
+            }
+        }
     }
 
     return path_rectangles;

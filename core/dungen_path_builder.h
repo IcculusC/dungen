@@ -1,6 +1,7 @@
 #ifndef DUNGEN_PATH_BUILDER_H
 #define DUNGEN_PATH_BUILDER_H
 
+#include <godot_cpp/classes/geometry2d.hpp>
 #include <godot_cpp/classes/ref.hpp>
 
 #include <godot_cpp/templates/hash_map.hpp>

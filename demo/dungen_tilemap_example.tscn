@@ -1,23 +1,30 @@
-[gd_scene load_steps=6 format=3 uid="uid://cjecf608p14dx"]
+[gd_scene load_steps=6 format=3 uid="uid://bhpfhf4154gda"]
 
-[ext_resource type="DungenConfig" uid="uid://cx0ar5e0sru1a" path="res://example_dungen_config.tres" id="1_emuab"]
+[ext_resource type="DungenConfig" uid="uid://cc4h0p48n43c3" path="res://another_example.tres" id="1_wrvhu"]
 [ext_resource type="Script" path="res://dungen_renderer.gd" id="2_q3qnt"]
-[ext_resource type="Texture2D" uid="uid://bi0imlwua1fex" path="res://tile.png" id="3_wir52"]
+[ext_resource type="Texture2D" uid="uid://d3ytmmcma00xs" path="res://floor_tile.png" id="3_vras5"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xi8e5"]
-texture = ExtResource("3_wir52")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_b8ruu"]
+texture = ExtResource("3_vras5")
+texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
+0:0/0/texture_origin = Vector2i(0, 8)
 
 [sub_resource type="TileSet" id="TileSet_hf5fd"]
-sources/0 = SubResource("TileSetAtlasSource_xi8e5")
+tile_shape = 1
+tile_layout = 4
+tile_size = Vector2i(32, 16)
+sources/0 = SubResource("TileSetAtlasSource_b8ruu")
 
 [node name="Dungen" type="Dungen"]
-config = ExtResource("1_emuab")
+config = ExtResource("1_wrvhu")
 script = ExtResource("2_q3qnt")
 
 [node name="TileMap" type="TileMap" parent="."]
+y_sort_enabled = true
 tile_set = SubResource("TileSet_hf5fd")
 format = 2
+layer_0/y_sort_enabled = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(0.4, 0.4)
