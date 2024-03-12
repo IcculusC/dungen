@@ -39,6 +39,9 @@ Dungen::~Dungen()
     {
         memdelete(all_rooms[i]);
     }
+    all_rooms.clear();
+    map_rooms.clear();
+    trimmed_rooms.clear();
 }
 
 void Dungen::set_config(const Ref<DungenConfig> &p_config)

@@ -3,7 +3,13 @@
 using namespace godot;
 
 DungenPathBuilder::DungenPathBuilder() : super_rect(Rect2(0, 0, 1, 1)) {}
-DungenPathBuilder::~DungenPathBuilder() {}
+DungenPathBuilder::~DungenPathBuilder() {
+    rooms.clear();
+    triangulation.clear();
+    corners.clear();
+    minimum_spanning_tree.clear();
+    non_spanning_edges.clear();
+}
 
 void DungenPathBuilder::add_rooms(const Vector<DungenRoom *> &p_rooms)
 {
