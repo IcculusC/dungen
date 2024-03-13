@@ -25,12 +25,13 @@ namespace godot
     
     protected:
         static void _bind_methods();
-
         void _notification(int p_what);
 
         void _emit_pressed(String p_which);
 
     public:
+        void set_text(const String &p_text);
+
         DungenZoomWidget();
         ~DungenZoomWidget(); 
     };

@@ -25,12 +25,6 @@ namespace godot
     private:
         DungenZoomWidget *dungen_zoom_widget;
 
-        HBoxContainer *nav;
-
-        Button *zoom_out_btn;
-        Button *zoom_reset_btn;
-        Button *zoom_in_btn;
-
         PanelContainer *dungen_preview_wrapper;
 
         DungenPreviewer *dungen_previewer;

@@ -40,6 +40,10 @@ DungenZoomWidget::DungenZoomWidget()
 }
 DungenZoomWidget::~DungenZoomWidget() {}
 
+void DungenZoomWidget::set_text(const String &p_text) {
+    zoom_reset_btn->set_text(p_text);
+}
+
 void DungenZoomWidget::_bind_methods()
 {
     ADD_SIGNAL(MethodInfo("zoom_out_pressed"));
