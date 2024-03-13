@@ -14,6 +14,7 @@
 
 #include "../core/dungen.h"
 #include "dungen_previewer.h"
+#include "components/dungen_zoom_widget.h"
 
 namespace godot
 {
@@ -22,6 +23,8 @@ namespace godot
         GDCLASS(DungenPreviewPanel, VBoxContainer)
 
     private:
+        DungenZoomWidget *dungen_zoom_widget;
+
         HBoxContainer *nav;
 
         Button *zoom_out_btn;

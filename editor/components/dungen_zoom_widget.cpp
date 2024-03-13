@@ -42,9 +42,9 @@ DungenZoomWidget::~DungenZoomWidget() {}
 
 void DungenZoomWidget::_bind_methods()
 {
-    ADD_SIGNAL(MethodInfo("zoom_out"));
-    ADD_SIGNAL(MethodInfo("zoom_reset"));
-    ADD_SIGNAL(MethodInfo("zoom_in"));
+    ADD_SIGNAL(MethodInfo("zoom_out_pressed"));
+    ADD_SIGNAL(MethodInfo("zoom_reset_pressed"));
+    ADD_SIGNAL(MethodInfo("zoom_in_pressed"));
 }
 
 void DungenZoomWidget::_emit_pressed(String p_what) {
@@ -55,9 +55,9 @@ void DungenZoomWidget::_notification(int p_what)
 {
     if (p_what == NOTIFICATION_READY)
     {
-        zoom_out_btn->connect("pressed", callable_mp(this, &DungenZoomWidget::_emit_pressed).bind("zoom_out"));
-        zoom_reset_btn->connect("pressed", callable_mp(this, &DungenZoomWidget::_emit_pressed).bind("zoom_reset"));
-        zoom_in_btn->connect("pressed", callable_mp(this, &DungenZoomWidget::_emit_pressed).bind("zoom_in"));
+        zoom_out_btn->connect("pressed", callable_mp(this, &DungenZoomWidget::_emit_pressed).bind("zoom_out_pressed"));
+        zoom_reset_btn->connect("pressed", callable_mp(this, &DungenZoomWidget::_emit_pressed).bind("zoom_reset_pressed"));
+        zoom_in_btn->connect("pressed", callable_mp(this, &DungenZoomWidget::_emit_pressed).bind("zoom_in_pressed"));
     }
     if (p_what == NOTIFICATION_THEME_CHANGED)
     {
