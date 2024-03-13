@@ -9,15 +9,10 @@ using namespace godot;
 DungenPreviewPanel::DungenPreviewPanel()
 {
     Ref<StyleBoxEmpty> empty_stylebox = memnew(StyleBoxEmpty);
-
-    vbox = memnew(VBoxContainer);
-    vbox->set_h_size_flags(SIZE_EXPAND_FILL);
-    vbox->set_v_size_flags(SIZE_EXPAND_FILL);
-    add_child(vbox);
-
+    
     nav = memnew(HBoxContainer);
     nav->set_h_size_flags(SIZE_EXPAND);
-    vbox->add_child(nav);
+    add_child(nav);
 
     zoom_out_btn = memnew(Button);
     zoom_out_btn->set_text("");
@@ -51,7 +46,7 @@ DungenPreviewPanel::DungenPreviewPanel()
     dungen_preview_wrapper->set_h_size_flags(SIZE_EXPAND_FILL);
     dungen_preview_wrapper->set_v_size_flags(SIZE_EXPAND_FILL);
     dungen_preview_wrapper->set_clip_contents(true);
-    vbox->add_child(dungen_preview_wrapper);
+    add_child(dungen_preview_wrapper);
 
     dungen_previewer = memnew(DungenPreviewer);
     dungen_previewer->set_h_size_flags(SIZE_EXPAND_FILL);

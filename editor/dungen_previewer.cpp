@@ -18,6 +18,7 @@ void DungenPreviewer::set_dungen_instance(Dungen *dungen)
     {
         dungen_instance->connect("generation_complete", callable_mp(this, &DungenPreviewer::_generation_complete));
     }
+    queue_redraw();
 }
 
 void DungenPreviewer::set_show_trimmed_rooms(bool p_show)

@@ -17,13 +17,11 @@
 
 namespace godot
 {
-    class DungenPreviewPanel : public PanelContainer
+    class DungenPreviewPanel : public VBoxContainer 
     {
-        GDCLASS(DungenPreviewPanel, PanelContainer)
+        GDCLASS(DungenPreviewPanel, VBoxContainer)
 
     private:
-        VBoxContainer *vbox;
-
         HBoxContainer *nav;
 
         Button *zoom_out_btn;

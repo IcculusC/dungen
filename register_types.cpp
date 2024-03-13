@@ -6,7 +6,7 @@
 
 #ifdef TOOLS_ENABLED
 #include "editor/dungen_editor_plugin.h"
-#include "editor/dungen_editor_toolbar.h"
+#include "editor/components/dungen_editor_toolbar.h"
 #include "editor/dungen_preview_panel.h"
 #include "editor/dungen_previewer.h"
 #endif // TOOLS_ENABLED

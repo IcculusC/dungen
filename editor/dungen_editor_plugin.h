@@ -13,13 +13,16 @@
 #include <godot_cpp/classes/file_dialog.hpp>
 #include <godot_cpp/classes/h_box_container.hpp>
 #include <godot_cpp/classes/h_split_container.hpp>
-#include <godot_cpp/classes/panel_container.hpp>
+#include <godot_cpp/classes/margin_container.hpp>
 #include <godot_cpp/classes/panel.hpp>
+#include <godot_cpp/classes/panel_container.hpp>
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/resource_saver.hpp>
 #include <godot_cpp/classes/style_box_empty.hpp>
+#include <godot_cpp/classes/style_box_flat.hpp>
 #include <godot_cpp/classes/texture2d.hpp>
+#include <godot_cpp/classes/theme.hpp>
 #include <godot_cpp/classes/v_box_container.hpp>
 
 #include <godot_cpp/core/error_macros.hpp>
@@ -28,7 +31,7 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include "../core/dungen.h"
-#include "dungen_editor_toolbar.h"
+#include "components/dungen_editor_toolbar.h"
 #include "dungen_preview_panel.h"
 #include "dungen_previewer.h"
 
@@ -45,11 +48,11 @@ namespace godot
         EditorPlugin *plugin;
         Dungen *dungen_instance;
 
-        VBoxContainer *vbox;
-        Button *header;
-
         FileDialog *save_dialog;
         FileDialog *load_dialog;
+
+        VBoxContainer *main_layout;
+        Button *header;
 
         DungenEditorToolbar *dungen_editor_toolbar;
 
@@ -57,13 +60,17 @@ namespace godot
 
         DungenPreviewPanel *dungen_preview_panel;
 
-        VBoxContainer *dungen_preview_sidebar_vbox;
+        PanelContainer *dungen_preview_sidebar_panel;
+        VBoxContainer *dungen_preview_sidebar_layout;
 
         CheckButton *show_path_rectangles_btn;
         CheckButton *show_trimmed_rooms_btn;
         CheckButton *show_triangulation_btn;
         CheckButton *show_minimum_spanning_tree_btn;
         CheckButton *show_path_edges_btn;
+
+        void _initialize_dialogs();
+        void _initialize_main_layout();
 
         void _config_changed();
 
