@@ -4,6 +4,10 @@ using namespace godot;
 
 DungenPathBuilder::DungenPathBuilder() : super_rect(Rect2(0, 0, 1, 1)) {}
 DungenPathBuilder::~DungenPathBuilder() {
+    reset();
+}
+
+void DungenPathBuilder::reset() {
     rooms.clear();
     triangulation.clear();
     corners.clear();
@@ -23,7 +27,7 @@ void DungenPathBuilder::add_room(DungenRoom *p_room)
 
 void DungenPathBuilder::clear_rooms()
 {
-    rooms.clear();
+    reset();
 }
 
 void DungenPathBuilder::triangulate()

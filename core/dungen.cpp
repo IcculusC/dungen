@@ -69,17 +69,20 @@ Vector<DungenRoom *> Dungen::get_trimmed_rooms() const
     return trimmed_rooms;
 }
 
-Dictionary Dungen::get_all() {
+Dictionary Dungen::get_all()
+{
     Dictionary results;
 
     Array room_rects_array;
-    for (int i = 0; i < map_rooms.size(); i++) {
+    for (int i = 0; i < map_rooms.size(); i++)
+    {
         room_rects_array.push_back(map_rooms[i]->get_rectangle());
     }
 
     Vector<Rect2i> path_rects = path_builder.get_path_rectangles();
     Array path_rects_array;
-    for (int i = 0; i < path_rects.size(); i++) {
+    for (int i = 0; i < path_rects.size(); i++)
+    {
         path_rects_array.push_back(path_rects[i]);
     }
 
@@ -93,6 +96,7 @@ void Dungen::generate()
 {
     rng.set_seed(config->get_seed());
     double generation_start = (double)clock();
+
     _generate_rooms();
     _separate_rooms();
     _trim_rooms();
@@ -165,7 +169,7 @@ void Dungen::_reset()
     all_rooms.clear();
     map_rooms.clear();
     trimmed_rooms.clear();
-    path_builder.clear_rooms();
+    path_builder.reset();
     total_area = 0;
 }
 
@@ -258,6 +262,72 @@ bool Dungen::_has_overlapping_rooms()
             }
         }
     }
+    return false;
+}
+
+void Dungen::_separation_iteration(int p_start) {
+    for (int i = p_start; i < all_rooms.size(); i += 1)
+    {
+        Vector2 movement_vector = Vector2(0, 0);
+        int neighbors = 0;
+        DungenRoom *rect_a = all_rooms[i];
+
+        for (int j = p_start; j < all_rooms.size(); j += 1)
+        {
+            if (i == j)
+            {
+                continue;
+            }
+
+            DungenRoom *rect_b = all_rooms[j];
+
+            if (!rect_a->intersects(rect_b))
+            {
+                continue;
+            }
+
+            neighbors++;
+
+            Vector2 center_distance = rect_a->get_center() - rect_b->get_center();
+
+            if (center_distance.is_zero_approx())
+            {
+                movement_vector += Vector2(rng.randi_range(-1, 1), rng.randi_range(-1, 1));
+                // neighbors++;
+                // movement_vector = Vector2(rng.randi_range(-5, 5), rng.randi_range(-5, 5));
+                // neighbors = 1;
+                continue;
+            }
+
+            // movement_vector += center_distance;
+            // neighbors++;
+            movement_vector += center_distance;
+        }
+
+        if (movement_vector != Vector2i(0, 0) && neighbors > 0)
+        {
+            Vector2 direction =
+                Vector2(movement_vector / neighbors)
+                    .normalized()
+                    .snapped(Vector2(1, 1));
+
+            rect_a->set_position(rect_a->get_position() + Vector2i(direction));
+        }
+    }
+
+}
+
+bool Dungen::_smart_separate_rooms()
+{
+    int first_index = _smart_has_overlapping_rooms();
+
+    if (first_index == -1)
+    {
+        return true;
+    }
+
+    _separation_iteration(first_index);
+
     return false;
 }
 

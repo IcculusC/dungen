@@ -190,6 +190,8 @@ namespace godot
         Vector<DungenEdge> get_minimum_spanning_tree() { return minimum_spanning_tree; };
         Vector<DungenEdge> get_path_edges();
         Vector<Rect2i> get_path_rectangles();
+
+        void reset();
         
         operator Variant() const;
     };

@@ -31,6 +31,10 @@ void DungenPreviewPanel::set_dungen_instance(Dungen *dungen)
     dungen_previewer->set_dungen_instance(dungen);
 }
 
+void DungenPreviewPanel::set_show_all(bool p_show) {
+    dungen_previewer->set_show_all(p_show);
+}
+
 void DungenPreviewPanel::set_show_trimmed_rooms(bool p_show)
 {
     dungen_previewer->set_show_trimmed_rooms(p_show);
@@ -58,7 +62,7 @@ void DungenPreviewPanel::set_show_path_rectangles(bool p_show)
 
 void DungenPreviewPanel::refresh()
 {
-    dungen_previewer->queue_redraw();
+    dungen_previewer->refresh();
 }
 
 void DungenPreviewPanel::_update_zoom_reset_button()

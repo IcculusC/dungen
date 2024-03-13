@@ -56,67 +56,190 @@ namespace godot
 		int _smart_has_overlapping_rooms();
 		bool _has_overlapping_rooms();
 
+		void _separation_iteration(int p_start);
+
+		bool _smart_separate_rooms();
 		void _separate_rooms();
 
 		bool _should_trim_room(DungenRoom *room, double minimum_area) const;
 		void _trim_rooms();
 
+	protected:
+		static void _bind_methods();
+
+	public:
 		struct Iterator
 		{
 		private:
+			Dungen *dungen;
 			int E = -1;
+			int stage = 0;
 
 		public:
-			_FORCE_INLINE_ int &operator*() const
+			_FORCE_INLINE_ int get_stage() const { return stage; }
+
+			_FORCE_INLINE_ int operator*() const
 			{
 				return E;
 			}
 
-			_FORCE_INLINE_ int *operator->() const
+			_FORCE_INLINE_ int operator->() const
 			{
 				return E;
+			}
+
+			_FORCE_INLINE_ void next() {
+				E++;
+
+				switch (stage)
+				{
+				case 0:
+				{
+					if (dungen->all_rooms.size() < dungen->config->get_room_count())
+					{
+						DungenRoom *room = dungen->_generate_room();
+						dungen->total_area += room->get_area();
+						dungen->all_rooms.push_back(room);
+					}
+					else
+					{
+						stage++;
+					}
+					break;
+				}
+				case 1:
+				{
+					if (dungen->_smart_separate_rooms())
+					{
+						stage++;
+					}
+					break;
+				}
+				case 2:
+				{
+					dungen->_trim_rooms();
+					stage++;
+				}
+				case 3:
+				{
+					dungen->path_builder.add_rooms(dungen->map_rooms);
+					dungen->path_builder.triangulate();
+					stage++;
+				}
+				case 4:
+				{
+					dungen->path_builder.find_minimum_spanning_tree();
+					stage++;
+				}
+				default:
+					dungen->emit_signal("generation_complete", 0);
+					E = -1;
+					stage = -1;
+				}
 			}
 
 			_FORCE_INLINE_ Iterator &operator++()
 			{
 				E++;
+
+				switch (stage)
+				{
+				case 0:
+				{
+					if (dungen->all_rooms.size() < dungen->config->get_room_count())
+					{
+						DungenRoom *room = dungen->_generate_room();
+						dungen->total_area += room->get_area();
+						dungen->all_rooms.push_back(room);
+					}
+					else
+					{
+						stage++;
+					}
+					break;
+				}
+				case 1:
+				{
+					if (dungen->_smart_separate_rooms())
+					{
+						stage++;
+					}
+					break;
+				}
+				case 2:
+				{
+					dungen->_trim_rooms();
+					stage++;
+				}
+				case 3:
+				{
+					dungen->path_builder.add_rooms(dungen->map_rooms);
+					dungen->path_builder.triangulate();
+					stage++;
+				}
+				case 4:
+				{
+					dungen->path_builder.find_minimum_spanning_tree();
+					stage++;
+				}
+				default:
+					dungen->emit_signal("generation_complete", 0);
+					E = -1;
+					stage = -1;
+					return *this;
+				}
+
 				return *this;
 			}
 
-			_FORCE_INLINE_ bool operator==(const Iterator &b) const { return E == b.E; }
-			_FORCE_INLINE_ bool operator!=(const Iterator &b) const { return E != b.E; }
+			_FORCE_INLINE_ bool operator==(const Iterator &b) const { return E == b.E && stage == b.stage; }
+			_FORCE_INLINE_ bool operator!=(const Iterator &b) const { return E != b.E && stage != b.stage; }
 
 			_FORCE_INLINE_ explicit operator bool() const
 			{
 				return E != -1;
 			}
 
-			_FORCE_INLINE_ Iterator(int p_E) { E = p_E; }
+			_FORCE_INLINE_ Iterator(Dungen *p_dungen, int p_E, int p_stage)
+			{
+				dungen = p_dungen;
+				E = p_E;
+				stage = p_stage;
+			}
 			_FORCE_INLINE_ Iterator() {}
-			_FORCE_INLINE_ Iterator(const Iterator &p_it) { E = p_it.E; }
-			
+			_FORCE_INLINE_ Iterator(const Iterator &p_it)
+			{
+				dungen = p_it.dungen;
+				E = p_it.E;
+				stage = p_it.stage;
+			}
+
 			_FORCE_INLINE_ void operator=(const Iterator &p_it)
 			{
+				dungen = p_it.dungen;
 				E = p_it.E;
+				stage = p_it.stage;
 			}
 		};
-	
-	_FORCE_INLINE_ Iterator begin() {
-		return Iterator(0);
-	}
-	_FORCE_INLINE_ Iterator end() {
-		return Iterator(-1);
-	}
-	/*
-	_FORCE_INLINE_ Iterator last() {
-		return Iterator(-1);
-	}
-	*/
 
-	protected:
-		static void _bind_methods();
+		_FORCE_INLINE_ Iterator begin()
+		{
+			_reset();
+			return Iterator(this, 0, 0);
+		}
+		_FORCE_INLINE_ Iterator end()
+		{
+			return Iterator(this, -1, -1);
+		}
+		/*
+		_FORCE_INLINE_ Iterator last() {
+			return Iterator(-1);
+		}
+		*/
 
-	public:
+
+
+
 		Dungen();
 		~Dungen();
 

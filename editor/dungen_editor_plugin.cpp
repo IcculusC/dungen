@@ -173,7 +173,26 @@ void DungenEditor::_edit_dungen_config(Ref<DungenConfig> config)
 
 void DungenEditor::_regenerate()
 {
-    dungen_instance->generate();
+    animation_iterator = dungen_instance->begin();
+    _step();
+    // dungen_instance->generate();
+}
+
+void DungenEditor::_step() {
+    if (animation_iterator != dungen_instance->end()) {
+        if (animation_iterator.get_stage() > 1) {
+            dungen_preview_panel->set_show_all(false);
+        } else {
+            dungen_preview_panel->set_show_all(true);
+        }
+        UtilityFunctions::print("STEPPED");
+        animation_iterator.next();
+
+        dungen_preview_panel->refresh();
+
+        Ref<SceneTreeTimer> timer = get_tree()->create_timer(0.1);
+        timer->connect("timeout", callable_mp(this, &DungenEditor::_step));
+    }
 }
 
 void DungenEditor::_notification(int p_what)
