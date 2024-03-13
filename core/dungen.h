@@ -61,6 +61,58 @@ namespace godot
 		bool _should_trim_room(DungenRoom *room, double minimum_area) const;
 		void _trim_rooms();
 
+		struct Iterator
+		{
+		private:
+			int E = -1;
+
+		public:
+			_FORCE_INLINE_ int &operator*() const
+			{
+				return E;
+			}
+
+			_FORCE_INLINE_ int *operator->() const
+			{
+				return E;
+			}
+
+			_FORCE_INLINE_ Iterator &operator++()
+			{
+				E++;
+				return *this;
+			}
+
+			_FORCE_INLINE_ bool operator==(const Iterator &b) const { return E == b.E; }
+			_FORCE_INLINE_ bool operator!=(const Iterator &b) const { return E != b.E; }
+
+			_FORCE_INLINE_ explicit operator bool() const
+			{
+				return E != -1;
+			}
+
+			_FORCE_INLINE_ Iterator(int p_E) { E = p_E; }
+			_FORCE_INLINE_ Iterator() {}
+			_FORCE_INLINE_ Iterator(const Iterator &p_it) { E = p_it.E; }
+			
+			_FORCE_INLINE_ void operator=(const Iterator &p_it)
+			{
+				E = p_it.E;
+			}
+		};
+	
+	_FORCE_INLINE_ Iterator begin() {
+		return Iterator(0);
+	}
+	_FORCE_INLINE_ Iterator end() {
+		return Iterator(-1);
+	}
+	/*
+	_FORCE_INLINE_ Iterator last() {
+		return Iterator(-1);
+	}
+	*/
+
 	protected:
 		static void _bind_methods();
 
