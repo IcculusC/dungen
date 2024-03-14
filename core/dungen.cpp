@@ -26,11 +26,12 @@ Dungen::Dungen() : config(Ref<DungenConfig>(memnew(DungenConfig))),
                    all_rooms(Vector<DungenRoom *>()),
                    map_rooms(Vector<DungenRoom *>()),
                    trimmed_rooms(Vector<DungenRoom *>()),
-                   rng(RandomNumberGenerator()),
+                   rng(Ref<RandomNumberGenerator>(memnew(RandomNumberGenerator))),
                    total_area(0),
-                   path_builder(DungenPathBuilder())
+                   path_builder(DungenPathBuilder()),
+                   room_generator(DungenRoomGenerator())
 {
-    rng.set_seed(config->get_seed());
+    rng->set_seed(config->get_seed());
 }
 
 Dungen::~Dungen()
@@ -94,12 +95,14 @@ Dictionary Dungen::get_all()
 
 void Dungen::generate()
 {
-    rng.set_seed(config->get_seed());
+    rng->set_seed(config->get_seed());
     double generation_start = (double)clock();
 
     _generate_rooms();
     _separate_rooms();
     _trim_rooms();
+
+    room_generator.generate(config, rng);
 
     path_builder.clear_rooms();
     path_builder.add_rooms(map_rooms);
@@ -136,14 +139,14 @@ Vector2i Dungen::generate_random_point_in_rectangle(Vector2i &dimensions)
     Vector2i half_size = dimensions / 2;
 
     return Vector2i(
-        rng.randi_range(-half_size.x, half_size.x),
-        rng.randi_range(-half_size.y, half_size.y));
+        rng->randi_range(-half_size.x, half_size.x),
+        rng->randi_range(-half_size.y, half_size.y));
 }
 
 Vector2i Dungen::generate_random_point_in_ellipse(Vector2i &dimensions)
 {
-    double t = 2 * Math_PI * rng.randf();
-    double u = rng.randf() + rng.randf();
+    double t = 2 * Math_PI * rng->randf();
+    double u = rng->randf() + rng->randf();
     double r = 0;
 
     if (u > 1)
@@ -192,11 +195,11 @@ DungenRoom *Dungen::_generate_room()
     }
     if (room_position == Vector2i(0, 0))
     {
-        room_position += Vector2i(rng.randi_range(-5, 5), rng.randi_range(-5, 5));
+        room_position += Vector2i(rng->randi_range(-5, 5), rng->randi_range(-5, 5));
     }
 
-    double w = Math::abs(rng.randfn(room_dimensions.x, room_dimensions_sigma.x));
-    double h = Math::abs(rng.randfn(room_dimensions.y, room_dimensions_sigma.y));
+    double w = Math::abs(rng->randfn(room_dimensions.x, room_dimensions_sigma.x));
+    double h = Math::abs(rng->randfn(room_dimensions.y, room_dimensions_sigma.y));
     Vector2i size = Vector2i(w, h);
     Rect2i rect = Rect2i(room_position - (size / 2), size);
 
@@ -292,9 +295,9 @@ void Dungen::_separation_iteration(int p_start) {
 
             if (center_distance.is_zero_approx())
             {
-                movement_vector += Vector2(rng.randi_range(-1, 1), rng.randi_range(-1, 1));
+                movement_vector += Vector2(rng->randi_range(-1, 1), rng->randi_range(-1, 1));
                 // neighbors++;
-                // movement_vector = Vector2(rng.randi_range(-5, 5), rng.randi_range(-5, 5));
+                // movement_vector = Vector2(rng->randi_range(-5, 5), rng->randi_range(-5, 5));
                 // neighbors = 1;
                 continue;
             }
@@ -362,9 +365,9 @@ void Dungen::_separate_rooms()
 
                 if (center_distance.is_zero_approx())
                 {
-                    movement_vector += Vector2(rng.randi_range(-1, 1), rng.randi_range(-1, 1));
+                    movement_vector += Vector2(rng->randi_range(-1, 1), rng->randi_range(-1, 1));
                     // neighbors++;
-                    // movement_vector = Vector2(rng.randi_range(-5, 5), rng.randi_range(-5, 5));
+                    // movement_vector = Vector2(rng->randi_range(-5, 5), rng->randi_range(-5, 5));
                     // neighbors = 1;
                     continue;
                 }
@@ -412,7 +415,7 @@ void Dungen::_trim_rooms()
     double room_dimensions_trim_sigma = config->get_room_dimensions_trim_sigma();
 
     double average_area = get_average_area();
-    double minimum_area = rng.randfn(average_area, room_dimensions_trim_sigma);
+    double minimum_area = rng->randfn(average_area, room_dimensions_trim_sigma);
     int new_area = 0;
 
     for (int i = 0; i < all_rooms.size(); i++)

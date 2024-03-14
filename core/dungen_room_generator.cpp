@@ -5,6 +5,11 @@ using namespace godot;
 DungenRoomGenerator::DungenRoomGenerator(){};
 DungenRoomGenerator::~DungenRoomGenerator(){};
 
+void DungenRoomGenerator::generate(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng) {
+    _reset();
+    for (int i = 0; i < this->end(); this->next(config, rng)) {}
+}
+
 int DungenRoomGenerator::begin()
 {
     _reset();

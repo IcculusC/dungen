@@ -23,6 +23,7 @@
 #include "dungen_config.h"
 #include "dungen_path_builder.h"
 #include "dungen_room.h"
+#include "dungen_room_generator.h"
 #include "enums.h"
 
 namespace godot
@@ -37,13 +38,14 @@ namespace godot
 
 		double total_area;
 
-		RandomNumberGenerator rng;
+		Ref<RandomNumberGenerator> rng;
 
 		Vector<DungenRoom *> all_rooms;
 		Vector<DungenRoom *> map_rooms;
 		Vector<DungenRoom *> trimmed_rooms;
 
 		DungenPathBuilder path_builder;
+		DungenRoomGenerator room_generator;
 
 		Vector2i generate_random_point_in_ellipse(Vector2i &spawn_area_dimensions);
 		Vector2i generate_random_point_in_rectangle(Vector2i &spawn_area_dimensions);

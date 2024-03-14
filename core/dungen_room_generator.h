@@ -58,7 +58,7 @@ namespace godot {
         DungenRoomGenerator();
         ~DungenRoomGenerator();
 
-        void generate();
+        void generate(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng);
 
         double get_average_area() const { return all_rooms.size() > 0 ? total_area / all_rooms.size() : 0; };
 		double get_total_area() const { return total_area; };
