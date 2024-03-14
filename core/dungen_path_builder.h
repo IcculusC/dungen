@@ -165,6 +165,16 @@ namespace godot
     class DungenPathBuilder
     {
     private:
+        enum Phase
+        {
+            START,
+            TRIANGULATE,
+            MINIMUM_SPANNING_TREE,
+            COMPLETE
+        } phase;
+
+        int current_index;
+
         Vector<DungenRoom *> rooms;
         Vector<DungenRoom *> corners;
         Rect2 super_rect;
@@ -184,6 +194,7 @@ namespace godot
         void clear_rooms();
 
         void triangulate();
+        bool triangulate_point(int i);
         void find_minimum_spanning_tree();
 
         Vector<DungenTriangle> get_triangulation() { return triangulation; };
@@ -191,8 +202,12 @@ namespace godot
         Vector<DungenEdge> get_path_edges();
         Vector<Rect2i> get_path_rectangles();
 
+        int begin();
+        int end() { return -1; }
+        int next();
+
         void reset();
-        
+
         operator Variant() const;
     };
 }

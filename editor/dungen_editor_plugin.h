@@ -73,7 +73,6 @@ namespace godot
 
         void _initialize_dialogs();
         void _initialize_main_layout();
-        Dungen::Iterator animation_iterator;
 
         void _config_changed();
 

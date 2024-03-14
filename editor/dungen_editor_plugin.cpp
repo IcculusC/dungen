@@ -7,7 +7,8 @@
 
 using namespace godot;
 
-void DungenEditor::_initialize_dialogs() {
+void DungenEditor::_initialize_dialogs()
+{
     save_dialog = memnew(FileDialog);
     save_dialog->set_file_mode(FileDialog::FILE_MODE_SAVE_FILE);
     save_dialog->set_title("Save Dungen Config");
@@ -23,7 +24,8 @@ void DungenEditor::_initialize_dialogs() {
     add_child(load_dialog);
 }
 
-void DungenEditor::_initialize_main_layout() {
+void DungenEditor::_initialize_main_layout()
+{
     main_layout = memnew(VBoxContainer);
     main_layout->set_anchor(SIDE_RIGHT, ANCHOR_END);
     main_layout->set_anchor(SIDE_BOTTOM, ANCHOR_END);
@@ -59,7 +61,7 @@ DungenEditor::DungenEditor()
 
     _initialize_dialogs();
     _initialize_main_layout();
-    
+
     dungen_preview_panel = memnew(DungenPreviewPanel);
     EXPAND_FILL(dungen_preview_panel)
     dungen_preview_panel->set_stretch_ratio(4);
@@ -173,12 +175,22 @@ void DungenEditor::_edit_dungen_config(Ref<DungenConfig> config)
 
 void DungenEditor::_regenerate()
 {
-    animation_iterator = dungen_instance->begin();
+    dungen_instance->begin();
     _step();
+    // animation_iterator = dungen_instance->begin();
+    // _step();
     // dungen_instance->generate();
 }
 
-void DungenEditor::_step() {
+void DungenEditor::_step()
+{
+    dungen_preview_panel->refresh();
+    if (dungen_instance->next() != -1)
+    {
+        Ref<SceneTreeTimer> timer = get_tree()->create_timer(0.1);
+        timer->connect("timeout", callable_mp(this, &DungenEditor::_step));
+    }
+    /*
     if (animation_iterator != dungen_instance->end()) {
         if (animation_iterator.get_stage() > 1) {
             dungen_preview_panel->set_show_all(false);
@@ -192,6 +204,7 @@ void DungenEditor::_step() {
         Ref<SceneTreeTimer> timer = get_tree()->create_timer(0.1);
         timer->connect("timeout", callable_mp(this, &DungenEditor::_step));
     }
+    */
 }
 
 void DungenEditor::_notification(int p_what)

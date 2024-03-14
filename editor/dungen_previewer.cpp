@@ -100,7 +100,7 @@ void DungenPreviewer::_draw()
 
     set_pivot_offset(get_size() / 2);
 
-    Vector<DungenRoom *> rooms = dungen_instance->get_map();
+    Vector<DungenRoom *> rooms = dungen_instance->get_map_rooms();
     Vector<DungenRoom *> trimmed_rooms = dungen_instance->get_trimmed_rooms();
     Vector<DungenRoom *> all_rooms = dungen_instance->get_all_rooms();
 

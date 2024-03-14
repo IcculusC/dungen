@@ -18,6 +18,7 @@ void Dungen::_bind_methods()
 
     ADD_SIGNAL(MethodInfo("generate_rooms", PropertyInfo(Variant::FLOAT, "time_elapsed")));
     ADD_SIGNAL(MethodInfo("separate_rooms", PropertyInfo(Variant::FLOAT, "time_elapsed")));
+    ADD_SIGNAL(MethodInfo("triangulate_rooms", PropertyInfo(Variant::FLOAT, "time_elapsed")));
 
     ADD_SIGNAL(MethodInfo("generation_complete", PropertyInfo(Variant::FLOAT, "time_elapsed")));
 }
@@ -32,13 +33,42 @@ Dungen::Dungen() : config(Ref<DungenConfig>(memnew(DungenConfig))),
 
 Dungen::~Dungen()
 {
-    for (int i = 0; i < all_rooms.size(); i++)
-    {
-        memdelete(all_rooms[i]);
+    path_builder.reset();
+    room_generator.reset();
+}
+
+int Dungen::begin()
+{
+    reset();
+    return current_index;
+}
+
+int Dungen::next() {
+    switch(phase) {
+        case START:
+            phase = ROOMS;
+            break;
+        case ROOMS:
+            if (room_generator.next() == -1)
+            {
+                path_builder.add_rooms(room_generator.get_map_rooms());
+                phase = GEOMETRY;
+            }
+            current_index++;
+            break;
+        case GEOMETRY:
+            if (path_builder.next() == -1)
+            {
+                phase = COMPLETE;
+            }
+            current_index++;
+            break;
+        case COMPLETE:
+        default:
+            return -1;
     }
-    all_rooms.clear();
-    map_rooms.clear();
-    trimmed_rooms.clear();
+
+    return current_index;
 }
 
 void Dungen::set_config(const Ref<DungenConfig> &p_config)
@@ -56,7 +86,7 @@ Vector<DungenRoom *> Dungen::get_all_rooms() const
     return room_generator.get_all_rooms();
 }
 
-Vector<DungenRoom *> Dungen::get_map() const
+Vector<DungenRoom *> Dungen::get_map_rooms() const
 {
     return room_generator.get_map_rooms();
 }
@@ -69,6 +99,9 @@ Vector<DungenRoom *> Dungen::get_trimmed_rooms() const
 Dictionary Dungen::get_all()
 {
     Dictionary results;
+
+    Vector<DungenRoom *> map_rooms = room_generator.get_map_rooms();
+
 
     Array room_rects_array;
     for (int i = 0; i < map_rooms.size(); i++)
@@ -169,275 +202,11 @@ Vector2i Dungen::generate_random_point_in_ellipse(Vector2i &dimensions)
     return Vector2i(dimensions_d);
 }
 
-void Dungen::_reset()
-{
-    for (int i = 0; i < all_rooms.size(); i++)
-    {
-        memdelete(all_rooms[i]);
-    }
-    all_rooms.clear();
-    map_rooms.clear();
-    trimmed_rooms.clear();
+void Dungen::reset()
+{   
     path_builder.reset();
-    total_area = 0;
-}
+    room_generator.reset();
 
-DungenRoom *Dungen::_generate_room()
-{
-    DungenShape spawn_area_shape = config->get_spawn_area_shape();
-    Vector2i spawn_area_dimensions = config->get_spawn_area_dimensions();
-
-    Vector2i room_dimensions = config->get_room_dimensions();
-    Vector2i room_dimensions_sigma = config->get_room_dimensions_sigma();
-
-    Vector2i room_position;
-    if (spawn_area_shape == RECTANGLE)
-    {
-        room_position = generate_random_point_in_rectangle(spawn_area_dimensions);
-    }
-    else
-    {
-        room_position = generate_random_point_in_ellipse(spawn_area_dimensions);
-    }
-    if (room_position == Vector2i(0, 0))
-    {
-        room_position += Vector2i(rng->randi_range(-5, 5), rng->randi_range(-5, 5));
-    }
-
-    double w = Math::abs(rng->randfn(room_dimensions.x, room_dimensions_sigma.x));
-    double h = Math::abs(rng->randfn(room_dimensions.y, room_dimensions_sigma.y));
-    Vector2i size = Vector2i(w, h);
-    Rect2i rect = Rect2i(room_position - (size / 2), size);
-
-    return memnew(DungenRoom(rect));
-}
-
-void Dungen::_generate_rooms()
-{
-    clock_t generate_start = clock();
-    _reset();
-
-    int room_count = config->get_room_count();
-
-    for (int i = 0; i < room_count; i++)
-    {
-        DungenRoom *room = _generate_room();
-        total_area += room->get_area();
-        all_rooms.push_back(room);
-    }
-
-    emit_signal("generate_rooms", ((double)clock() - generate_start) / CLOCKS_PER_SEC);
-}
-
-// TODO: implement this maybe optimization of having the ID of the first overlap
-int Dungen::_smart_has_overlapping_rooms()
-{
-    for (int i = 0; i < all_rooms.size(); i += 1)
-    {
-        DungenRoom *rect_a = all_rooms[i];
-        for (int j = 0; j < all_rooms.size(); j += 1)
-        {
-            if (i == j)
-            {
-                continue;
-            }
-
-            DungenRoom *rect_b = all_rooms[j];
-            if (rect_a->intersects(rect_b))
-            {
-                return i;
-            }
-        }
-    }
-    return -1;
-}
-
-bool Dungen::_has_overlapping_rooms()
-{
-    for (int i = 0; i < all_rooms.size(); i += 1)
-    {
-        DungenRoom *rect_a = all_rooms[i];
-        for (int j = 0; j < all_rooms.size(); j += 1)
-        {
-            if (i == j)
-            {
-                continue;
-            }
-
-            DungenRoom *rect_b = all_rooms[j];
-            if (rect_a->intersects(rect_b))
-            {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-void Dungen::_separation_iteration(int p_start) {
-    for (int i = p_start; i < all_rooms.size(); i += 1)
-    {
-        Vector2 movement_vector = Vector2(0, 0);
-        int neighbors = 0;
-        DungenRoom *rect_a = all_rooms[i];
-
-        for (int j = p_start; j < all_rooms.size(); j += 1)
-        {
-            if (i == j)
-            {
-                continue;
-            }
-
-            DungenRoom *rect_b = all_rooms[j];
-
-            if (!rect_a->intersects(rect_b))
-            {
-                continue;
-            }
-
-            neighbors++;
-
-            Vector2 center_distance = rect_a->get_center() - rect_b->get_center();
-
-            if (center_distance.is_zero_approx())
-            {
-                movement_vector += Vector2(rng->randi_range(-1, 1), rng->randi_range(-1, 1));
-                // neighbors++;
-                // movement_vector = Vector2(rng->randi_range(-5, 5), rng->randi_range(-5, 5));
-                // neighbors = 1;
-                continue;
-            }
-
-            // movement_vector += center_distance;
-            // neighbors++;
-            movement_vector += center_distance;
-        }
-
-        if (movement_vector != Vector2i(0, 0) && neighbors > 0)
-        {
-            Vector2 direction =
-                Vector2(movement_vector / neighbors)
-                    .normalized()
-                    .snapped(Vector2(1, 1));
-
-            rect_a->set_position(rect_a->get_position() + Vector2i(direction));
-        }
-    }
-
-}
-
-bool Dungen::_smart_separate_rooms()
-{
-    int first_index = _smart_has_overlapping_rooms();
-
-    if (first_index == -1)
-    {
-        return true;
-    }
-
-    _separation_iteration(first_index);
-
-    return false;
-}
-
-// TODO: make this faster, start at first overlapping room with _smart_has_overlapping_rooms function, test other optimizations
-void Dungen::_separate_rooms()
-{
-    clock_t separate_start = clock();
-    while (_has_overlapping_rooms())
-    {
-        for (int i = 0; i < all_rooms.size(); i += 1)
-        {
-            Vector2 movement_vector = Vector2(0, 0);
-            int neighbors = 0;
-            DungenRoom *rect_a = all_rooms[i];
-            for (int j = 0; j < all_rooms.size(); j += 1)
-            {
-                if (i == j)
-                {
-                    continue;
-                }
-
-                DungenRoom *rect_b = all_rooms[j];
-
-                if (!rect_a->intersects(rect_b))
-                {
-                    continue;
-                }
-
-                neighbors++;
-
-                Vector2 center_distance = rect_a->get_center() - rect_b->get_center();
-
-                if (center_distance.is_zero_approx())
-                {
-                    movement_vector += Vector2(rng->randi_range(-1, 1), rng->randi_range(-1, 1));
-                    // neighbors++;
-                    // movement_vector = Vector2(rng->randi_range(-5, 5), rng->randi_range(-5, 5));
-                    // neighbors = 1;
-                    continue;
-                }
-
-                // movement_vector += center_distance;
-                // neighbors++;
-                movement_vector += center_distance;
-            }
-
-            if (movement_vector != Vector2i(0, 0) && neighbors > 0)
-            {
-                Vector2 direction =
-                    Vector2(movement_vector / neighbors)
-                        .normalized()
-                        .snapped(Vector2(1, 1));
-
-                rect_a->set_position(rect_a->get_position() + Vector2i(direction));
-            }
-        }
-    }
-
-    UtilityFunctions::print("SEPARATION TIME ELAPSED ", (float)(clock() - separate_start) / CLOCKS_PER_SEC);
-    emit_signal("separate_rooms", ((double)clock() - separate_start) / CLOCKS_PER_SEC);
-}
-
-bool Dungen::_should_trim_room(DungenRoom *room, double minimum_area) const
-{
-    Vector2i room_minimum_dimensions = config->get_room_minimum_dimensions();
-    Rect2i rectangle = room->get_rectangle();
-
-    if (
-        rectangle.size.x < room_minimum_dimensions.x ||
-        rectangle.size.y < room_minimum_dimensions.y ||
-        rectangle.get_area() < minimum_area)
-    {
-        return true;
-    }
-
-    return false;
-}
-
-// TODO: figure out some less random logic for this because it's quiet unpredictable
-void Dungen::_trim_rooms()
-{
-    double room_dimensions_trim_sigma = config->get_room_dimensions_trim_sigma();
-
-    double average_area = get_average_area();
-    double minimum_area = rng->randfn(average_area, room_dimensions_trim_sigma);
-    int new_area = 0;
-
-    for (int i = 0; i < all_rooms.size(); i++)
-    {
-        DungenRoom *rect = all_rooms[i];
-
-        if (_should_trim_room(rect, minimum_area))
-        {
-            trimmed_rooms.push_back(rect);
-            continue;
-        }
-
-        rect->set_color(Color::named("POWDERBLUE"));
-        map_rooms.push_back(rect);
-        new_area += rect->get_area();
-    }
-
-    total_area = new_area;
+    phase = START;
+    current_index = 0;
 }

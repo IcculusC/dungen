@@ -13,12 +13,12 @@ void DungenRoomGenerator::set_config(Ref<DungenConfig> &p_config) {
         return;
     }
     config = p_config;
-    _reset();
+    reset();
 }
 
 void DungenRoomGenerator::generate()
 {
-    _reset();
+    reset();
     while (this->next() != this->end())
     {
     }
@@ -26,7 +26,7 @@ void DungenRoomGenerator::generate()
 
 int DungenRoomGenerator::begin()
 {
-    _reset();
+    reset();
     return current_step;
 }
 
@@ -78,7 +78,7 @@ int DungenRoomGenerator::next()
     return current_step;
 }
 
-void DungenRoomGenerator::_reset()
+void DungenRoomGenerator::reset()
 {
     for (int i = 0; i < all_rooms.size(); i++)
     {
@@ -154,7 +154,7 @@ DungenRoom *DungenRoomGenerator::_generate_room()
 
 void DungenRoomGenerator::_generate_rooms()
 {
-    _reset();
+    reset();
 
     int room_count = config->get_room_count();
 
