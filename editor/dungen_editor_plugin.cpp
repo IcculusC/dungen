@@ -1,19 +1,13 @@
 #ifdef TOOLS_ENABLED
 
 #include "dungen_editor_plugin.h"
+#include "dungen_editor_macros.h"
 
 #include "../core/dungen_config.h"
 
 using namespace godot;
 
-DungenEditor::DungenEditor()
-{
-    set_clip_contents(true);
-
-    Ref<StyleBoxEmpty> empty_stylebox = memnew(StyleBoxEmpty);
-
-    dungen_instance = memnew(Dungen());
-
+void DungenEditor::_initialize_dialogs() {
     save_dialog = memnew(FileDialog);
     save_dialog->set_file_mode(FileDialog::FILE_MODE_SAVE_FILE);
     save_dialog->set_title("Save Dungen Config");
@@ -27,79 +21,97 @@ DungenEditor::DungenEditor()
     load_dialog->add_filter("*.tres");
     load_dialog->hide();
     add_child(load_dialog);
+}
 
-    vbox = memnew(VBoxContainer);
-    vbox->set_anchor(SIDE_RIGHT, ANCHOR_END);
-    vbox->set_anchor(SIDE_BOTTOM, ANCHOR_END);
-    add_child(vbox);
+void DungenEditor::_initialize_main_layout() {
+    main_layout = memnew(VBoxContainer);
+    main_layout->set_anchor(SIDE_RIGHT, ANCHOR_END);
+    main_layout->set_anchor(SIDE_BOTTOM, ANCHOR_END);
+    add_child(main_layout);
 
     dungen_editor_toolbar = memnew(DungenEditorToolbar);
-    vbox->add_child(dungen_editor_toolbar);
+    main_layout->add_child(dungen_editor_toolbar);
 
     header = memnew(Button);
     header->set_text_alignment(HORIZONTAL_ALIGNMENT_LEFT);
     header->add_theme_constant_override("hseparation", 8);
-    vbox->add_child(header);
+    main_layout->add_child(header);
+
+    MarginContainer *main_margins = memnew(MarginContainer);
+    EXPAND_FILL(main_margins)
+    MARGIN_OVERRIDE_ALL(main_margins, 8)
+    MARGIN_OVERRIDE(main_margins, "top", 0)
+    main_layout->add_child(main_margins);
 
     hsc = memnew(HSplitContainer);
-    hsc->set_h_size_flags(SIZE_EXPAND_FILL);
-    hsc->set_v_size_flags(SIZE_EXPAND_FILL);
-    hsc->set_dragger_visibility(HSplitContainer::DRAGGER_HIDDEN);
+    EXPAND_FILL(hsc)
     hsc->set_focus_mode(FOCUS_NONE);
-    vbox->add_child(hsc);
+    main_margins->add_child(hsc);
+}
 
+DungenEditor::DungenEditor()
+{
+    set_clip_contents(true);
+
+    Ref<StyleBoxEmpty> empty_stylebox = memnew(StyleBoxEmpty);
+
+    dungen_instance = memnew(Dungen());
+
+    _initialize_dialogs();
+    _initialize_main_layout();
+    
     dungen_preview_panel = memnew(DungenPreviewPanel);
-    dungen_preview_panel->set_h_size_flags(SIZE_EXPAND_FILL);
-    dungen_preview_panel->set_v_size_flags(SIZE_EXPAND_FILL);
+    EXPAND_FILL(dungen_preview_panel)
     dungen_preview_panel->set_stretch_ratio(4);
     dungen_preview_panel->set_dungen_instance(dungen_instance);
     hsc->add_child(dungen_preview_panel);
 
-    PanelContainer *dungen_preview_sidebar_panel = memnew(PanelContainer);
-    dungen_preview_sidebar_panel->set_h_size_flags(SIZE_EXPAND_FILL);
-    dungen_preview_sidebar_panel->set_v_size_flags(SIZE_EXPAND_FILL);
+    Ref<StyleBoxFlat> panel_bg = EDITOR_THEME()->get_stylebox("panel", "Panel");
+
+    dungen_preview_sidebar_panel = memnew(PanelContainer);
+    ADD_STYLEBOX_OVERRIDE(dungen_preview_sidebar_panel, "panel", panel_bg)
+    EXPAND_FILL(dungen_preview_sidebar_panel)
     dungen_preview_sidebar_panel->set_stretch_ratio(1);
     hsc->add_child(dungen_preview_sidebar_panel);
 
-    dungen_preview_sidebar_vbox = memnew(VBoxContainer);
-    dungen_preview_sidebar_vbox->set_h_size_flags(SIZE_EXPAND_FILL);
-    dungen_preview_sidebar_vbox->set_v_size_flags(SIZE_EXPAND_FILL);
-    dungen_preview_sidebar_panel->add_child(dungen_preview_sidebar_vbox);
+    dungen_preview_sidebar_layout = memnew(VBoxContainer);
+    EXPAND_FILL(dungen_preview_sidebar_layout)
+    dungen_preview_sidebar_panel->add_child(dungen_preview_sidebar_layout);
 
     show_path_rectangles_btn = memnew(CheckButton);
     show_path_rectangles_btn->set_text("Path Rectangles");
     show_path_rectangles_btn->set_toggle_mode(true);
     show_path_rectangles_btn->set_pressed(true);
     dungen_preview_panel->set_show_path_rectangles(true);
-    dungen_preview_sidebar_vbox->add_child(show_path_rectangles_btn);
+    dungen_preview_sidebar_layout->add_child(show_path_rectangles_btn);
 
     show_trimmed_rooms_btn = memnew(CheckButton);
     show_trimmed_rooms_btn->set_text("Trimmed Rooms");
     show_trimmed_rooms_btn->set_toggle_mode(true);
     show_trimmed_rooms_btn->set_pressed(false);
     dungen_preview_panel->set_show_trimmed_rooms(false);
-    dungen_preview_sidebar_vbox->add_child(show_trimmed_rooms_btn);
+    dungen_preview_sidebar_layout->add_child(show_trimmed_rooms_btn);
 
     show_triangulation_btn = memnew(CheckButton);
     show_triangulation_btn->set_text("Triangulation");
     show_triangulation_btn->set_toggle_mode(true);
     show_triangulation_btn->set_pressed(false);
     dungen_preview_panel->set_show_triangulation(false);
-    dungen_preview_sidebar_vbox->add_child(show_triangulation_btn);
+    dungen_preview_sidebar_layout->add_child(show_triangulation_btn);
 
     show_minimum_spanning_tree_btn = memnew(CheckButton);
     show_minimum_spanning_tree_btn->set_text("Minimum Spanning Tree");
     show_minimum_spanning_tree_btn->set_toggle_mode(true);
     show_minimum_spanning_tree_btn->set_pressed(false);
     dungen_preview_panel->set_show_minimum_spanning_tree(false);
-    dungen_preview_sidebar_vbox->add_child(show_minimum_spanning_tree_btn);
+    dungen_preview_sidebar_layout->add_child(show_minimum_spanning_tree_btn);
 
     show_path_edges_btn = memnew(CheckButton);
     show_path_edges_btn->set_text("Path Edges");
     show_path_edges_btn->set_toggle_mode(true);
     show_path_edges_btn->set_pressed(false);
     dungen_preview_panel->set_show_path_edges(false);
-    dungen_preview_sidebar_vbox->add_child(show_path_edges_btn);
+    dungen_preview_sidebar_layout->add_child(show_path_edges_btn);
 }
 
 DungenEditor::~DungenEditor()
@@ -227,7 +239,7 @@ void DungenEditorPlugin::_notification(int p_what)
     {
         dungen_editor = memnew(DungenEditor());
         dungen_editor->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-        EditorInterface::get_singleton()->get_editor_main_screen()->add_child(dungen_editor);
+        MAIN_SCREEN_CONTROL()->add_child(dungen_editor);
         dungen_editor->hide();
         dungen_editor->set_plugin(this);
     }

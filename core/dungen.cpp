@@ -102,8 +102,25 @@ void Dungen::generate()
     path_builder.triangulate();
     path_builder.find_minimum_spanning_tree();
 
-    // TODO: generate minimum spanning tree
-    // TODO: path rectangles
+    Vector<DungenEdge> path_edges = path_builder.get_path_edges();
+
+    for (DungenEdge &e : path_edges) {
+        Vector2 midpoint = Vector2(e.a->get_center().x, e.b->get_center().y);
+        Vector2 center = e.get_center();
+
+        for (DungenRoom *e : trimmed_rooms) {
+            if (e->get_rectangle().has_point(midpoint) || e->get_rectangle().has_point(center)) {
+                e->set_color(Color::named("CORAL"));
+                map_rooms.push_back(e);
+                trimmed_rooms.erase(e);
+            }
+        }
+    }
+
+    path_builder.clear_rooms();
+    path_builder.add_rooms(map_rooms);
+    path_builder.triangulate();
+    path_builder.find_minimum_spanning_tree();
 
     emit_signal("generation_complete", ((double)clock() - generation_start) / CLOCKS_PER_SEC);
 }

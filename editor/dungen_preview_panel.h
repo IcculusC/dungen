@@ -14,21 +14,16 @@
 
 #include "../core/dungen.h"
 #include "dungen_previewer.h"
+#include "components/dungen_zoom_widget.h"
 
 namespace godot
 {
-    class DungenPreviewPanel : public PanelContainer
+    class DungenPreviewPanel : public VBoxContainer 
     {
-        GDCLASS(DungenPreviewPanel, PanelContainer)
+        GDCLASS(DungenPreviewPanel, VBoxContainer)
 
     private:
-        VBoxContainer *vbox;
-
-        HBoxContainer *nav;
-
-        Button *zoom_out_btn;
-        Button *zoom_reset_btn;
-        Button *zoom_in_btn;
+        DungenZoomWidget *dungen_zoom_widget;
 
         PanelContainer *dungen_preview_wrapper;
 
