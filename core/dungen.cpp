@@ -109,7 +109,7 @@ void Dungen::generate()
         Vector2 center = e.get_center();
 
         for (DungenRoom *e : trimmed_rooms) {
-            if (e->get_rectangle().has_point(midpoint) || e->get_rectangle().has_point(center) || Rect2(e->get_rectangle()).intersects_segment(e->get_center(), e->get_center())) {
+            if (e->get_rectangle().has_point(midpoint) || e->get_rectangle().has_point(center)) {
                 e->set_color(Color::named("CORAL"));
                 map_rooms.push_back(e);
                 trimmed_rooms.erase(e);
