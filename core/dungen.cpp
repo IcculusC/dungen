@@ -23,13 +23,9 @@ void Dungen::_bind_methods()
 }
 
 Dungen::Dungen() : config(Ref<DungenConfig>(memnew(DungenConfig))),
-                   all_rooms(Vector<DungenRoom *>()),
-                   map_rooms(Vector<DungenRoom *>()),
-                   trimmed_rooms(Vector<DungenRoom *>()),
                    rng(Ref<RandomNumberGenerator>(memnew(RandomNumberGenerator))),
-                   total_area(0),
                    path_builder(DungenPathBuilder()),
-                   room_generator(DungenRoomGenerator())
+                   room_generator(DungenRoomGenerator(this->config, this->rng))
 {
     rng->set_seed(config->get_seed());
 }
@@ -57,17 +53,17 @@ void Dungen::set_config(const Ref<DungenConfig> &p_config)
 
 Vector<DungenRoom *> Dungen::get_all_rooms() const
 {
-    return all_rooms;
+    return room_generator.get_all_rooms();
 }
 
 Vector<DungenRoom *> Dungen::get_map() const
 {
-    return map_rooms;
+    return room_generator.get_map_rooms();
 }
 
 Vector<DungenRoom *> Dungen::get_trimmed_rooms() const
 {
-    return trimmed_rooms;
+    return room_generator.get_trimmed_rooms();
 }
 
 Dictionary Dungen::get_all()
@@ -98,17 +94,26 @@ void Dungen::generate()
     rng->set_seed(config->get_seed());
     double generation_start = (double)clock();
 
+    /*
     _generate_rooms();
     _separate_rooms();
     _trim_rooms();
+    */
+    room_generator.generate();
+    /*
+    all_rooms = room_generator.get_all_rooms();
+    map_rooms = room_generator.get_map_rooms();
+    trimmed_rooms = room_generator.get_trimmed_rooms();
 
-    room_generator.generate(config, rng);
+    total_area = room_generator.get_total_area();
+    */
 
     path_builder.clear_rooms();
-    path_builder.add_rooms(map_rooms);
+    path_builder.add_rooms(room_generator.get_map_rooms());
     path_builder.triangulate();
     path_builder.find_minimum_spanning_tree();
 
+    /*
     Vector<DungenEdge> path_edges = path_builder.get_path_edges();
 
     for (DungenEdge &e : path_edges) {
@@ -125,9 +130,10 @@ void Dungen::generate()
     }
 
     path_builder.clear_rooms();
-    path_builder.add_rooms(map_rooms);
+    path_builder.add_rooms(room_generator.get_map_rooms());
     path_builder.triangulate();
     path_builder.find_minimum_spanning_tree();
+    */
 
     emit_signal("generation_complete", ((double)clock() - generation_start) / CLOCKS_PER_SEC);
 }

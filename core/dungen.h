@@ -28,21 +28,25 @@
 
 namespace godot
 {
-
 	class Dungen : public Node
 	{
 		GDCLASS(Dungen, Node)
 
+		friend class DungenRoomGenerator;
+
 	private:
-		Ref<DungenConfig> config;
+		// DEPRECATED
+		int total_area;
 
-		double total_area;
-
-		Ref<RandomNumberGenerator> rng;
-
-		Vector<DungenRoom *> all_rooms;
+        Vector<DungenRoom *> all_rooms;
 		Vector<DungenRoom *> map_rooms;
 		Vector<DungenRoom *> trimmed_rooms;
+
+		// END DEPRECATED
+
+		Ref<DungenConfig> config;
+
+		Ref<RandomNumberGenerator> rng;
 
 		DungenPathBuilder path_builder;
 		DungenRoomGenerator room_generator;
@@ -97,13 +101,7 @@ namespace godot
 				{
 				case 0:
 				{
-					if (dungen->all_rooms.size() < dungen->config->get_room_count())
-					{
-						DungenRoom *room = dungen->_generate_room();
-						dungen->total_area += room->get_area();
-						dungen->all_rooms.push_back(room);
-					}
-					else
+					if (dungen->room_generator.next() == -1)
 					{
 						stage++;
 					}
@@ -124,7 +122,7 @@ namespace godot
 				}
 				case 3:
 				{
-					dungen->path_builder.add_rooms(dungen->map_rooms);
+					dungen->path_builder.add_rooms(dungen->room_generator.get_map_rooms());
 					dungen->path_builder.triangulate();
 					stage++;
 				}
@@ -148,14 +146,13 @@ namespace godot
 				{
 				case 0:
 				{
-					if (dungen->all_rooms.size() < dungen->config->get_room_count())
+					if (dungen->room_generator.next() == -1)
 					{
+						/*
 						DungenRoom *room = dungen->_generate_room();
 						dungen->total_area += room->get_area();
 						dungen->all_rooms.push_back(room);
-					}
-					else
-					{
+						*/
 						stage++;
 					}
 					break;
@@ -175,7 +172,7 @@ namespace godot
 				}
 				case 3:
 				{
-					dungen->path_builder.add_rooms(dungen->map_rooms);
+					dungen->path_builder.add_rooms(dungen->room_generator.get_map_rooms());
 					dungen->path_builder.triangulate();
 					stage++;
 				}
@@ -227,6 +224,7 @@ namespace godot
 		_FORCE_INLINE_ Iterator begin()
 		{
 			_reset();
+			room_generator.begin();
 			return Iterator(this, 0, 0);
 		}
 		_FORCE_INLINE_ Iterator end()
@@ -252,8 +250,8 @@ namespace godot
 
 		DungenPathBuilder get_path_builder() { return path_builder; }
 
-		double get_average_area() const { return all_rooms.size() > 0 ? total_area / all_rooms.size() : 0; };
-		double get_total_area() const { return total_area; };
+		double get_average_area() const { return room_generator.get_average_area(); };
+		double get_total_area() const { return room_generator.get_total_area(); };
 
 		Vector<DungenRoom *> get_all_rooms() const;
 		Vector<DungenRoom *> get_map() const;

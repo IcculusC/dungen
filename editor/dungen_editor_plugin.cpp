@@ -185,7 +185,6 @@ void DungenEditor::_step() {
         } else {
             dungen_preview_panel->set_show_all(true);
         }
-        UtilityFunctions::print("STEPPED");
         animation_iterator.next();
 
         dungen_preview_panel->refresh();

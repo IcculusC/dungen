@@ -2,12 +2,26 @@
 
 using namespace godot;
 
-DungenRoomGenerator::DungenRoomGenerator(){};
-DungenRoomGenerator::~DungenRoomGenerator(){};
+DungenRoomGenerator::DungenRoomGenerator(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng)
+    : config(config), rng(rng)
+{
+}
+DungenRoomGenerator::~DungenRoomGenerator() {}
 
-void DungenRoomGenerator::generate(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng) {
+void DungenRoomGenerator::set_config(Ref<DungenConfig> &p_config) {
+    if (config == p_config) {
+        return;
+    }
+    config = p_config;
     _reset();
-    for (int i = 0; i < this->end(); this->next(config, rng)) {}
+}
+
+void DungenRoomGenerator::generate()
+{
+    _reset();
+    while (this->next() != this->end())
+    {
+    }
 }
 
 int DungenRoomGenerator::begin()
@@ -16,7 +30,7 @@ int DungenRoomGenerator::begin()
     return current_step;
 }
 
-int DungenRoomGenerator::next(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng)
+int DungenRoomGenerator::next()
 {
     switch (phase)
     {
@@ -27,7 +41,7 @@ int DungenRoomGenerator::next(Ref<DungenConfig> &config, Ref<RandomNumberGenerat
     case GENERATE:
         if (all_rooms.size() < config->get_room_count())
         {
-            DungenRoom *room = _generate_room(config, rng);
+            DungenRoom *room = _generate_room();
             total_area += room->get_area();
             all_rooms.push_back(room);
         }
@@ -42,7 +56,7 @@ int DungenRoomGenerator::next(Ref<DungenConfig> &config, Ref<RandomNumberGenerat
         int first_overlap = _smart_has_overlapping_rooms();
         if (first_overlap != -1)
         {
-            _smart_separation_iteration(first_overlap, rng);
+            _smart_separation_iteration(first_overlap);
         }
         else
         {
@@ -52,8 +66,9 @@ int DungenRoomGenerator::next(Ref<DungenConfig> &config, Ref<RandomNumberGenerat
         break;
     }
     case TRIM:
-        _smart_trim_rooms(config, rng);
-        phase = COMPLETE;
+        _smart_trim_rooms();
+        phase = COMPLETE; 
+        current_step++;
         break;
     case COMPLETE:
     default:
@@ -82,7 +97,7 @@ void DungenRoomGenerator::_reset()
     phase = START;
 }
 
-Vector2i DungenRoomGenerator::generate_random_point_in_rectangle(Vector2i &dimensions, Ref<RandomNumberGenerator> &rng)
+Vector2i DungenRoomGenerator::generate_random_point_in_rectangle(Vector2i &dimensions)
 {
     Vector2i half_size = dimensions / 2;
 
@@ -91,7 +106,7 @@ Vector2i DungenRoomGenerator::generate_random_point_in_rectangle(Vector2i &dimen
         rng->randi_range(-half_size.y, half_size.y));
 }
 
-Vector2i DungenRoomGenerator::generate_random_point_in_ellipse(Vector2i &dimensions, Ref<RandomNumberGenerator> &rng)
+Vector2i DungenRoomGenerator::generate_random_point_in_ellipse(Vector2i &dimensions)
 {
     double t = 2 * Math_PI * rng->randf();
     double u = rng->randf() + rng->randf();
@@ -111,7 +126,7 @@ Vector2i DungenRoomGenerator::generate_random_point_in_ellipse(Vector2i &dimensi
     return Vector2i(dimensions_d);
 }
 
-DungenRoom *DungenRoomGenerator::_generate_room(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng)
+DungenRoom *DungenRoomGenerator::_generate_room()
 {
     DungenShape spawn_area_shape = config->get_spawn_area_shape();
     Vector2i spawn_area_dimensions = config->get_spawn_area_dimensions();
@@ -122,11 +137,11 @@ DungenRoom *DungenRoomGenerator::_generate_room(Ref<DungenConfig> &config, Ref<R
     Vector2i room_position;
     if (spawn_area_shape == RECTANGLE)
     {
-        room_position = generate_random_point_in_rectangle(spawn_area_dimensions, rng);
+        room_position = generate_random_point_in_rectangle(spawn_area_dimensions);
     }
     else
     {
-        room_position = generate_random_point_in_ellipse(spawn_area_dimensions, rng);
+        room_position = generate_random_point_in_ellipse(spawn_area_dimensions);
     }
 
     double w = Math::abs(rng->randfn(room_dimensions.x, room_dimensions_sigma.x));
@@ -137,7 +152,7 @@ DungenRoom *DungenRoomGenerator::_generate_room(Ref<DungenConfig> &config, Ref<R
     return memnew(DungenRoom(rect));
 }
 
-void DungenRoomGenerator::_generate_rooms(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng)
+void DungenRoomGenerator::_generate_rooms()
 {
     _reset();
 
@@ -145,7 +160,7 @@ void DungenRoomGenerator::_generate_rooms(Ref<DungenConfig> &config, Ref<RandomN
 
     for (int i = 0; i < room_count; i++)
     {
-        DungenRoom *room = _generate_room(config, rng);
+        DungenRoom *room = _generate_room();
         total_area += room->get_area();
         all_rooms.push_back(room);
     }
@@ -173,7 +188,7 @@ int DungenRoomGenerator::_smart_has_overlapping_rooms()
     return -1;
 }
 
-bool DungenRoomGenerator::_smart_separate_rooms(Ref<RandomNumberGenerator> &rng)
+bool DungenRoomGenerator::_smart_separate_rooms()
 {
     int first_index = _smart_has_overlapping_rooms();
 
@@ -182,12 +197,12 @@ bool DungenRoomGenerator::_smart_separate_rooms(Ref<RandomNumberGenerator> &rng)
         return true;
     }
 
-    _smart_separation_iteration(first_index, rng);
+    _smart_separation_iteration(first_index);
 
     return false;
 }
 
-void DungenRoomGenerator::_smart_separation_iteration(int starting_room, Ref<RandomNumberGenerator> &rng)
+void DungenRoomGenerator::_smart_separation_iteration(int starting_room)
 {
     for (int i = starting_room; i < all_rooms.size(); i += 1)
     {
@@ -240,7 +255,7 @@ void DungenRoomGenerator::_smart_separation_iteration(int starting_room, Ref<Ran
     }
 }
 
-bool DungenRoomGenerator::_smart_should_trim_room(DungenRoom *room, Ref<DungenConfig> &config, double minimum_area) const
+bool DungenRoomGenerator::_smart_should_trim_room(DungenRoom *room, double minimum_area) const
 {
     Vector2i room_minimum_dimensions = config->get_room_minimum_dimensions();
     Rect2i rectangle = room->get_rectangle();
@@ -256,7 +271,35 @@ bool DungenRoomGenerator::_smart_should_trim_room(DungenRoom *room, Ref<DungenCo
     return false;
 }
 
-void DungenRoomGenerator::_smart_trim_rooms(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng)
+bool DungenRoomGenerator::_smart_trim_one() {
+    double room_dimensions_trim_sigma = config->get_room_dimensions_trim_sigma();
+    double average_area = get_average_area();
+    double minimum_area = rng->randfn(average_area, room_dimensions_trim_sigma);
+
+    Vector<DungenRoom *> keepers;
+    int kept_area;
+    for (int i = 0; i < all_rooms.size(); i++)
+    {
+        DungenRoom *rect = all_rooms[i];
+
+        if (_smart_should_trim_room(rect, minimum_area))
+        {
+            trimmed_rooms.push_back(rect);
+            trimmed_area += rect->get_area();
+            return true;
+        }
+
+        keepers.push_back(rect);
+        kept_area += rect->get_area();
+    }
+
+    map_rooms.append_array(keepers);
+    map_area = kept_area;
+
+    return false;
+}
+
+void DungenRoomGenerator::_smart_trim_rooms()
 {
     double room_dimensions_trim_sigma = config->get_room_dimensions_trim_sigma();
 
@@ -269,7 +312,7 @@ void DungenRoomGenerator::_smart_trim_rooms(Ref<DungenConfig> &config, Ref<Rando
     {
         DungenRoom *rect = all_rooms[i];
 
-        if (_smart_should_trim_room(rect, config, minimum_area))
+        if (_smart_should_trim_room(rect, minimum_area))
         {
             trimmed_rooms.push_back(rect);
             trimmed_area += rect->get_area();

@@ -28,6 +28,9 @@ namespace godot {
             COMPLETE
         } phase;
 
+        Ref<DungenConfig> config;
+        Ref<RandomNumberGenerator> rng;
+
         int current_step;
 
         int map_area;
@@ -38,34 +41,43 @@ namespace godot {
 		Vector<DungenRoom *> map_rooms;
 		Vector<DungenRoom *> trimmed_rooms;
 
-        Vector2i generate_random_point_in_ellipse(Vector2i &spawn_area_dimensions, Ref<RandomNumberGenerator> &rng);
-		Vector2i generate_random_point_in_rectangle(Vector2i &spawn_area_dimensions, Ref<RandomNumberGenerator> &rng);
+        Vector2i generate_random_point_in_ellipse(Vector2i &spawn_area_dimensions);
+		Vector2i generate_random_point_in_rectangle(Vector2i &spawn_area_dimensions);
 
-		DungenRoom *_generate_room(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng);
-		void _generate_rooms(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng);
+		DungenRoom *_generate_room();
+		void _generate_rooms();
 
 		int _smart_has_overlapping_rooms();
 
-		bool _smart_separate_rooms(Ref<RandomNumberGenerator> &rng);
-		void _smart_separation_iteration(int starting_room, Ref<RandomNumberGenerator> &rng);
+		bool _smart_separate_rooms();
+		void _smart_separation_iteration(int starting_room);
 
-		bool _smart_should_trim_room(DungenRoom *room, Ref<DungenConfig> &config, double minimum_area) const;
-        void _smart_trim_rooms(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng);
+		bool _smart_should_trim_room(DungenRoom *room, double minimum_area) const;
+        bool _smart_trim_one();
+        void _smart_trim_rooms();
 
         void _reset();
 
     public:
-        DungenRoomGenerator();
+        DungenRoomGenerator(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng);
         ~DungenRoomGenerator();
 
-        void generate(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng);
+        void set_config(Ref<DungenConfig> &p_config);
 
-        double get_average_area() const { return all_rooms.size() > 0 ? total_area / all_rooms.size() : 0; };
-		double get_total_area() const { return total_area; };
+        void generate();
+
+        double get_average_area() const { return all_rooms.size() > 0 ? 1.0 * total_area / all_rooms.size() : 0.0; };
+		int get_map_area() const { return map_area; };
+        int get_total_area() const { return total_area; };
+        int get_trimmed_area() const { return trimmed_area; };
 
         int begin();
         int end() { return -1; }
-        int next(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng);
+        int next();
+
+        const Vector<DungenRoom *> &get_all_rooms() const { return all_rooms; };
+		const Vector<DungenRoom *> &get_map_rooms() const { return map_rooms; };
+		const Vector<DungenRoom *> &get_trimmed_rooms() const { return trimmed_rooms; };
     };
 }
 
