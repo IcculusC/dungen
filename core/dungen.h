@@ -32,8 +32,6 @@ namespace godot
 	{
 		GDCLASS(Dungen, Node)
 
-		friend class DungenRoomGenerator;
-
 	private:
 		enum Phase
 		{
@@ -86,7 +84,9 @@ namespace godot
 		Vector<DungenRoom *> get_map_rooms() const;
 		Vector<DungenRoom *> get_trimmed_rooms() const;
 		
-		Dictionary get_all();		
+		Dictionary get_all();
+
+		int get_phase() const { return int(phase); };
 	};
 
 }

@@ -63,7 +63,7 @@ namespace godot
         DungenRoomGenerator(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng);
         ~DungenRoomGenerator();
 
-        void set_config(Ref<DungenConfig> &p_config);
+        void set_config(const Ref<DungenConfig> &p_config);
 
         void generate();
 

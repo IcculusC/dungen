@@ -33,8 +33,7 @@ Dungen::Dungen() : config(Ref<DungenConfig>(memnew(DungenConfig))),
 
 Dungen::~Dungen()
 {
-    path_builder.reset();
-    room_generator.reset();
+    reset();
 }
 
 int Dungen::begin()
@@ -77,7 +76,7 @@ void Dungen::set_config(const Ref<DungenConfig> &p_config)
     {
         return;
     }
-
+    room_generator.set_config(p_config);
     config = p_config;
 }
 

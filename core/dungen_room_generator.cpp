@@ -8,8 +8,10 @@ DungenRoomGenerator::DungenRoomGenerator(Ref<DungenConfig> &config, Ref<RandomNu
 }
 DungenRoomGenerator::~DungenRoomGenerator() {}
 
-void DungenRoomGenerator::set_config(Ref<DungenConfig> &p_config) {
-    if (config == p_config) {
+void DungenRoomGenerator::set_config(const Ref<DungenConfig> &p_config)
+{
+    if (config == p_config)
+    {
         return;
     }
     config = p_config;
@@ -37,7 +39,7 @@ int DungenRoomGenerator::next()
     case START:
         phase = GENERATE;
         current_step++;
-        // can fall down just need a starting and ending state
+        break;
     case GENERATE:
         if (all_rooms.size() < config->get_room_count())
         {
@@ -67,7 +69,7 @@ int DungenRoomGenerator::next()
     }
     case TRIM:
         _smart_trim_rooms();
-        phase = COMPLETE; 
+        phase = COMPLETE;
         current_step++;
         break;
     case COMPLETE:
@@ -88,13 +90,12 @@ void DungenRoomGenerator::reset()
     map_rooms.clear();
     trimmed_rooms.clear();
 
-    current_step = 0;
-
     map_area = 0;
     total_area = 0;
     trimmed_area = 0;
 
     phase = START;
+    current_step = 0;
 }
 
 Vector2i DungenRoomGenerator::generate_random_point_in_rectangle(Vector2i &dimensions)
@@ -271,7 +272,8 @@ bool DungenRoomGenerator::_smart_should_trim_room(DungenRoom *room, double minim
     return false;
 }
 
-bool DungenRoomGenerator::_smart_trim_one() {
+bool DungenRoomGenerator::_smart_trim_one()
+{
     double room_dimensions_trim_sigma = config->get_room_dimensions_trim_sigma();
     double average_area = get_average_area();
     double minimum_area = rng->randfn(average_area, room_dimensions_trim_sigma);

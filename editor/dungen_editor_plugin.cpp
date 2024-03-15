@@ -187,6 +187,18 @@ void DungenEditor::_step()
     dungen_preview_panel->refresh();
     if (dungen_instance->next() != -1)
     {
+        switch(dungen_instance->get_phase()) {
+            case 0:
+            case 1:
+            {
+                dungen_preview_panel->set_show_all(true);
+                break;
+            }
+            default:
+            {
+                dungen_preview_panel->set_show_all(false);
+            }
+        }
         Ref<SceneTreeTimer> timer = get_tree()->create_timer(0.1);
         timer->connect("timeout", callable_mp(this, &DungenEditor::_step));
     }

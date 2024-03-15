@@ -46,8 +46,38 @@ int DungenPathBuilder::next()
     switch (phase)
     {
     case START:
+    {
+        triangulation.clear();
+        corners.clear();
+
+        // CREATE INITIAL GEOMETRY
+        super_rect = Rect2(-1, -1, 1, 1);
+        for (int i = 0; i < rooms.size(); i++)
+        {
+            super_rect.expand_to(rooms[i]->get_center());
+        }
+
+        super_rect.grow_by(Math::max(super_rect.size.x, super_rect.size.y) / 2);
+
+        Vector2i corner0 = super_rect.position;
+        Vector2i corner1 = super_rect.position + (Vector2i(1, 0) * super_rect.size);
+        Vector2i corner2 = super_rect.position + super_rect.size;
+        Vector2i corner3 = super_rect.position + (Vector2i(0, 1) * super_rect.size);
+
+        corners.push_back(memnew(DungenRoom(corner0)));
+        corners.push_back(memnew(DungenRoom(corner1)));
+        corners.push_back(memnew(DungenRoom(corner2)));
+        corners.push_back(memnew(DungenRoom(corner3)));
+
+        clock_t triangulate_start = clock();
+
+        triangulation.push_back(DungenTriangle(corners[0], corners[1], corners[2]));
+        triangulation.push_back(DungenTriangle(corners[2], corners[3], corners[0]));
+        // CREATE INITIAL GEOMETRY
+
         phase = TRIANGULATE;
         break;
+    }
     case TRIANGULATE:
         if (triangulate_point(current_index))
         {
@@ -87,37 +117,6 @@ bool DungenPathBuilder::triangulate_point(int i)
     if (i == rooms.size())
     {
         return true;
-    }
-
-    if (i == 0)
-    {
-        triangulation.clear();
-        corners.clear();
-
-        // CREATE INITIAL GEOMETRY
-        super_rect = Rect2(-1, -1, 1, 1);
-        for (int i = 0; i < rooms.size(); i++)
-        {
-            super_rect.expand_to(rooms[i]->get_center());
-        }
-
-        super_rect.grow_by(Math::max(super_rect.size.x, super_rect.size.y) / 2);
-
-        Vector2i corner0 = super_rect.position;
-        Vector2i corner1 = super_rect.position + (Vector2i(1, 0) * super_rect.size);
-        Vector2i corner2 = super_rect.position + super_rect.size;
-        Vector2i corner3 = super_rect.position + (Vector2i(0, 1) * super_rect.size);
-
-        corners.push_back(memnew(DungenRoom(corner0)));
-        corners.push_back(memnew(DungenRoom(corner1)));
-        corners.push_back(memnew(DungenRoom(corner2)));
-        corners.push_back(memnew(DungenRoom(corner3)));
-
-        clock_t triangulate_start = clock();
-
-        triangulation.push_back(DungenTriangle(corners[0], corners[1], corners[2]));
-        triangulation.push_back(DungenTriangle(corners[2], corners[3], corners[0]));
-        // CREATE INITIAL GEOMETRY
     }
 
     DungenRoom *room = rooms[i];
@@ -170,22 +169,7 @@ bool DungenPathBuilder::triangulate_point(int i)
     {
         outer_polygon.erase(bad_edges[i]);
     }
-
-    // attempting to not add duplicate edges at all, but we'll see
-    /*
-    for (int t = 0; t < bad_triangles.size(); t++) {
-        if (!outer_polygon.has(bad_triangles[t].ab)) {
-           outer_polygon.push_back(bad_triangles[t].ab);
-        }
-        if (!outer_polygon.has(bad_triangles[t].bc)) {
-           outer_polygon.push_back(bad_triangles[t].bc);
-        }
-        if (!outer_polygon.has(bad_triangles[t].ca)) {
-           outer_polygon.push_back(bad_triangles[t].ca);
-        }
-    }
-    */
-
+   
     for (int i = 0; i < outer_polygon.size(); i++)
     {
         DungenEdge current_edge = outer_polygon[i];
@@ -229,6 +213,8 @@ void DungenPathBuilder::triangulate()
     // MAIN LOOP
     for (int room_number = 0; room_number < rooms.size(); room_number++)
     {
+        triangulate_point(room_number);
+        /*
         DungenRoom *room = rooms[room_number];
         Vector<DungenTriangle> bad_triangles;
 
@@ -280,6 +266,8 @@ void DungenPathBuilder::triangulate()
             outer_polygon.erase(bad_edges[i]);
         }
 
+        */
+
         // attempting to not add duplicate edges at all, but we'll see
         /*
         for (int t = 0; t < bad_triangles.size(); t++) {
@@ -295,12 +283,16 @@ void DungenPathBuilder::triangulate()
         }
         */
 
+        /*
+
         for (int i = 0; i < outer_polygon.size(); i++)
         {
             DungenEdge current_edge = outer_polygon[i];
             DungenTriangle t = DungenTriangle(room, current_edge.a, current_edge.b);
             triangulation.push_back(t);
         }
+
+        */
     }
 
     Vector<DungenTriangle> corner_triangles;
