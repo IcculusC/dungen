@@ -283,21 +283,6 @@ bool DungenPathBuilder::find_next_spanning_edge()
         return true;
     }
 
-    DungenEdge next_edge = all_edges[j];
-
-    while (minimum_spanning_tree.has(next_edge))
-    {
-        j++;
-
-        if (j >= all_edges.size())
-        {
-            // broken as fuck but rather not crash
-            return true;
-        }
-
-        next_edge = all_edges[j];
-    }
-
     /*
     if (minimum_spanning_tree.has(next_edge))
     {
@@ -305,21 +290,41 @@ bool DungenPathBuilder::find_next_spanning_edge()
         return false;
     }
     */
+    bool found_edge;
 
-    DungenRoom *room_a = _find_edge_parent(subsets, next_edge.a);
-    DungenRoom *room_b = _find_edge_parent(subsets, next_edge.b);
-
-    if (room_a != room_b)
+    while (!found_edge && j < all_edges.size())
     {
-        minimum_spanning_tree.push_back(next_edge);
-        _union_subsets(subsets, room_a, room_b);
-    }
-    else if (!non_spanning_edges.has(next_edge))
-    {
-        non_spanning_edges.push_back(next_edge);
-    }
+        DungenEdge next_edge = all_edges[j];
 
-    j++;
+        while (minimum_spanning_tree.has(next_edge))
+        {
+            j++;
+
+            if (j >= all_edges.size())
+            {
+                // broken as fuck but rather not crash
+                return true;
+            }
+
+            next_edge = all_edges[j];
+        }
+
+        DungenRoom *room_a = _find_edge_parent(subsets, next_edge.a);
+        DungenRoom *room_b = _find_edge_parent(subsets, next_edge.b);
+
+        if (room_a != room_b)
+        {
+            minimum_spanning_tree.push_back(next_edge);
+            _union_subsets(subsets, room_a, room_b);
+            found_edge = true;
+        }
+        else if (!non_spanning_edges.has(next_edge))
+        {
+            non_spanning_edges.push_back(next_edge);
+        }
+
+        j++;
+    }
 
     return false;
 }
