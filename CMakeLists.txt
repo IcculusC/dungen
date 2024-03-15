@@ -10,7 +10,9 @@ list(APPEND CMAKE_MODULE_PATH
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/godot-cpp)
 
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
+file(GLOB SOURCES CMAKE_CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/register_types.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/register_types.[hc]pp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/core/*.[hc]pp"
     "${CMAKE_CURRENT_SOURCE_DIR}/editor/*.h"
@@ -45,7 +47,7 @@ string(TOLOWER
 
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "${dungen_lib_name}")
 
-target_include_directories(${PROJECT_NAME} 
+target_include_directories(${PROJECT_NAME}
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/core"
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/editor"
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/editor/components")

@@ -5,7 +5,7 @@ compatibility_minimum = "4.2"
 
 [libraries]
 
-macos.debug = "res://bin/libdungen.macos.editor.framework"
+macos.debug = "res://bin/libdungen.darwin.64.debugd.dylib"
 macos.release = "res://bin/libdungen.macos.template_release.framework"
 windows.debug.x86_32 = "res://bin/libdungen.windows.editor.x86_32.dll"
 windows.release.x86_32 = "res://bin/libdungen.windows.template_release.x86_32.dll"
