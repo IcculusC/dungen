@@ -23,48 +23,46 @@
 #include "dungen_config.h"
 #include "dungen_path_builder.h"
 #include "dungen_room.h"
+#include "dungen_room_generator.h"
 #include "enums.h"
 
 namespace godot
 {
-
 	class Dungen : public Node
 	{
 		GDCLASS(Dungen, Node)
 
 	private:
+		enum Phase
+		{
+			START,
+			ROOMS,
+			GEOMETRY,
+			COMPLETE
+		} phase;
+
+		int current_index;
+
 		Ref<DungenConfig> config;
 
-		double total_area;
-
-		RandomNumberGenerator rng;
-
-		Vector<DungenRoom *> all_rooms;
-		Vector<DungenRoom *> map_rooms;
-		Vector<DungenRoom *> trimmed_rooms;
+		Ref<RandomNumberGenerator> rng;
 
 		DungenPathBuilder path_builder;
+		DungenRoomGenerator room_generator;
 
 		Vector2i generate_random_point_in_ellipse(Vector2i &spawn_area_dimensions);
 		Vector2i generate_random_point_in_rectangle(Vector2i &spawn_area_dimensions);
-
-		void _reset();
-
-		DungenRoom *_generate_room();
-		void _generate_rooms();
-
-		int _smart_has_overlapping_rooms();
-		bool _has_overlapping_rooms();
-
-		void _separate_rooms();
-
-		bool _should_trim_room(DungenRoom *room, double minimum_area) const;
-		void _trim_rooms();
 
 	protected:
 		static void _bind_methods();
 
 	public:
+		int begin();
+		int end() { return -1; }
+		int next();
+
+		void reset();
+
 		Dungen();
 		~Dungen();
 
@@ -75,14 +73,16 @@ namespace godot
 
 		DungenPathBuilder get_path_builder() { return path_builder; }
 
-		double get_average_area() const { return all_rooms.size() > 0 ? total_area / all_rooms.size() : 0; };
-		double get_total_area() const { return total_area; };
+		double get_average_area() const { return room_generator.get_average_area(); };
+		double get_total_area() const { return room_generator.get_total_area(); };
 
 		Vector<DungenRoom *> get_all_rooms() const;
-		Vector<DungenRoom *> get_map() const;
+		Vector<DungenRoom *> get_map_rooms() const;
 		Vector<DungenRoom *> get_trimmed_rooms() const;
-
+		
 		Dictionary get_all();
+
+		int get_phase() const { return int(phase); };
 	};
 
 }

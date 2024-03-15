@@ -44,6 +44,7 @@ namespace godot
 
         void set_dungen_instance(Dungen *dungen);
 
+        void set_show_all(bool p_show);
         void set_show_trimmed_rooms(bool p_show);
         void set_show_triangulation(bool p_show);
         void set_show_minimum_spanning_tree(bool p_show);

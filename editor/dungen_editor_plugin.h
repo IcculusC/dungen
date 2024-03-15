@@ -24,6 +24,8 @@
 #include <godot_cpp/classes/texture2d.hpp>
 #include <godot_cpp/classes/theme.hpp>
 #include <godot_cpp/classes/v_box_container.hpp>
+#include <godot_cpp/classes/scene_tree.hpp>
+#include <godot_cpp/classes/scene_tree_timer.hpp>
 
 #include <godot_cpp/core/error_macros.hpp>
 
@@ -82,6 +84,7 @@ namespace godot
 
         void _edit_dungen_config(Ref<DungenConfig> config);
         void _regenerate();
+        void _step();
 
         void _redraw();
 

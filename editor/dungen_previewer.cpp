@@ -21,6 +21,16 @@ void DungenPreviewer::set_dungen_instance(Dungen *dungen)
     queue_redraw();
 }
 
+void DungenPreviewer::set_show_all(bool p_show)
+{
+    if (show_all == p_show)
+    {
+        return;
+    }
+    show_all = p_show;
+    queue_redraw();
+}
+
 void DungenPreviewer::set_show_trimmed_rooms(bool p_show)
 {
     if (show_trimmed_rooms == p_show)
@@ -61,7 +71,8 @@ void DungenPreviewer::set_show_path_edges(bool p_show)
     queue_redraw();
 }
 
-void DungenPreviewer::set_show_path_rectangles(bool p_show) {
+void DungenPreviewer::set_show_path_rectangles(bool p_show)
+{
     if (show_path_rectangles == p_show)
     {
         return;
@@ -75,13 +86,21 @@ void DungenPreviewer::_generation_complete(double p_time)
     queue_redraw();
 }
 
+void DungenPreviewer::refresh()
+{
+    queue_redraw();
+}
+
 void DungenPreviewer::_draw()
 {
-    if (is_queued_for_deletion()) { return; }
+    if (is_queued_for_deletion())
+    {
+        return;
+    }
 
     set_pivot_offset(get_size() / 2);
 
-    Vector<DungenRoom *> rooms = dungen_instance->get_map();
+    Vector<DungenRoom *> rooms = dungen_instance->get_map_rooms();
     Vector<DungenRoom *> trimmed_rooms = dungen_instance->get_trimmed_rooms();
     Vector<DungenRoom *> all_rooms = dungen_instance->get_all_rooms();
 
@@ -103,12 +122,27 @@ void DungenPreviewer::_draw()
 
     bounds.set_position(bounds.position + center);
 
-    if (show_path_rectangles) {
+    if (show_path_rectangles)
+    {
         Vector<Rect2i> path_rectangles = dungen_instance->get_path_builder().get_path_rectangles();
-        for (int i = 0; i < path_rectangles.size(); i++) {
+        for (int i = 0; i < path_rectangles.size(); i++)
+        {
             Rect2 current_rect = Rect2(path_rectangles[i]);
             current_rect.set_position(current_rect.get_position() + center);
             draw_rect(current_rect, Color::named("DODGERBLUE"));
+        }
+    }
+
+    if (show_all)
+    {
+        for (int i = 0; i < all_rooms.size(); i++)
+        {
+            DungenRoom *current_room = (all_rooms[i]);
+            Rect2 rect_copy_hopefully = Rect2i(current_room->get_rectangle());
+            rect_copy_hopefully.set_position(rect_copy_hopefully.get_position() + center);
+            draw_rect(rect_copy_hopefully, current_room->get_color());
+            draw_rect(rect_copy_hopefully, Color::named("ORANGE"), false, 1.0);
+            draw_circle(rect_copy_hopefully.get_center(), 1.0, Color::named("BLUE"));
         }
     }
 
@@ -176,15 +210,16 @@ void DungenPreviewer::_draw()
         }
     }
 
-    if (show_path_rectangles) {
+    if (show_path_rectangles)
+    {
         Vector<Rect2i> path_rectangles = dungen_instance->get_path_builder().get_path_rectangles();
-        for (int i = 0; i < path_rectangles.size(); i++) {
+        for (int i = 0; i < path_rectangles.size(); i++)
+        {
             Rect2 current_rect = Rect2(path_rectangles[i]);
             current_rect.set_position(current_rect.get_position() + center);
             draw_rect(current_rect, Color::named("GREEN"));
         }
     }
-
 }
 
 void DungenPreviewer::_bind_methods() {}

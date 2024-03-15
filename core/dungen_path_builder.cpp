@@ -3,12 +3,21 @@
 using namespace godot;
 
 DungenPathBuilder::DungenPathBuilder() : super_rect(Rect2(0, 0, 1, 1)) {}
-DungenPathBuilder::~DungenPathBuilder() {
+DungenPathBuilder::~DungenPathBuilder()
+{
+    reset();
+}
+
+void DungenPathBuilder::reset()
+{
     rooms.clear();
     triangulation.clear();
     corners.clear();
     minimum_spanning_tree.clear();
     non_spanning_edges.clear();
+
+    phase = START;
+    current_index = 0;
 }
 
 void DungenPathBuilder::add_rooms(const Vector<DungenRoom *> &p_rooms)
@@ -23,14 +32,61 @@ void DungenPathBuilder::add_room(DungenRoom *p_room)
 
 void DungenPathBuilder::clear_rooms()
 {
-    rooms.clear();
+    reset();
 }
 
-void DungenPathBuilder::triangulate()
+int DungenPathBuilder::begin()
 {
-    triangulation.clear();
-    corners.clear();
+    reset();
+    return current_index;
+}
 
+int DungenPathBuilder::next()
+{
+    switch (phase)
+    {
+    case START:
+    {
+        _setup_triangulation();
+        phase = TRIANGULATE;
+        break;
+    }
+    case TRIANGULATE:
+        if (triangulate_point(current_index))
+        {
+            Vector<DungenTriangle> corner_triangles;
+
+            for (int t = 0; t < triangulation.size(); t++)
+            {
+                DungenTriangle current_triangle = triangulation[t];
+
+                if (corners.has(current_triangle.a) || corners.has(current_triangle.b) || corners.has(current_triangle.c))
+                {
+                    corner_triangles.push_back(current_triangle);
+                }
+            }
+            for (int t = 0; t < corner_triangles.size(); t++)
+            {
+                triangulation.erase(corner_triangles[t]);
+            }
+            phase = MINIMUM_SPANNING_TREE;
+        }
+        current_index++;
+        break;
+    case MINIMUM_SPANNING_TREE:
+        find_minimum_spanning_tree();
+        phase = COMPLETE;
+        break;
+    case COMPLETE:
+    default:
+        return -1;
+    }
+
+    return current_index;
+}
+
+
+void DungenPathBuilder::_setup_triangulation() {
     // CREATE INITIAL GEOMETRY
     super_rect = Rect2(-1, -1, 1, 1);
     for (int i = 0; i < rooms.size(); i++)
@@ -50,87 +106,89 @@ void DungenPathBuilder::triangulate()
     corners.push_back(memnew(DungenRoom(corner2)));
     corners.push_back(memnew(DungenRoom(corner3)));
 
-    clock_t triangulate_start = clock();
-
     triangulation.push_back(DungenTriangle(corners[0], corners[1], corners[2]));
     triangulation.push_back(DungenTriangle(corners[2], corners[3], corners[0]));
     // CREATE INITIAL GEOMETRY
+}
+
+bool DungenPathBuilder::triangulate_point(int i)
+{
+    if (i == rooms.size())
+    {
+        return true;
+    }
+
+    DungenRoom *room = rooms[i];
+    Vector<DungenTriangle> bad_triangles;
+
+    // find triangles whos circumcircle contains the rooms center
+    for (int i = 0; i < triangulation.size(); i++)
+    {
+        DungenTriangle current_triangle = triangulation[i];
+
+        if (current_triangle.is_point_in_circumfrence(room->get_center()))
+        {
+            bad_triangles.push_back(current_triangle);
+        }
+    }
+
+    // delete the bad ones from the overall triangulation
+    for (int i = 0; i < bad_triangles.size(); i++)
+    {
+        triangulation.erase(bad_triangles[i]);
+    }
+
+    Vector<DungenEdge> bad_edges;
+    Vector<DungenEdge> outer_polygon;
+
+    for (int i = 0; i < bad_triangles.size(); i++)
+    {
+        outer_polygon.push_back(bad_triangles[i].ab);
+        outer_polygon.push_back(bad_triangles[i].bc);
+        outer_polygon.push_back(bad_triangles[i].ca);
+    }
+
+    for (int i = 0; i < outer_polygon.size(); i++)
+    {
+        for (int j = 0; j < outer_polygon.size(); j++)
+        {
+            if (i == j)
+            {
+                continue;
+            }
+            if (outer_polygon[i] == outer_polygon[j])
+            {
+                bad_edges.push_back(outer_polygon[i]);
+                bad_edges.push_back(outer_polygon[j]);
+            }
+        }
+    }
+
+    for (int i = 0; i < bad_edges.size(); i++)
+    {
+        outer_polygon.erase(bad_edges[i]);
+    }
+   
+    for (int i = 0; i < outer_polygon.size(); i++)
+    {
+        DungenEdge current_edge = outer_polygon[i];
+        DungenTriangle t = DungenTriangle(room, current_edge.a, current_edge.b);
+        triangulation.push_back(t);
+    }
+
+    return false;
+}
+
+void DungenPathBuilder::triangulate()
+{
+    _setup_triangulation();
+
+    clock_t triangulate_start = clock();
 
     // MAIN LOOP
     for (int room_number = 0; room_number < rooms.size(); room_number++)
     {
-        DungenRoom *room = rooms[room_number];
-        Vector<DungenTriangle> bad_triangles;
-
-        // find triangles whos circumcircle contains the rooms center
-        for (int i = 0; i < triangulation.size(); i++)
-        {
-            DungenTriangle current_triangle = triangulation[i];
-
-            if (current_triangle.is_point_in_circumfrence(room->get_center()))
-            {
-                bad_triangles.push_back(current_triangle);
-            }
-        }
-
-        // delete the bad ones from the overall triangulation
-        for (int i = 0; i < bad_triangles.size(); i++)
-        {
-            triangulation.erase(bad_triangles[i]);
-        }
-
-        Vector<DungenEdge> bad_edges;
-        Vector<DungenEdge> outer_polygon;
-
-        for (int i = 0; i < bad_triangles.size(); i++)
-        {
-            outer_polygon.push_back(bad_triangles[i].ab);
-            outer_polygon.push_back(bad_triangles[i].bc);
-            outer_polygon.push_back(bad_triangles[i].ca);
-        }
-
-        for (int i = 0; i < outer_polygon.size(); i++)
-        {
-            for (int j = 0; j < outer_polygon.size(); j++)
-            {
-                if (i == j)
-                {
-                    continue;
-                }
-                if (outer_polygon[i] == outer_polygon[j])
-                {
-                    bad_edges.push_back(outer_polygon[i]);
-                    bad_edges.push_back(outer_polygon[j]);
-                }
-            }
-        }
-
-        for (int i = 0; i < bad_edges.size(); i++)
-        {
-            outer_polygon.erase(bad_edges[i]);
-        }
-
-        // attempting to not add duplicate edges at all, but we'll see
-        /*
-        for (int t = 0; t < bad_triangles.size(); t++) {
-            if (!outer_polygon.has(bad_triangles[t].ab)) {
-               outer_polygon.push_back(bad_triangles[t].ab);
-            }
-            if (!outer_polygon.has(bad_triangles[t].bc)) {
-               outer_polygon.push_back(bad_triangles[t].bc);
-            }
-            if (!outer_polygon.has(bad_triangles[t].ca)) {
-               outer_polygon.push_back(bad_triangles[t].ca);
-            }
-        }
-        */
-
-        for (int i = 0; i < outer_polygon.size(); i++)
-        {
-            DungenEdge current_edge = outer_polygon[i];
-            DungenTriangle t = DungenTriangle(room, current_edge.a, current_edge.b);
-            triangulation.push_back(t);
-        }
+        triangulate_point(room_number);
     }
 
     Vector<DungenTriangle> corner_triangles;
@@ -355,30 +413,38 @@ Vector<Rect2i> DungenPathBuilder::get_path_rectangles()
             bool ax_bx = rect_a.get_center().x > rect_b.get_center().x;
             bool ay_by = rect_a.get_center().y > rect_b.get_center().y;
 
-            if (ax_bx) {
+            if (ax_bx)
+            {
                 //  [b] [a]
                 start_position_b = Vector2(rect_b.position.x + rect_b.size.x, rect_b.get_center().y);
-                if (ay_by) {
-                //  [b]  *
-                //      [a]
+                if (ay_by)
+                {
+                    //  [b]  *
+                    //      [a]
                     start_position_a = Vector2(rect_a.get_center().x, rect_a.position.y);
-                } else {
-                //      [a]
-                //  [b]  *
+                }
+                else
+                {
+                    //      [a]
+                    //  [b]  *
                     start_position_a = Vector2(rect_a.get_center().x, rect_a.position.y + rect_a.size.y);
                 }
-            } else {
+            }
+            else
+            {
                 // [a] [b]
                 start_position_b = Vector2(rect_b.position.x, rect_b.get_center().y);
-                if (ay_by) {
-                //  *  [b]
-                // [a] 
+                if (ay_by)
+                {
+                    //  *  [b]
+                    // [a]
                     start_position_a = Vector2(rect_a.get_center().x, rect_a.position.y);
-                } else {
-                //  [a] 
-                //   *  [b]
+                }
+                else
+                {
+                    //  [a]
+                    //   *  [b]
                     start_position_a = Vector2(rect_a.get_center().x, rect_a.position.y + rect_a.size.y);
-
                 }
             }
 

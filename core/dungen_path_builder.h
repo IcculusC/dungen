@@ -107,16 +107,18 @@ namespace godot
         }
 
         DungenTriangle() {}
-        DungenTriangle(const Vector2i &a, const Vector2i &b, const Vector2i &c) : DungenTriangle(
-                                                                                      (memnew(DungenRoom(a))),
-                                                                                      (memnew(DungenRoom(b))),
-                                                                                      (memnew(DungenRoom(c)))) {}
-        DungenTriangle(DungenRoom *a, DungenRoom *b, DungenRoom *c) : a(a),
-                                                                      b(b),
-                                                                      c(c),
-                                                                      ab(DungenEdge(a, b)),
-                                                                      bc(DungenEdge(b, c)),
-                                                                      ca(DungenEdge(c, a))
+        DungenTriangle(const Vector2i &a, const Vector2i &b, const Vector2i &c)
+            : DungenTriangle(
+                  (memnew(DungenRoom(a))),
+                  (memnew(DungenRoom(b))),
+                  (memnew(DungenRoom(c)))) {}
+        DungenTriangle(DungenRoom *a, DungenRoom *b, DungenRoom *c)
+            : a(a),
+              b(b),
+              c(c),
+              ab(DungenEdge(a, b)),
+              bc(DungenEdge(b, c)),
+              ca(DungenEdge(c, a))
         {
             recalculate_circumfrence();
         };
@@ -165,12 +167,24 @@ namespace godot
     class DungenPathBuilder
     {
     private:
+        enum Phase
+        {
+            START,
+            TRIANGULATE,
+            MINIMUM_SPANNING_TREE,
+            COMPLETE
+        } phase;
+
+        int current_index;
+
         Vector<DungenRoom *> rooms;
         Vector<DungenRoom *> corners;
         Rect2 super_rect;
         Vector<DungenTriangle> triangulation;
         Vector<DungenEdge> minimum_spanning_tree;
         Vector<DungenEdge> non_spanning_edges;
+
+        void _setup_triangulation();
 
         DungenRoom *_find_edge_parent(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom *room);
         void _union_subsets(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom *room_a, DungenRoom *room_b);
@@ -184,13 +198,20 @@ namespace godot
         void clear_rooms();
 
         void triangulate();
+        bool triangulate_point(int i);
         void find_minimum_spanning_tree();
 
         Vector<DungenTriangle> get_triangulation() { return triangulation; };
         Vector<DungenEdge> get_minimum_spanning_tree() { return minimum_spanning_tree; };
         Vector<DungenEdge> get_path_edges();
         Vector<Rect2i> get_path_rectangles();
-        
+
+        int begin();
+        int end() { return -1; }
+        int next();
+
+        void reset();
+
         operator Variant() const;
     };
 }

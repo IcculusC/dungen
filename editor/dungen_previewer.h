@@ -21,6 +21,7 @@ namespace godot
     private:
         Dungen *dungen_instance;
 
+        bool show_all;
         bool show_trimmed_rooms;
         bool show_triangulation;
         bool show_minimum_spanning_tree;
@@ -38,12 +39,15 @@ namespace godot
 
         void set_dungen_instance(Dungen *dungen);
 
+        void set_show_all(bool p_show);
         void set_show_trimmed_rooms(bool s_show);
         void set_show_triangulation(bool s_show);
         void set_show_minimum_spanning_tree(bool s_show);
         void set_show_path_edges(bool s_show);
         void set_show_path_rectangles(bool s_show);
         virtual void _draw() override;
+
+        void refresh();
     };
 
 }
