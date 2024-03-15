@@ -131,23 +131,23 @@ DungenEditor::~DungenEditor()
 void DungenEditor::_new_config()
 {
     Ref<DungenConfig> config = memnew(DungenConfig);
-    EditorInterface::get_singleton()->edit_resource(config);
+    EDITOR_INTERFACE()->edit_resource(config);
 }
 
 void DungenEditor::_load_config(String p_path)
 {
     ERR_FAIL_COND_MSG(p_path.is_empty(), "Empty p_path.");
-    Ref<DungenConfig> config = ResourceLoader::get_singleton()->load(p_path, "DungenConfig");
+    Ref<DungenConfig> config = RESOURCE_LOAD(p_path, "DungenConfig");
     ERR_FAIL_COND(!config.is_valid());
 
-    EditorInterface::get_singleton()->edit_resource(config);
+    EDITOR_INTERFACE()->edit_resource(config);
 }
 
 void DungenEditor::_save_config(String p_path)
 {
     ERR_FAIL_COND_MSG(p_path.is_empty(), "Empty p_path.");
     ERR_FAIL_COND_MSG(dungen_instance->get_config().is_null(), "DungenConfig is null.");
-    ResourceSaver::get_singleton()->save(dungen_instance->get_config(), p_path, ResourceSaver::FLAG_CHANGE_PATH);
+    RESOURCE_SAVE(dungen_instance->get_config(), p_path, ResourceSaver::FLAG_CHANGE_PATH);
 }
 
 void DungenEditor::_on_save_pressed()
@@ -283,12 +283,12 @@ bool DungenEditorPlugin::_handles(Object *p_object) const
 
 Ref<Texture2D> DungenEditorPlugin::_get_plugin_icon() const
 {
-    if (!ResourceLoader::get_singleton()->exists("res://dungen/dungen_editor_icon.svg", "Texture2D"))
+    if (!RESOURCE_EXISTS("res://dungen/dungen_editor_icon.svg", "Texture2D"))
     {
         UtilityFunctions::print("editor icon not found");
         return nullptr;
     }
-    Ref<Texture2D> icon = ResourceLoader::get_singleton()->load("res://dungen/dungen_editor_icon.svg", "Texture2D");
+    Ref<Texture2D> icon = RESOURCE_LOAD("res://dungen/dungen_editor_icon.svg", "Texture2D");
     return icon;
 };
 
