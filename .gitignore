@@ -37,3 +37,10 @@
 *.os
 
 bin/
+
+CMakeFiles/
+*.cmake
+CMakeCache.txt
+Makefile
+
+out/
