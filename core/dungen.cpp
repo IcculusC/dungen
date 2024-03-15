@@ -122,7 +122,7 @@ Dictionary Dungen::get_all()
 
 void Dungen::generate()
 {
-    rng->set_seed(config->get_seed());
+    reset();
     double generation_start = (double)clock();
 
     room_generator.generate();
@@ -190,6 +190,7 @@ Vector2i Dungen::generate_random_point_in_ellipse(Vector2i &dimensions)
 
 void Dungen::reset()
 {   
+    rng->set_seed(config->get_seed());
     path_builder.reset();
     room_generator.reset();
 
