@@ -101,7 +101,6 @@ Dictionary Dungen::get_all()
 
     Vector<DungenRoom *> map_rooms = room_generator.get_map_rooms();
 
-
     Array room_rects_array;
     for (int i = 0; i < map_rooms.size(); i++)
     {
@@ -126,19 +125,7 @@ void Dungen::generate()
     rng->set_seed(config->get_seed());
     double generation_start = (double)clock();
 
-    /*
-    _generate_rooms();
-    _separate_rooms();
-    _trim_rooms();
-    */
     room_generator.generate();
-    /*
-    all_rooms = room_generator.get_all_rooms();
-    map_rooms = room_generator.get_map_rooms();
-    trimmed_rooms = room_generator.get_trimmed_rooms();
-
-    total_area = room_generator.get_total_area();
-    */
 
     path_builder.clear_rooms();
     path_builder.add_rooms(room_generator.get_map_rooms());

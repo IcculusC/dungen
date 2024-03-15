@@ -211,7 +211,7 @@ void DungenRoomGenerator::_smart_separation_iteration(int starting_room)
         int neighbors = 0;
         DungenRoom *room_a = all_rooms[i];
 
-        // i realize waht this says but they jiggle a lot if you don't lol
+        // i realize waht this says given i == j but they jiggle a lot if you don't lol
         for (int j = starting_room; j < all_rooms.size(); j++)
         {
             if (i == j)
@@ -233,14 +233,9 @@ void DungenRoomGenerator::_smart_separation_iteration(int starting_room)
             if (center_distance.is_zero_approx())
             {
                 movement_vector += Vector2(rng->randi_range(-1, 1), rng->randi_range(-1, 1));
-                // neighbors++;
-                // movement_vector = Vector2(rng->randi_range(-5, 5), rng->randi_range(-5, 5));
-                // neighbors = 1;
                 continue;
             }
 
-            // movement_vector += center_distance;
-            // neighbors++;
             movement_vector += center_distance;
         }
 

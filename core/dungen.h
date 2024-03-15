@@ -43,10 +43,6 @@ namespace godot
 
 		int current_index;
 
-		// DEPRECATED
-
-		// END DEPRECATED
-
 		Ref<DungenConfig> config;
 
 		Ref<RandomNumberGenerator> rng;

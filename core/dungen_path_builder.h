@@ -184,6 +184,8 @@ namespace godot
         Vector<DungenEdge> minimum_spanning_tree;
         Vector<DungenEdge> non_spanning_edges;
 
+        void _setup_triangulation();
+
         DungenRoom *_find_edge_parent(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom *room);
         void _union_subsets(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom *room_a, DungenRoom *room_b);
 
