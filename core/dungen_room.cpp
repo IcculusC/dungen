@@ -8,18 +8,21 @@ void DungenRoom::_bind_methods()
 {
 }
 
-DungenRoom::DungenRoom() : color(Color::named("ORANGERED")),
-                           rectangle(Rect2(Vector2i(0, 0), Vector2i(1, 1)))
+DungenRoom::DungenRoom()
+    : color(Color::named("ORANGERED")),
+      rectangle(Rect2(Vector2i(0, 0), Vector2i(1, 1)))
 {
 }
 
-DungenRoom::DungenRoom(Vector2i _vector) : color(Color::named("ORANGERED")),
-                                           rectangle(Rect2i(_vector - Vector2i(1, 1), Vector2(2, 2)))
+DungenRoom::DungenRoom(Vector2i _vector)
+    : color(Color::named("ORANGERED")),
+      rectangle(Rect2i(_vector - Vector2i(1, 1), Vector2(2, 2)))
 {
 }
 
-DungenRoom::DungenRoom(Rect2i _rectangle) : color(Color::named("ORANGERED")),
-                                            rectangle(_rectangle)
+DungenRoom::DungenRoom(Rect2i _rectangle)
+    : color(Color::named("ORANGERED")),
+      rectangle(_rectangle)
 {
 }
 

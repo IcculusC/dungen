@@ -20,7 +20,7 @@ namespace godot
 		Vector2i room_dimensions;
 		Vector2i room_dimensions_sigma;
 
-		double room_dimensions_trim_sigma;
+		double room_dimensions_trim_ratio;
 		Vector2i room_minimum_dimensions;
 
 		Vector2i spawn_area_dimensions;
@@ -49,8 +49,8 @@ namespace godot
 		void set_room_dimensions_sigma(const Vector2i p_room_dimensions_sigma);
 		Vector2i get_room_dimensions_sigma() const { return room_dimensions_sigma; }
 
-		void set_room_dimensions_trim_sigma(const double p_room_dimensions_trim_sigma);
-		double get_room_dimensions_trim_sigma() const { return room_dimensions_trim_sigma; }
+		void set_room_dimensions_trim_ratio(double p_room_dimensions_trim_ratio);
+		double get_room_dimensions_trim_ratio() const { return room_dimensions_trim_ratio; }
 
 		void set_room_minimum_dimensions(const Vector2i p_room_minimum_dimensions);
 		Vector2i get_room_minimum_dimensions() const { return room_minimum_dimensions; }

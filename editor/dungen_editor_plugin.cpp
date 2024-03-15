@@ -175,8 +175,13 @@ void DungenEditor::_edit_dungen_config(Ref<DungenConfig> config)
 
 void DungenEditor::_regenerate()
 {
+    /*
     dungen_instance->begin();
     _step();
+    */
+
+   dungen_instance->generate();
+
     // animation_iterator = dungen_instance->begin();
     // _step();
     // dungen_instance->generate();

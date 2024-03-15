@@ -107,16 +107,18 @@ namespace godot
         }
 
         DungenTriangle() {}
-        DungenTriangle(const Vector2i &a, const Vector2i &b, const Vector2i &c) : DungenTriangle(
-                                                                                      (memnew(DungenRoom(a))),
-                                                                                      (memnew(DungenRoom(b))),
-                                                                                      (memnew(DungenRoom(c)))) {}
-        DungenTriangle(DungenRoom *a, DungenRoom *b, DungenRoom *c) : a(a),
-                                                                      b(b),
-                                                                      c(c),
-                                                                      ab(DungenEdge(a, b)),
-                                                                      bc(DungenEdge(b, c)),
-                                                                      ca(DungenEdge(c, a))
+        DungenTriangle(const Vector2i &a, const Vector2i &b, const Vector2i &c)
+            : DungenTriangle(
+                  (memnew(DungenRoom(a))),
+                  (memnew(DungenRoom(b))),
+                  (memnew(DungenRoom(c)))) {}
+        DungenTriangle(DungenRoom *a, DungenRoom *b, DungenRoom *c)
+            : a(a),
+              b(b),
+              c(c),
+              ab(DungenEdge(a, b)),
+              bc(DungenEdge(b, c)),
+              ca(DungenEdge(c, a))
         {
             recalculate_circumfrence();
         };

@@ -171,7 +171,7 @@ int DungenRoomGenerator::_smart_has_overlapping_rooms()
 {
     for (int i = 0; i < all_rooms.size(); i += 1)
     {
-        DungenRoom *rect_a = all_rooms[i];
+        DungenRoom *room_a = all_rooms[i];
         for (int j = 0; j < all_rooms.size(); j += 1)
         {
             if (i == j)
@@ -179,8 +179,8 @@ int DungenRoomGenerator::_smart_has_overlapping_rooms()
                 continue;
             }
 
-            DungenRoom *rect_b = all_rooms[j];
-            if (rect_a->intersects(rect_b))
+            DungenRoom *room_b = all_rooms[j];
+            if (room_a->intersects(room_b))
             {
                 return i;
             }
@@ -209,7 +209,7 @@ void DungenRoomGenerator::_smart_separation_iteration(int starting_room)
     {
         Vector2 movement_vector = Vector2(0, 0);
         int neighbors = 0;
-        DungenRoom *rect_a = all_rooms[i];
+        DungenRoom *room_a = all_rooms[i];
 
         // i realize waht this says but they jiggle a lot if you don't lol
         for (int j = starting_room; j < all_rooms.size(); j++)
@@ -219,16 +219,16 @@ void DungenRoomGenerator::_smart_separation_iteration(int starting_room)
                 continue;
             }
 
-            DungenRoom *rect_b = all_rooms[j];
+            DungenRoom *room_b = all_rooms[j];
 
-            if (!rect_a->intersects(rect_b))
+            if (!room_a->intersects(room_b))
             {
                 continue;
             }
 
             neighbors++;
 
-            Vector2 center_distance = rect_a->get_center() - rect_b->get_center();
+            Vector2 center_distance = room_a->get_center() - room_b->get_center();
 
             if (center_distance.is_zero_approx())
             {
@@ -251,7 +251,7 @@ void DungenRoomGenerator::_smart_separation_iteration(int starting_room)
                     .normalized()
                     .snapped(Vector2(1, 1));
 
-            rect_a->set_position(rect_a->get_position() + Vector2i(direction));
+            room_a->set_position(room_a->get_position() + Vector2i(direction));
         }
     }
 }
@@ -274,9 +274,11 @@ bool DungenRoomGenerator::_smart_should_trim_room(DungenRoom *room, double minim
 
 bool DungenRoomGenerator::_smart_trim_one()
 {
-    double room_dimensions_trim_sigma = config->get_room_dimensions_trim_sigma();
+    // TODO: figure this out later
+    /*
+    double room_dimensions_trim_ratio = config->get_room_dimensions_trim_ratio();
     double average_area = get_average_area();
-    double minimum_area = rng->randfn(average_area, room_dimensions_trim_sigma);
+    double minimum_area = average_area * room_dimensions_trim_ratio;
 
     Vector<DungenRoom *> keepers;
     int kept_area;
@@ -299,14 +301,16 @@ bool DungenRoomGenerator::_smart_trim_one()
     map_area = kept_area;
 
     return false;
+    */
+    return false;
 }
 
 void DungenRoomGenerator::_smart_trim_rooms()
 {
-    double room_dimensions_trim_sigma = config->get_room_dimensions_trim_sigma();
+    double room_dimensions_trim_ratio = config->get_room_dimensions_trim_ratio();
 
     double average_area = get_average_area();
-    double minimum_area = rng->randfn(average_area, room_dimensions_trim_sigma);
+    double minimum_area = average_area * room_dimensions_trim_ratio; 
     map_area = 0;
     trimmed_area = 0;
 

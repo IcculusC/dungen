@@ -37,9 +37,9 @@ void DungenConfig::set_room_dimensions_sigma(const Vector2i p_room_dimensions_si
     emit_changed();
 }
 
-void DungenConfig::set_room_dimensions_trim_sigma(const double p_room_dimensions_trim_sigma)
+void DungenConfig::set_room_dimensions_trim_ratio(double p_room_dimensions_trim_ratio)
 {
-    room_dimensions_trim_sigma = p_room_dimensions_trim_sigma;
+    room_dimensions_trim_ratio = p_room_dimensions_trim_ratio;
 
     emit_changed();
 }
@@ -70,7 +70,7 @@ DungenConfig::DungenConfig() : seed(-1),
                                room_dimensions(Vector2i(10, 10)),
                                room_dimensions_sigma(Vector2i(2.0, 2.0)),
 
-                               room_dimensions_trim_sigma(2.0),
+                               room_dimensions_trim_ratio(1.0),
                                room_minimum_dimensions(Vector2i(3, 3)),
 
                                spawn_area_dimensions(Vector2i(10, 10)),
@@ -93,8 +93,8 @@ void DungenConfig::_bind_methods()
     ClassDB::bind_method(D_METHOD("get_room_dimensions_sigma"), &DungenConfig::get_room_dimensions_sigma);
     ClassDB::bind_method(D_METHOD("set_room_dimensions_sigma", "p_room_dimensions_sigma"), &DungenConfig::set_room_dimensions_sigma);
 
-    ClassDB::bind_method(D_METHOD("get_room_dimensions_trim_sigma"), &DungenConfig::get_room_dimensions_trim_sigma);
-    ClassDB::bind_method(D_METHOD("set_room_dimensions_trim_sigma", "p_room_dimensions_trim_sigma"), &DungenConfig::set_room_dimensions_trim_sigma);
+    ClassDB::bind_method(D_METHOD("get_room_dimensions_trim_ratio"), &DungenConfig::get_room_dimensions_trim_ratio);
+    ClassDB::bind_method(D_METHOD("set_room_dimensions_trim_ratio", "p_room_dimensions_trim_ratio"), &DungenConfig::set_room_dimensions_trim_ratio);
 
     ClassDB::bind_method(D_METHOD("get_room_minimum_dimensions"), &DungenConfig::get_room_minimum_dimensions);
     ClassDB::bind_method(D_METHOD("set_room_minimum_dimensions", "p_room_minimum_dimensions"), &DungenConfig::set_room_minimum_dimensions);
@@ -111,7 +111,7 @@ void DungenConfig::_bind_methods()
     ClassDB::add_property("DungenConfig", PropertyInfo(Variant::VECTOR2I, "room_dimensions_sigma"), "set_room_dimensions_sigma", "get_room_dimensions_sigma");
     ClassDB::add_property("DungenConfig", PropertyInfo(Variant::VECTOR2I, "spawn_area_dimensions"), "set_spawn_area_dimensions", "get_spawn_area_dimensions");
     ClassDB::add_property("DungenConfig", PropertyInfo(Variant::INT, "spawn_area_shape", PROPERTY_HINT_ENUM, "ELLIPSE, RECTANGLE"), "set_spawn_area_shape", "get_spawn_area_shape");
-    ClassDB::add_property("DungenConfig", PropertyInfo(Variant::FLOAT, "room_dimensions_trim_sigma"), "set_room_dimensions_trim_sigma", "get_room_dimensions_trim_sigma");
+    ClassDB::add_property("DungenConfig", PropertyInfo(Variant::FLOAT, "room_dimensions_trim_ratio", PROPERTY_HINT_RANGE, "0.0,2.0"), "set_room_dimensions_trim_ratio", "get_room_dimensions_trim_ratio");
     ClassDB::add_property("DungenConfig", PropertyInfo(Variant::VECTOR2I, "room_minimum_dimensions"), "set_room_minimum_dimensions", "get_room_minimum_dimensions");
 
     ADD_SIGNAL(MethodInfo("changed"));
