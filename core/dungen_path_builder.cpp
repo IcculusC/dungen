@@ -16,6 +16,9 @@ void DungenPathBuilder::reset()
     minimum_spanning_tree.clear();
     non_spanning_edges.clear();
 
+    subsets.clear();
+    all_edges.clear();
+
     phase = START;
     current_index = 0;
 }
@@ -69,13 +72,17 @@ int DungenPathBuilder::next()
             {
                 triangulation.erase(corner_triangles[t]);
             }
+            _setup_minimum_spanning_tree();
             phase = MINIMUM_SPANNING_TREE;
         }
         current_index++;
         break;
     case MINIMUM_SPANNING_TREE:
-        find_minimum_spanning_tree();
-        phase = COMPLETE;
+        if (find_next_spanning_edge())
+        {
+            phase = COMPLETE;
+        }
+        current_index++;
         break;
     case COMPLETE:
     default:
@@ -85,8 +92,8 @@ int DungenPathBuilder::next()
     return current_index;
 }
 
-
-void DungenPathBuilder::_setup_triangulation() {
+void DungenPathBuilder::_setup_triangulation()
+{
     // CREATE INITIAL GEOMETRY
     super_rect = Rect2(-1, -1, 1, 1);
     for (int i = 0; i < rooms.size(); i++)
@@ -168,7 +175,7 @@ bool DungenPathBuilder::triangulate_point(int i)
     {
         outer_polygon.erase(bad_edges[i]);
     }
-   
+
     for (int i = 0; i < outer_polygon.size(); i++)
     {
         DungenEdge current_edge = outer_polygon[i];
@@ -244,18 +251,13 @@ void DungenPathBuilder::_union_subsets(HashMap<DungenRoom *, DungenDisjoinSet> &
     }
 }
 
-void DungenPathBuilder::find_minimum_spanning_tree()
+void DungenPathBuilder::_setup_minimum_spanning_tree()
 {
     minimum_spanning_tree.clear();
     non_spanning_edges.clear();
 
-    if (triangulation.size() == 0)
-    {
-        return;
-    }
-
-    HashMap<DungenRoom *, DungenDisjoinSet> subsets;
-    Vector<DungenEdge> all_edges;
+    subsets.clear();
+    all_edges.clear();
 
     for (int i = 0; i < triangulation.size(); i++)
     {
@@ -270,8 +272,66 @@ void DungenPathBuilder::find_minimum_spanning_tree()
 
     all_edges.sort();
 
-    int V = rooms.size();
-    int j = 0;
+    V = rooms.size();
+    j = 0;
+}
+
+bool DungenPathBuilder::find_next_spanning_edge()
+{
+    if (minimum_spanning_tree.size() >= V - 1 || j >= all_edges.size())
+    {
+        return true;
+    }
+
+    DungenEdge next_edge = all_edges[j];
+
+    while (minimum_spanning_tree.has(next_edge))
+    {
+        j++;
+
+        if (j >= all_edges.size())
+        {
+            // broken as fuck but rather not crash
+            return true;
+        }
+
+        next_edge = all_edges[j];
+    }
+
+    /*
+    if (minimum_spanning_tree.has(next_edge))
+    {
+        j++;
+        return false;
+    }
+    */
+
+    DungenRoom *room_a = _find_edge_parent(subsets, next_edge.a);
+    DungenRoom *room_b = _find_edge_parent(subsets, next_edge.b);
+
+    if (room_a != room_b)
+    {
+        minimum_spanning_tree.push_back(next_edge);
+        _union_subsets(subsets, room_a, room_b);
+    }
+    else if (!non_spanning_edges.has(next_edge))
+    {
+        non_spanning_edges.push_back(next_edge);
+    }
+
+    j++;
+
+    return false;
+}
+
+void DungenPathBuilder::find_minimum_spanning_tree()
+{
+    if (triangulation.size() == 0)
+    {
+        return;
+    }
+
+    _setup_minimum_spanning_tree();
 
     clock_t start_mst = clock();
 

@@ -80,6 +80,13 @@ DungenEditor::DungenEditor()
     EXPAND_FILL(dungen_preview_sidebar_layout)
     dungen_preview_sidebar_panel->add_child(dungen_preview_sidebar_layout);
 
+    show_generation_animation = false;
+    show_generation_animation_btn = memnew(CheckButton);
+    show_generation_animation_btn->set_text("Animate Generation");
+    show_generation_animation_btn->set_toggle_mode(true);
+    show_generation_animation_btn->set_pressed(show_generation_animation);
+    dungen_preview_sidebar_layout->add_child(show_generation_animation_btn);
+
     show_path_rectangles_btn = memnew(CheckButton);
     show_path_rectangles_btn->set_text("Path Rectangles");
     show_path_rectangles_btn->set_toggle_mode(true);
@@ -124,23 +131,23 @@ DungenEditor::~DungenEditor()
 void DungenEditor::_new_config()
 {
     Ref<DungenConfig> config = memnew(DungenConfig);
-    EditorInterface::get_singleton()->edit_resource(config);
+    EDITOR_INTERFACE()->edit_resource(config);
 }
 
 void DungenEditor::_load_config(String p_path)
 {
     ERR_FAIL_COND_MSG(p_path.is_empty(), "Empty p_path.");
-    Ref<DungenConfig> config = ResourceLoader::get_singleton()->load(p_path, "DungenConfig");
+    Ref<DungenConfig> config = RESOURCE_LOAD(p_path, "DungenConfig");
     ERR_FAIL_COND(!config.is_valid());
 
-    EditorInterface::get_singleton()->edit_resource(config);
+    EDITOR_INTERFACE()->edit_resource(config);
 }
 
 void DungenEditor::_save_config(String p_path)
 {
     ERR_FAIL_COND_MSG(p_path.is_empty(), "Empty p_path.");
     ERR_FAIL_COND_MSG(dungen_instance->get_config().is_null(), "DungenConfig is null.");
-    ResourceSaver::get_singleton()->save(dungen_instance->get_config(), p_path, ResourceSaver::FLAG_CHANGE_PATH);
+    RESOURCE_SAVE(dungen_instance->get_config(), p_path, ResourceSaver::FLAG_CHANGE_PATH);
 }
 
 void DungenEditor::_on_save_pressed()
@@ -173,18 +180,26 @@ void DungenEditor::_edit_dungen_config(Ref<DungenConfig> config)
     _regenerate();
 }
 
+void DungenEditor::_set_show_generation_animation(bool p_show) {
+    if (show_generation_animation == p_show) {
+        return;
+    }
+    show_generation_animation = p_show;
+    
+    _regenerate();
+}
+
 void DungenEditor::_regenerate()
 {
-    /*
-    dungen_instance->begin();
-    _step();
-    */
 
-   dungen_instance->generate();
-
-    // animation_iterator = dungen_instance->begin();
-    // _step();
-    // dungen_instance->generate();
+    if (show_generation_animation) {
+        dungen_instance->begin();
+        _step();
+    }
+    else
+    {
+        dungen_instance->generate();
+    }
 }
 
 void DungenEditor::_step()
@@ -192,17 +207,18 @@ void DungenEditor::_step()
     dungen_preview_panel->refresh();
     if (dungen_instance->next() != -1)
     {
-        switch(dungen_instance->get_phase()) {
-            case 0:
-            case 1:
-            {
-                dungen_preview_panel->set_show_all(true);
-                break;
-            }
-            default:
-            {
-                dungen_preview_panel->set_show_all(false);
-            }
+        switch (dungen_instance->get_phase())
+        {
+        case 0:
+        case 1:
+        {
+            dungen_preview_panel->set_show_all(true);
+            break;
+        }
+        default:
+        {
+            dungen_preview_panel->set_show_all(false);
+        }
         }
         Ref<SceneTreeTimer> timer = get_tree()->create_timer(0.1);
         timer->connect("timeout", callable_mp(this, &DungenEditor::_step));
@@ -231,6 +247,7 @@ void DungenEditor::_notification(int p_what)
         save_dialog->connect("file_selected", callable_mp(this, &DungenEditor::_save_config));
         load_dialog->connect("file_selected", callable_mp(this, &DungenEditor::_load_config));
 
+        show_generation_animation_btn->connect("toggled", callable_mp(this, &DungenEditor::_set_show_generation_animation));
         show_path_rectangles_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_path_rectangles));
         show_trimmed_rooms_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_trimmed_rooms));
         show_triangulation_btn->connect("toggled", callable_mp(dungen_preview_panel, &DungenPreviewPanel::set_show_triangulation));
@@ -266,12 +283,12 @@ bool DungenEditorPlugin::_handles(Object *p_object) const
 
 Ref<Texture2D> DungenEditorPlugin::_get_plugin_icon() const
 {
-    if (!ResourceLoader::get_singleton()->exists("res://dungen/dungen_editor_icon.svg", "Texture2D"))
+    if (!RESOURCE_EXISTS("res://dungen/dungen_editor_icon.svg", "Texture2D"))
     {
         UtilityFunctions::print("editor icon not found");
         return nullptr;
     }
-    Ref<Texture2D> icon = ResourceLoader::get_singleton()->load("res://dungen/dungen_editor_icon.svg", "Texture2D");
+    Ref<Texture2D> icon = RESOURCE_LOAD("res://dungen/dungen_editor_icon.svg", "Texture2D");
     return icon;
 };
 

@@ -65,11 +65,14 @@ namespace godot
         PanelContainer *dungen_preview_sidebar_panel;
         VBoxContainer *dungen_preview_sidebar_layout;
 
+        CheckButton *show_generation_animation_btn;
         CheckButton *show_path_rectangles_btn;
         CheckButton *show_trimmed_rooms_btn;
         CheckButton *show_triangulation_btn;
         CheckButton *show_minimum_spanning_tree_btn;
         CheckButton *show_path_edges_btn;
+
+        bool show_generation_animation;
 
         void _initialize_dialogs();
         void _initialize_main_layout();
@@ -85,6 +88,8 @@ namespace godot
         void _edit_dungen_config(Ref<DungenConfig> config);
         void _regenerate();
         void _step();
+
+        void _set_show_generation_animation(bool p_show);        
 
         void _redraw();
 

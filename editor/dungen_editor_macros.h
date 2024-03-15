@@ -1,7 +1,9 @@
 #ifdef TOOLS_ENABLED
 
-#define MAIN_SCREEN_CONTROL() (EditorInterface::get_singleton()->get_editor_main_screen())
-#define EDITOR_THEME() (EditorInterface::get_singleton()->get_editor_theme())
+#define EDITOR_INTERFACE() (EditorInterface::get_singleton())
+
+#define MAIN_SCREEN_CONTROL() (EDITOR_INTERFACE()->get_editor_main_screen())
+#define EDITOR_THEME() (EDITOR_INTERFACE()->get_editor_theme())
 
 #define EXPAND_FILL_V(m_thing) m_thing->set_v_size_flags(SIZE_EXPAND_FILL);
 #define EXPAND_FILL_H(m_thing) m_thing->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -23,4 +25,13 @@
 #define ADD_COLOR_OVERRIDE(m_control, m_name, m_color) (m_control->add_theme_color_override(m_name, m_color));
 #define ADD_CONSTANT_OVERRIDE(m_control, m_name, m_constant) (m_control->add_theme_constant_override(m_name, m_constant));
 
+#define RESOURCE_LOADER() (ResourceLoader::get_singleton())
+#define RESOURCE_SAVER() (ResourceSaver::get_singleton())
+
+#define RESOURCE_EXISTS(m_path, m_hint) RESOURCE_LOADER()->exists(m_path, m_hint)
+#define RESOURCE_LOAD(m_path, m_hint) RESOURCE_LOADER()->load(m_path, m_hint)
+
+#define RESOURCE_SAVE(m_res, m_path, m_flags) RESOURCE_SAVER()->save(m_res, m_path, m_flags)
+
 #endif
+
