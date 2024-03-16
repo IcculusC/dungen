@@ -2,7 +2,7 @@
 
 [resource]
 seed = 420.0
-room_count = 69.0
+generation_type = 1
 room_dimensions = Vector2i(20, 20)
 room_dimensions_sigma = Vector2i(10, 10)
 spawn_area_shape = 1

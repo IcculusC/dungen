@@ -50,9 +50,6 @@ namespace godot
 		DungenPathBuilder path_builder;
 		DungenRoomGenerator room_generator;
 
-		Vector2i generate_random_point_in_ellipse(Vector2i &spawn_area_dimensions);
-		Vector2i generate_random_point_in_rectangle(Vector2i &spawn_area_dimensions);
-
 	protected:
 		static void _bind_methods();
 
