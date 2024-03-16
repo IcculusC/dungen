@@ -65,16 +65,17 @@ void DungenConfig::set_spawn_area_shape(const DungenShape p_spawn_area_shape)
     emit_changed();
 }
 
-DungenConfig::DungenConfig() : seed(-1),
-                               room_count(32),
-                               room_dimensions(Vector2i(10, 10)),
-                               room_dimensions_sigma(Vector2i(2.0, 2.0)),
+DungenConfig::DungenConfig()
+    : seed(-1),
+      room_count(32),
+      room_dimensions(Vector2i(10, 10)),
+      room_dimensions_sigma(Vector2i(2.0, 2.0)),
 
-                               room_dimensions_trim_ratio(1.0),
-                               room_minimum_dimensions(Vector2i(3, 3)),
+      room_dimensions_trim_ratio(1.0),
+      room_minimum_dimensions(Vector2i(3, 3)),
 
-                               spawn_area_dimensions(Vector2i(10, 10)),
-                               spawn_area_shape(ELLIPSE)
+      spawn_area_dimensions(Vector2i(10, 10)),
+      spawn_area_shape(ELLIPSE)
 {
 }
 DungenConfig::~DungenConfig() {}

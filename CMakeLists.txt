@@ -10,15 +10,19 @@ list(APPEND CMAKE_MODULE_PATH
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/godot-cpp)
 
-file(GLOB SOURCES CMAKE_CONFIGURE_DEPENDS
+file(GLOB register_types CMAKE_CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/register_types.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/register_types.[hc]pp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/register_types.[hc]pp")
+
+file(GLOB_RECURSE module_sources CMAKE_CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/core/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/core/*.[hc]pp"
     "${CMAKE_CURRENT_SOURCE_DIR}/editor/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/editor/*.[hc]pp"
     "${CMAKE_CURRENT_SOURCE_DIR}/editor/components/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/editor/components/*.[hc]pp")
+
+list(APPEND SOURCES ${register_types} ${module_sources})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/demo/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/demo/bin)
@@ -52,3 +56,4 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/editor"
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/editor/components")
 target_link_libraries(${PROJECT_NAME} PUBLIC godot::cpp)
+
