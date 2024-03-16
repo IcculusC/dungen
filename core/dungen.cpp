@@ -157,37 +157,6 @@ void Dungen::generate()
     emit_signal("generation_complete", ((double)clock() - generation_start) / CLOCKS_PER_SEC);
 }
 
-Vector2i Dungen::generate_random_point_in_rectangle(Vector2i &dimensions)
-{
-    // ASSUMING ORIGIN IS Vector2(0, 0)
-
-    Vector2i half_size = dimensions / 2;
-
-    return Vector2i(
-        rng->randi_range(-half_size.x, half_size.x),
-        rng->randi_range(-half_size.y, half_size.y));
-}
-
-Vector2i Dungen::generate_random_point_in_ellipse(Vector2i &dimensions)
-{
-    double t = 2 * Math_PI * rng->randf();
-    double u = rng->randf() + rng->randf();
-    double r = 0;
-
-    if (u > 1)
-    {
-        r = 2 - u;
-    }
-    else
-    {
-        r = u;
-    }
-
-    Vector2 dimensions_d = Vector2(Math::floor(dimensions.x * r * Math::cos(t) / 2), Math::floor(dimensions.y * r * Math::sin(t / 2))).snapped(Vector2i(1, 1));
-
-    return Vector2i(dimensions_d);
-}
-
 void Dungen::reset()
 {   
     rng->set_seed(config->get_seed());

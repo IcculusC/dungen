@@ -15,6 +15,7 @@ namespace godot
 
 	private:
 		double seed;
+		DungenType generation_type;
 		double room_count;
 
 		Vector2i room_dimensions;
@@ -38,6 +39,9 @@ namespace godot
 		// basic generation stuff
 		void set_seed(const double p_seed);
 		double get_seed() const { return seed; }
+
+		void set_generation_type(const DungenType p_generation_type);
+		DungenType get_generation_type() const { return generation_type; }
 
 		// room stuff
 		void set_room_count(const double p_room_count);

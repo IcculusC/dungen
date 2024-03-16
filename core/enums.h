@@ -5,6 +5,11 @@
 
 namespace godot
 {
+	enum DungenType
+	{
+		RANDOM_SHAPE,
+		RANDOM_WALK
+	};
 
 	enum DungenShape
 	{
@@ -17,5 +22,6 @@ namespace godot
 using namespace godot;
 
 VARIANT_ENUM_CAST(DungenShape)
+VARIANT_ENUM_CAST(DungenType)
 
 #endif // DUNGEN_ENUMS_H

@@ -96,6 +96,7 @@ void DungenRoomGenerator::reset()
 
     phase = START;
     current_step = 0;
+    current_walk_position = Vector2(0, 0);
 }
 
 Vector2i DungenRoomGenerator::generate_random_point_in_rectangle(Vector2i &dimensions)
@@ -129,20 +130,37 @@ Vector2i DungenRoomGenerator::generate_random_point_in_ellipse(Vector2i &dimensi
 
 DungenRoom *DungenRoomGenerator::_generate_room()
 {
+    DungenType generation_type = config->get_generation_type();
     DungenShape spawn_area_shape = config->get_spawn_area_shape();
     Vector2i spawn_area_dimensions = config->get_spawn_area_dimensions();
 
     Vector2i room_dimensions = config->get_room_dimensions();
     Vector2i room_dimensions_sigma = config->get_room_dimensions_sigma();
 
-    Vector2i room_position;
-    if (spawn_area_shape == RECTANGLE)
+    Vector2i room_position = Vector2i(0, 0);
+    switch (generation_type)
     {
-        room_position = generate_random_point_in_rectangle(spawn_area_dimensions);
-    }
-    else
-    {
-        room_position = generate_random_point_in_ellipse(spawn_area_dimensions);
+    case RANDOM_SHAPE:
+
+        if (spawn_area_shape == RECTANGLE)
+        {
+            room_position = generate_random_point_in_rectangle(spawn_area_dimensions);
+        }
+        else
+        {
+            room_position = generate_random_point_in_ellipse(spawn_area_dimensions);
+        }
+        break;
+    case RANDOM_WALK:
+        Vector2i directions[4] = {
+            Vector2i(1, 0),
+            Vector2i(0, 1),
+            Vector2i(-1, 0),
+            Vector2i(0, -1)};
+        int direction = rng->randi_range(0, 3);
+        current_walk_position += directions[direction] * Math::min(room_dimensions.x, room_dimensions.y);
+        room_position = current_walk_position;
+        break;
     }
 
     double w = Math::abs(rng->randfn(room_dimensions.x, room_dimensions_sigma.x));
@@ -305,7 +323,7 @@ void DungenRoomGenerator::_smart_trim_rooms()
     double room_dimensions_trim_ratio = config->get_room_dimensions_trim_ratio();
 
     double average_area = get_average_area();
-    double minimum_area = average_area * room_dimensions_trim_ratio; 
+    double minimum_area = average_area * room_dimensions_trim_ratio;
     map_area = 0;
     trimmed_area = 0;
 

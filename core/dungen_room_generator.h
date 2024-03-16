@@ -35,6 +35,7 @@ namespace godot
         Ref<RandomNumberGenerator> rng;
 
         int current_step;
+        Vector2 current_walk_position;
 
         int map_area;
         int total_area;
