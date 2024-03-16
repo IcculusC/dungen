@@ -57,3 +57,5 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/editor/components")
 target_link_libraries(${PROJECT_NAME} PUBLIC godot::cpp)
 
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/gdextension/libdungen.gdextension" 
+    DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/demo/bin")
