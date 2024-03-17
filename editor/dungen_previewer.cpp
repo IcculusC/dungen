@@ -8,10 +8,14 @@ DungenPreviewer::DungenPreviewer()
 {
     set_clip_contents(true);
 }
-DungenPreviewer::~DungenPreviewer() {}
+DungenPreviewer::~DungenPreviewer() {
+    dungen_instance = nullptr;
+}
 
 void DungenPreviewer::set_dungen_instance(Dungen *dungen)
 {
+    ERR_FAIL_COND_MSG(!dungen, "Provided Dungen is null.");
+
     dungen_instance = dungen;
 
     if (!dungen_instance->is_connected("generation_complete", callable_mp(this, &DungenPreviewer::_generation_complete)))
@@ -97,6 +101,8 @@ void DungenPreviewer::_draw()
     {
         return;
     }
+
+    ERR_FAIL_COND_MSG(!dungen_instance, "Dungen is null.");
 
     set_pivot_offset(get_size() / 2);
 

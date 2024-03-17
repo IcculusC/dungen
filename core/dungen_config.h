@@ -29,8 +29,6 @@ namespace godot
 
 		int step_size;
 
-		void emit_changed();
-
 	protected:
 		static void _bind_methods();
 

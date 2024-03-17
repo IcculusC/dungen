@@ -130,6 +130,7 @@ DungenEditor::DungenEditor()
 
 DungenEditor::~DungenEditor()
 {
+    plugin = nullptr;
 }
 
 void DungenEditor::_new_config()
@@ -150,16 +151,16 @@ void DungenEditor::_load_config(String p_path)
 void DungenEditor::_save_config(String p_path)
 {
     ERR_FAIL_COND_MSG(p_path.is_empty(), "Empty p_path.");
+    ERR_FAIL_COND_MSG(!dungen_instance, "Dungen is null.");
     ERR_FAIL_COND_MSG(dungen_instance->get_config().is_null(), "DungenConfig is null.");
     RESOURCE_SAVE(dungen_instance->get_config(), p_path, ResourceSaver::FLAG_CHANGE_PATH);
 }
 
 void DungenEditor::_on_save_pressed()
 {
-    if (dungen_instance->get_config().is_null())
-    {
-        return;
-    }
+    ERR_FAIL_COND_MSG(!dungen_instance, "Dungen is null.");
+    ERR_FAIL_COND_MSG(dungen_instance->get_config().is_null(), "DungenConfig is null.");
+
     String path = dungen_instance->get_config()->get_path();
 
     if (path.is_empty())
@@ -175,9 +176,12 @@ void DungenEditor::_on_save_pressed()
 
 void DungenEditor::_edit_dungen_config(Ref<DungenConfig> config)
 {
+    ERR_FAIL_COND_MSG(!dungen_instance, "Dungen is null.");
     ERR_FAIL_COND_MSG(config.is_null(), "config is null.");
 
-    config->connect("changed", callable_mp(this, &DungenEditor::_regenerate));
+    if (!config->is_connected("changed", callable_mp(this, &DungenEditor::_regenerate))) {
+        config->connect("changed", callable_mp(this, &DungenEditor::_regenerate));
+    }
 
     dungen_instance->set_config(config);
 
@@ -195,6 +199,9 @@ void DungenEditor::_set_show_generation_animation(bool p_show) {
 
 void DungenEditor::_regenerate()
 {
+    ERR_FAIL_COND_MSG(!dungen_instance, "Dungen is null.");
+    ERR_FAIL_COND_MSG(dungen_instance->get_config().is_null(), "DungenConfig is null.");
+
     if (show_generation_animation)
     {
         animation_timer->stop();
@@ -210,6 +217,8 @@ void DungenEditor::_regenerate()
 
 void DungenEditor::_step()
 {
+    ERR_FAIL_COND_MSG(!dungen_instance, "Dungen is null.");
+
     if (dungen_instance->next() != -1)
     {
         switch (dungen_instance->get_phase())
@@ -277,33 +286,30 @@ bool DungenEditorPlugin::_handles(Object *p_object) const
 
 Ref<Texture2D> DungenEditorPlugin::_get_plugin_icon() const
 {
-    if (!RESOURCE_EXISTS("res://dungen/dungen_editor_icon.svg", "Texture2D"))
+    if (!RESOURCE_EXISTS("res://bin/dungen_editor_icon.svg", "Texture2D"))
     {
         UtilityFunctions::print("editor icon not found");
         return nullptr;
     }
-    Ref<Texture2D> icon = RESOURCE_LOAD("res://dungen/dungen_editor_icon.svg", "Texture2D");
+    Ref<Texture2D> icon = RESOURCE_LOAD("res://bin/dungen_editor_icon.svg", "Texture2D");
     return icon;
 };
 
-DungenEditorPlugin::DungenEditorPlugin() {}
+DungenEditorPlugin::DungenEditorPlugin() {
+    dungen_editor = memnew(DungenEditor);
+    dungen_editor->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+    MAIN_SCREEN_CONTROL()->add_child(dungen_editor);
+    dungen_editor->hide();
+    dungen_editor->set_plugin(this);
+}
 
-DungenEditorPlugin::~DungenEditorPlugin() {}
+DungenEditorPlugin::~DungenEditorPlugin() {
+    dungen_editor = nullptr;
+}
 
 void DungenEditorPlugin::_bind_methods() {}
 
 void DungenEditorPlugin::_notification(int p_what)
 {
-    if (p_what == NOTIFICATION_ENTER_TREE)
-    {
-        dungen_editor = memnew(DungenEditor());
-        dungen_editor->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-        MAIN_SCREEN_CONTROL()->add_child(dungen_editor);
-        dungen_editor->hide();
-        dungen_editor->set_plugin(this);
-    }
-    else if (p_what == NOTIFICATION_EXIT_TREE)
-    {
-    }
 }
 #endif // TOOLS_ENABLED

@@ -46,8 +46,8 @@ namespace godot
         Vector<DungenRoom *> map_rooms;
         Vector<DungenRoom *> trimmed_rooms;
 
-        Vector2i generate_random_point_in_ellipse(Vector2i &spawn_area_dimensions);
-        Vector2i generate_random_point_in_rectangle(Vector2i &spawn_area_dimensions);
+        Vector2i generate_random_point_in_ellipse(const Vector2i &spawn_area_dimensions);
+        Vector2i generate_random_point_in_rectangle(const Vector2i &spawn_area_dimensions);
 
         DungenRoom *_generate_room();
         void _generate_rooms();

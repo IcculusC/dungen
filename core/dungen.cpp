@@ -19,14 +19,16 @@ void Dungen::_bind_methods()
     ADD_SIGNAL(MethodInfo("generate_rooms", PropertyInfo(Variant::FLOAT, "time_elapsed")));
     ADD_SIGNAL(MethodInfo("separate_rooms", PropertyInfo(Variant::FLOAT, "time_elapsed")));
     ADD_SIGNAL(MethodInfo("triangulate_rooms", PropertyInfo(Variant::FLOAT, "time_elapsed")));
+    ADD_SIGNAL(MethodInfo("minimum_spanning_tree", PropertyInfo(Variant::FLOAT, "time_elapsed")));
 
     ADD_SIGNAL(MethodInfo("generation_complete", PropertyInfo(Variant::FLOAT, "time_elapsed")));
 }
 
-Dungen::Dungen() : config(Ref<DungenConfig>(memnew(DungenConfig))),
-                   rng(Ref<RandomNumberGenerator>(memnew(RandomNumberGenerator))),
-                   path_builder(DungenPathBuilder()),
-                   room_generator(DungenRoomGenerator(this->config, this->rng))
+Dungen::Dungen()
+    : config(Ref<DungenConfig>(memnew(DungenConfig))),
+      rng(Ref<RandomNumberGenerator>(memnew(RandomNumberGenerator))),
+      path_builder(DungenPathBuilder()),
+      room_generator(DungenRoomGenerator(this->config, this->rng))
 {
     rng->set_seed(config->get_seed());
 }
@@ -42,29 +44,31 @@ int Dungen::begin()
     return current_index;
 }
 
-int Dungen::next() {
-    switch(phase) {
-        case START:
-            phase = ROOMS;
-            break;
-        case ROOMS:
-            if (room_generator.next() == -1)
-            {
-                path_builder.add_rooms(room_generator.get_map_rooms());
-                phase = GEOMETRY;
-            }
-            current_index++;
-            break;
-        case GEOMETRY:
-            if (path_builder.next() == -1)
-            {
-                phase = COMPLETE;
-            }
-            current_index++;
-            break;
-        case COMPLETE:
-        default:
-            return -1;
+int Dungen::next()
+{
+    switch (phase)
+    {
+    case START:
+        phase = ROOMS;
+        break;
+    case ROOMS:
+        if (room_generator.next() == -1)
+        {
+            path_builder.add_rooms(room_generator.get_map_rooms());
+            phase = GEOMETRY;
+        }
+        current_index++;
+        break;
+    case GEOMETRY:
+        if (path_builder.next() == -1)
+        {
+            phase = COMPLETE;
+        }
+        current_index++;
+        break;
+    case COMPLETE:
+    default:
+        return -1;
     }
 
     return current_index;
@@ -132,33 +136,11 @@ void Dungen::generate()
     path_builder.triangulate();
     path_builder.find_minimum_spanning_tree();
 
-    /*
-    Vector<DungenEdge> path_edges = path_builder.get_path_edges();
-
-    for (DungenEdge &e : path_edges) {
-        Vector2 midpoint = Vector2(e.a->get_center().x, e.b->get_center().y);
-        Vector2 center = e.get_center();
-
-        for (DungenRoom *e : trimmed_rooms) {
-            if (e->get_rectangle().has_point(midpoint) || e->get_rectangle().has_point(center)) {
-                e->set_color(Color::named("CORAL"));
-                map_rooms.push_back(e);
-                trimmed_rooms.erase(e);
-            }
-        }
-    }
-
-    path_builder.clear_rooms();
-    path_builder.add_rooms(room_generator.get_map_rooms());
-    path_builder.triangulate();
-    path_builder.find_minimum_spanning_tree();
-    */
-
     emit_signal("generation_complete", ((double)clock() - generation_start) / CLOCKS_PER_SEC);
 }
 
 void Dungen::reset()
-{   
+{
     rng->set_seed(config->get_seed());
     path_builder.reset();
     room_generator.reset();

@@ -102,7 +102,7 @@ void DungenRoomGenerator::reset()
     current_walk_position = Vector2(0, 0);
 }
 
-Vector2i DungenRoomGenerator::generate_random_point_in_rectangle(Vector2i &dimensions)
+Vector2i DungenRoomGenerator::generate_random_point_in_rectangle(const Vector2i &dimensions)
 {
     Vector2i half_size = dimensions / 2;
 
@@ -111,7 +111,7 @@ Vector2i DungenRoomGenerator::generate_random_point_in_rectangle(Vector2i &dimen
         rng->randi_range(-half_size.y, half_size.y));
 }
 
-Vector2i DungenRoomGenerator::generate_random_point_in_ellipse(Vector2i &dimensions)
+Vector2i DungenRoomGenerator::generate_random_point_in_ellipse(const Vector2i &dimensions)
 {
     double t = 2 * Math_PI * rng->randf();
     double u = rng->randf() + rng->randf();

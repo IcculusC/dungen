@@ -42,7 +42,7 @@ namespace godot
         void set_rectangle(const Rect2i p_rectangle);
         Rect2i get_rectangle() const;
 
-        bool intersects(DungenRoom *other);
+        bool intersects(DungenRoom *other) const;
 
         bool operator==(DungenRoom *other) const;
         bool operator!=(DungenRoom *other) const;

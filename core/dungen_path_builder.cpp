@@ -278,7 +278,7 @@ void DungenPathBuilder::_setup_minimum_spanning_tree()
 
 bool DungenPathBuilder::find_next_spanning_edge()
 {
-    if (minimum_spanning_tree.size() >= V - 1 || j >= all_edges.size())
+    if (minimum_spanning_tree.size() >= V - 1)
     {
         return true;
     }
@@ -300,7 +300,7 @@ bool DungenPathBuilder::find_next_spanning_edge()
         {
             j++;
 
-            if (j >= all_edges.size())
+            if (unlikely(j >= all_edges.size()))
             {
                 // broken as fuck but rather not crash
                 return true;

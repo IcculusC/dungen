@@ -75,7 +75,7 @@ Rect2i DungenRoom::get_rectangle() const
     return rectangle;
 }
 
-bool DungenRoom::intersects(DungenRoom *other)
+bool DungenRoom::intersects(DungenRoom *other) const
 {
     return rectangle.intersects(other->get_rectangle());
 }

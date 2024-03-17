@@ -1,6 +1,8 @@
 #ifndef DUNGEN_PATH_BUILDER_H
 #define DUNGEN_PATH_BUILDER_H
 
+#include <godot_cpp/core/error_macros.hpp>
+
 #include <godot_cpp/classes/geometry2d.hpp>
 #include <godot_cpp/classes/ref.hpp>
 

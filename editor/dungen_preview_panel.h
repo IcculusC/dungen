@@ -3,6 +3,8 @@
 #ifndef DUNGEN_PREVIEW_PANEL_H
 #define DUNGEN_PREVIEW_PANEL_H
 
+#include <godot_cpp/core/error_macros.hpp>
+
 #include <godot_cpp/classes/button.hpp>
 #include <godot_cpp/classes/h_box_container.hpp>
 #include <godot_cpp/classes/object.hpp>

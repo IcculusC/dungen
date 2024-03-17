@@ -28,6 +28,8 @@ DungenPreviewPanel::~DungenPreviewPanel() {}
 
 void DungenPreviewPanel::set_dungen_instance(Dungen *dungen)
 {
+    ERR_FAIL_COND_MSG(!dungen, "Provided Dungen is null.");
+
     dungen_previewer->set_dungen_instance(dungen);
 }
 
