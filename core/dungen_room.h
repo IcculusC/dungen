@@ -16,7 +16,8 @@ namespace godot
     class DungenRoom
     {
     private:
-        struct RoomData {
+        struct RoomData
+        {
             SafeRefCount refcount;
 
             Color color;
@@ -27,8 +28,6 @@ namespace godot
         void unref();
 
     protected:
-        static void _bind_methods();
-
     public:
         DungenRoom();
         DungenRoom(const Vector2i &p_vector);
@@ -40,13 +39,13 @@ namespace godot
         const Vector2 get_center() const;
         const Vector2 get_size() const;
 
-        void set_position(const Vector2i p_position);
+        void set_position(const Vector2i &p_position);
         const Vector2 get_position() const;
 
-        void set_color(const Color p_color);
+        void set_color(const Color &p_color);
         const Color get_color() const;
 
-        void set_rectangle(const Rect2i p_rectangle);
+        void set_rectangle(const Rect2i &p_rectangle);
         const Rect2i get_rectangle() const;
 
         bool intersects(const DungenRoom &p_other) const;

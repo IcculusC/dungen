@@ -53,15 +53,15 @@ void DungenEditor::_initialize_main_layout()
 
 DungenEditor::DungenEditor()
 {
+    set_clip_contents(true);
+    Ref<StyleBoxEmpty> empty_stylebox = memnew(StyleBoxEmpty);
+
     animation_timer = memnew(Timer);
     add_child(animation_timer);
     animation_timer->connect("timeout", callable_mp(this, &DungenEditor::_step));
-
-    set_clip_contents(true);
-
-    Ref<StyleBoxEmpty> empty_stylebox = memnew(StyleBoxEmpty);
-
+    
     dungen_instance = memnew(Dungen());
+    add_child(dungen_instance);
 
     _initialize_dialogs();
     _initialize_main_layout();
@@ -129,7 +129,6 @@ DungenEditor::DungenEditor()
 
 DungenEditor::~DungenEditor()
 {
-    memdelete(dungen_instance);
 }
 
 void DungenEditor::_new_config()

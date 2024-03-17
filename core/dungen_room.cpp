@@ -4,10 +4,6 @@
 
 using namespace godot;
 
-void DungenRoom::_bind_methods()
-{
-}
-
 DungenRoom::DungenRoom()
     : DungenRoom(Vector2i(0, 0))
 {
@@ -26,8 +22,10 @@ DungenRoom::DungenRoom(const Rect2i &p_rectangle)
     set_rectangle(p_rectangle);
 }
 
-DungenRoom::DungenRoom(const DungenRoom &p_room) {
-    if (p_room.room_data && p_room.room_data->refcount.ref()) {
+DungenRoom::DungenRoom(const DungenRoom &p_room)
+{
+    if (p_room.room_data && p_room.room_data->refcount.ref())
+    {
         room_data = p_room.room_data;
     }
 }
@@ -37,8 +35,10 @@ DungenRoom::~DungenRoom()
     unref();
 }
 
-void DungenRoom::unref() {
-    if (room_data && room_data->refcount.unref()) {
+void DungenRoom::unref()
+{
+    if (room_data && room_data->refcount.unref())
+    {
         memdelete(room_data);
     }
     room_data = nullptr;
@@ -59,17 +59,17 @@ const Vector2 DungenRoom::get_size() const
     return room_data->rectangle.get_size();
 }
 
-void DungenRoom::set_position(const Vector2i p_position)
+void DungenRoom::set_position(const Vector2i &p_position)
 {
     room_data->rectangle.set_position(p_position);
 }
 
 const Vector2 DungenRoom::get_position() const
 {
-    return room_data->rectangle.position;
+    return room_data->rectangle.get_position();
 }
 
-void DungenRoom::set_color(const Color p_color)
+void DungenRoom::set_color(const Color &p_color)
 {
     room_data->color = p_color;
 }
@@ -79,12 +79,12 @@ const Color DungenRoom::get_color() const
     return room_data->color;
 }
 
-void DungenRoom::set_rectangle(const Rect2i p_rectangle)
+void DungenRoom::set_rectangle(const Rect2i &p_rectangle)
 {
     room_data->rectangle = p_rectangle;
 }
 
-const Rect2i DungenRoom::get_rectangle() const 
+const Rect2i DungenRoom::get_rectangle() const
 {
     return room_data->rectangle;
 }
@@ -104,14 +104,17 @@ bool DungenRoom::operator!=(const DungenRoom &p_other) const
     return room_data->rectangle != p_other.get_rectangle();
 }
 
-void DungenRoom::operator=(const DungenRoom &p_room) {
-    if (*this == p_room) {
+void DungenRoom::operator=(const DungenRoom &p_room)
+{
+    if (*this == p_room)
+    {
         return;
     }
 
     unref();
 
-    if (p_room.room_data && p_room.room_data->refcount.ref()) {
+    if (p_room.room_data && p_room.room_data->refcount.ref())
+    {
         room_data = p_room.room_data;
     }
 }
