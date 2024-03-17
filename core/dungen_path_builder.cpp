@@ -28,7 +28,7 @@ void DungenPathBuilder::add_rooms(const Vector<DungenRoom> &p_rooms)
     rooms.append_array(p_rooms);
 }
 
-void DungenPathBuilder::add_room(DungenRoom p_room)
+void DungenPathBuilder::add_room(DungenRoom &p_room)
 {
     rooms.push_back(p_room);
 }
@@ -118,7 +118,7 @@ void DungenPathBuilder::_setup_triangulation()
     // CREATE INITIAL GEOMETRY
 }
 
-bool DungenPathBuilder::triangulate_point(int i)
+inline bool DungenPathBuilder::triangulate_point(int i)
 {
     if (i == rooms.size())
     {
@@ -193,9 +193,9 @@ void DungenPathBuilder::triangulate()
     clock_t triangulate_start = clock();
 
     // MAIN LOOP
-    for (int room_number = 0; room_number < rooms.size(); room_number++)
+    for (int i = 0; i < rooms.size(); i++)
     {
-        triangulate_point(room_number);
+        triangulate_point(i);
     }
 
     Vector<DungenTriangle> corner_triangles;
@@ -219,7 +219,7 @@ void DungenPathBuilder::triangulate()
     UtilityFunctions::print("TRIANGULATION TIME ELAPSED ", (float)(clock() - triangulate_start) / CLOCKS_PER_SEC);
 }
 
-DungenRoom DungenPathBuilder::_find_edge_parent(HashMap<DungenRoom, DungenDisjoinSet> &subsets, DungenRoom room)
+DungenRoom DungenPathBuilder::_find_edge_parent(HashMap<DungenRoom, DungenDisjoinSet> &subsets, DungenRoom &room)
 {
     if (subsets.get(room).parent == room)
     {
@@ -231,7 +231,7 @@ DungenRoom DungenPathBuilder::_find_edge_parent(HashMap<DungenRoom, DungenDisjoi
     return subsets.get(room).parent;
 }
 
-void DungenPathBuilder::_union_subsets(HashMap<DungenRoom, DungenDisjoinSet> &subsets, DungenRoom room_a, DungenRoom room_b)
+void DungenPathBuilder::_union_subsets(HashMap<DungenRoom, DungenDisjoinSet> &subsets, DungenRoom &room_a, DungenRoom &room_b)
 {
     DungenRoom parent_a = _find_edge_parent(subsets, room_a);
     DungenRoom parent_b = _find_edge_parent(subsets, room_b);
@@ -290,7 +290,7 @@ bool DungenPathBuilder::find_next_spanning_edge()
         return false;
     }
     */
-    bool found_edge;
+    bool found_edge = false;
 
     while (!found_edge && j < all_edges.size())
     {

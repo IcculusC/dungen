@@ -212,24 +212,26 @@ void DungenEditor::_regenerate()
 
 void DungenEditor::_step()
 {
-    dungen_preview_panel->refresh();
     if (dungen_instance->next() != -1)
     {
         switch (dungen_instance->get_phase())
         {
         case 0:
         case 1:
-        {
             dungen_preview_panel->set_show_all(true);
             break;
-        }
+        case 2:
+            dungen_preview_panel->set_show_all(false);
+            break;
+        case 3:
         default:
         {
-            dungen_preview_panel->set_show_all(false);
             animation_timer->stop();
         }
         }
     }
+
+    dungen_preview_panel->refresh();
     /*
     if (animation_iterator != dungen_instance->end()) {
         if (animation_iterator.get_stage() > 1) {

@@ -25,7 +25,7 @@ namespace godot
         const double get_length() const { return Vector2(a.get_center()).distance_squared_to(b.get_center()); }
 
         DungenEdge() {}
-        DungenEdge(DungenRoom a, DungenRoom b) : a(a),
+        DungenEdge(const DungenRoom &a, const DungenRoom &b) : a(a),
                                                  b(b)
         {
         }
@@ -112,7 +112,7 @@ namespace godot
                   (DungenRoom(a)),
                   (DungenRoom(b)),
                   (DungenRoom(c))) {}
-        DungenTriangle(DungenRoom a, DungenRoom b, DungenRoom c)
+        DungenTriangle(const DungenRoom &a, const DungenRoom &b, const DungenRoom &c)
             : a(a),
               b(b),
               c(c),
@@ -158,8 +158,9 @@ namespace godot
         DungenRoom parent;
         int rank;
 
-        DungenDisjoinSet(DungenRoom parent) : parent(parent),
-                                              rank(0)
+        DungenDisjoinSet(DungenRoom &parent)
+            : parent(parent),
+              rank(0)
         {
         }
     };
@@ -193,15 +194,15 @@ namespace godot
         void _setup_triangulation();
         void _setup_minimum_spanning_tree();
 
-        DungenRoom _find_edge_parent(HashMap<DungenRoom, DungenDisjoinSet> &subsets, DungenRoom room);
-        void _union_subsets(HashMap<DungenRoom, DungenDisjoinSet> &subsets, DungenRoom room_a, DungenRoom room_b);
+        DungenRoom _find_edge_parent(HashMap<DungenRoom, DungenDisjoinSet> &subsets, DungenRoom &room);
+        void _union_subsets(HashMap<DungenRoom, DungenDisjoinSet> &subsets, DungenRoom &room_a, DungenRoom &room_b);
 
     public:
         DungenPathBuilder();
         ~DungenPathBuilder();
 
         void add_rooms(const Vector<DungenRoom> &p_rooms);
-        void add_room(DungenRoom p_room);
+        void add_room(DungenRoom &p_room);
         void clear_rooms();
 
         void triangulate();

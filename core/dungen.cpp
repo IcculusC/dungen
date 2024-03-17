@@ -33,7 +33,6 @@ Dungen::Dungen() : config(Ref<DungenConfig>(memnew(DungenConfig))),
 
 Dungen::~Dungen()
 {
-    reset();
 }
 
 int Dungen::begin()
@@ -50,7 +49,6 @@ int Dungen::next() {
         case ROOMS:
             if (room_generator.next() == -1)
             {
-                UtilityFunctions::print("ROOMS ", room_generator.get_map_rooms().size());
                 path_builder.add_rooms(room_generator.get_map_rooms());
                 phase = GEOMETRY;
             }
