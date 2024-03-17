@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://bhpfhf4154gda"]
 
-[ext_resource type="DungenConfig" uid="uid://cc4h0p48n43c3" path="res://another_example.tres" id="1_wrvhu"]
+[ext_resource type="DungenConfig" uid="uid://bfptxriyl1xxv" path="res://more_examples.tres" id="1_te54j"]
 [ext_resource type="Script" path="res://dungen_renderer.gd" id="2_q3qnt"]
 [ext_resource type="Texture2D" uid="uid://d3ytmmcma00xs" path="res://floor_tile.png" id="3_vras5"]
 
@@ -17,7 +17,7 @@ tile_size = Vector2i(32, 16)
 sources/0 = SubResource("TileSetAtlasSource_b8ruu")
 
 [node name="Dungen" type="Dungen"]
-config = ExtResource("1_wrvhu")
+config = ExtResource("1_te54j")
 script = ExtResource("2_q3qnt")
 
 [node name="TileMap" type="TileMap" parent="."]
@@ -27,4 +27,4 @@ format = 2
 layer_0/y_sort_enabled = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(0.4, 0.4)
+zoom = Vector2(0.5, 0.5)

@@ -3,6 +3,7 @@
 
 #include <godot_cpp/classes/random_number_generator.hpp>
 #include <godot_cpp/classes/ref.hpp>
+#include <godot_cpp/classes/scene_tree.hpp>
 
 #include <godot_cpp/templates/vector.hpp>
 

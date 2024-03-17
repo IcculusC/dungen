@@ -6,7 +6,9 @@ DungenRoomGenerator::DungenRoomGenerator(Ref<DungenConfig> &config, Ref<RandomNu
     : config(config), rng(rng)
 {
 }
-DungenRoomGenerator::~DungenRoomGenerator() {}
+DungenRoomGenerator::~DungenRoomGenerator() {
+    reset();
+}
 
 void DungenRoomGenerator::set_config(const Ref<DungenConfig> &p_config)
 {
@@ -86,6 +88,7 @@ void DungenRoomGenerator::reset()
     {
         memdelete(all_rooms[i]);
     }
+
     all_rooms.clear();
     map_rooms.clear();
     trimmed_rooms.clear();
@@ -152,13 +155,17 @@ DungenRoom *DungenRoomGenerator::_generate_room()
         }
         break;
     case RANDOM_WALK:
-        Vector2i directions[4] = {
+        Vector2i directions[8] = {
             Vector2i(1, 0),
             Vector2i(0, 1),
+            Vector2i(1, 1),
             Vector2i(-1, 0),
-            Vector2i(0, -1)};
-        int direction = rng->randi_range(0, 3);
-        current_walk_position += directions[direction] * Math::min(room_dimensions.x, room_dimensions.y);
+            Vector2i(0, -1),
+            Vector2i(-1, -1),
+            Vector2i(-1, 1),
+            Vector2i(1, -1)};
+        int direction = rng->randi_range(0, 7);
+        current_walk_position += directions[direction] * config->get_step_size(); 
         room_position = current_walk_position;
         break;
     }
