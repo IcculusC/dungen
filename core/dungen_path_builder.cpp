@@ -290,7 +290,7 @@ bool DungenPathBuilder::find_next_spanning_edge()
         return false;
     }
     */
-    bool found_edge;
+    bool found_edge = false;
 
     while (!found_edge && j < all_edges.size())
     {

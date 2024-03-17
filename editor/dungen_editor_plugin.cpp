@@ -56,8 +56,13 @@ DungenEditor::DungenEditor()
     set_clip_contents(true);
 
     Ref<StyleBoxEmpty> empty_stylebox = memnew(StyleBoxEmpty);
+    
+    animation_timer = memnew(Timer);
+    add_child(animation_timer);
+    animation_timer->connect("timeout", callable_mp(this, &DungenEditor::_step));
 
     dungen_instance = memnew(Dungen());
+    add_child(dungen_instance);
 
     _initialize_dialogs();
     _initialize_main_layout();
@@ -125,7 +130,6 @@ DungenEditor::DungenEditor()
 
 DungenEditor::~DungenEditor()
 {
-    memdelete(dungen_instance);
 }
 
 void DungenEditor::_new_config()
@@ -191,20 +195,21 @@ void DungenEditor::_set_show_generation_animation(bool p_show) {
 
 void DungenEditor::_regenerate()
 {
-
-    if (show_generation_animation) {
+    if (show_generation_animation)
+    {
+        animation_timer->stop();
         dungen_instance->begin();
-        _step();
+        animation_timer->start(0.1);
     }
     else
     {
+        animation_timer->stop();
         dungen_instance->generate();
     }
 }
 
 void DungenEditor::_step()
 {
-    dungen_preview_panel->refresh();
     if (dungen_instance->next() != -1)
     {
         switch (dungen_instance->get_phase())
@@ -215,29 +220,18 @@ void DungenEditor::_step()
             dungen_preview_panel->set_show_all(true);
             break;
         }
+        case 2:
+            dungen_preview_panel->set_show_all(false);
+            break;
+        case 3:
         default:
         {
-            dungen_preview_panel->set_show_all(false);
+            animation_timer->stop();
         }
         }
-        Ref<SceneTreeTimer> timer = get_tree()->create_timer(0.1);
-        timer->connect("timeout", callable_mp(this, &DungenEditor::_step));
     }
-    /*
-    if (animation_iterator != dungen_instance->end()) {
-        if (animation_iterator.get_stage() > 1) {
-            dungen_preview_panel->set_show_all(false);
-        } else {
-            dungen_preview_panel->set_show_all(true);
-        }
-        animation_iterator.next();
 
-        dungen_preview_panel->refresh();
-
-        Ref<SceneTreeTimer> timer = get_tree()->create_timer(0.1);
-        timer->connect("timeout", callable_mp(this, &DungenEditor::_step));
-    }
-    */
+    dungen_preview_panel->refresh();
 }
 
 void DungenEditor::_notification(int p_what)
