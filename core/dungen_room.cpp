@@ -9,83 +9,109 @@ void DungenRoom::_bind_methods()
 }
 
 DungenRoom::DungenRoom()
-    : color(Color::named("ORANGERED")),
-      rectangle(Rect2(Vector2i(0, 0), Vector2i(1, 1)))
+    : DungenRoom(Vector2i(0, 0))
 {
 }
 
-DungenRoom::DungenRoom(Vector2i _vector)
-    : color(Color::named("ORANGERED")),
-      rectangle(Rect2i(_vector - Vector2i(1, 1), Vector2(2, 2)))
+DungenRoom::DungenRoom(const Vector2i &p_vector)
+    : DungenRoom(Rect2i(p_vector - Vector2i(1, 1), Vector2i(2, 2)))
 {
 }
 
-DungenRoom::DungenRoom(Rect2i _rectangle)
-    : color(Color::named("ORANGERED")),
-      rectangle(_rectangle)
+DungenRoom::DungenRoom(const Rect2i &p_rectangle)
 {
+    room_data = memnew(RoomData);
+    room_data->refcount.init();
+    set_color(Color::named("ORANGERED"));
+    set_rectangle(p_rectangle);
+}
+
+DungenRoom::DungenRoom(const DungenRoom &p_room) {
+    if (p_room.room_data && p_room.room_data->refcount.ref()) {
+        room_data = p_room.room_data;
+    }
 }
 
 DungenRoom::~DungenRoom()
 {
+    unref();
 }
 
-double DungenRoom::get_area() const
-{
-    return rectangle.get_area();
+void DungenRoom::unref() {
+    if (room_data && room_data->refcount.unref()) {
+        memdelete(room_data);
+    }
+    room_data = nullptr;
 }
 
-Vector2 DungenRoom::get_center() const
+const double DungenRoom::get_area() const
 {
-    return rectangle.get_center();
+    return room_data->rectangle.get_area();
 }
 
-Vector2 DungenRoom::get_size() const
+const Vector2 DungenRoom::get_center() const
 {
-    return rectangle.get_size();
+    return room_data->rectangle.get_center();
+}
+
+const Vector2 DungenRoom::get_size() const
+{
+    return room_data->rectangle.get_size();
 }
 
 void DungenRoom::set_position(const Vector2i p_position)
 {
-    rectangle.set_position(p_position);
+    room_data->rectangle.set_position(p_position);
 }
 
-Vector2 DungenRoom::get_position() const
+const Vector2 DungenRoom::get_position() const
 {
-    return rectangle.position;
+    return room_data->rectangle.position;
 }
 
 void DungenRoom::set_color(const Color p_color)
 {
-    color = p_color;
+    room_data->color = p_color;
 }
 
-Color DungenRoom::get_color() const
+const Color DungenRoom::get_color() const
 {
-    return color;
+    return room_data->color;
 }
 
 void DungenRoom::set_rectangle(const Rect2i p_rectangle)
 {
-    rectangle = p_rectangle;
+    room_data->rectangle = p_rectangle;
 }
 
-Rect2i DungenRoom::get_rectangle() const
+const Rect2i DungenRoom::get_rectangle() const 
 {
-    return rectangle;
+    return room_data->rectangle;
 }
 
-bool DungenRoom::intersects(DungenRoom *other)
+bool DungenRoom::intersects(const DungenRoom &p_other) const
 {
-    return rectangle.intersects(other->get_rectangle());
+    return room_data->rectangle.intersects(p_other.get_rectangle());
 }
 
-bool DungenRoom::operator==(DungenRoom *other) const
+bool DungenRoom::operator==(const DungenRoom &p_other) const
 {
-    return rectangle == other->get_rectangle();
+    return room_data->rectangle == p_other.get_rectangle();
 }
 
-bool DungenRoom::operator!=(DungenRoom *other) const
+bool DungenRoom::operator!=(const DungenRoom &p_other) const
 {
-    return rectangle != other->get_rectangle();
+    return room_data->rectangle != p_other.get_rectangle();
+}
+
+void DungenRoom::operator=(const DungenRoom &p_room) {
+    if (*this == p_room) {
+        return;
+    }
+
+    unref();
+
+    if (p_room.room_data && p_room.room_data->refcount.ref()) {
+        room_data = p_room.room_data;
+    }
 }

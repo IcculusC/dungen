@@ -23,12 +23,12 @@ void DungenPathBuilder::reset()
     current_index = 0;
 }
 
-void DungenPathBuilder::add_rooms(const Vector<DungenRoom *> &p_rooms)
+void DungenPathBuilder::add_rooms(const Vector<DungenRoom> &p_rooms)
 {
     rooms.append_array(p_rooms);
 }
 
-void DungenPathBuilder::add_room(DungenRoom *p_room)
+void DungenPathBuilder::add_room(DungenRoom p_room)
 {
     rooms.push_back(p_room);
 }
@@ -98,7 +98,7 @@ void DungenPathBuilder::_setup_triangulation()
     super_rect = Rect2(-1, -1, 1, 1);
     for (int i = 0; i < rooms.size(); i++)
     {
-        super_rect.expand_to(rooms[i]->get_center());
+        super_rect.expand_to(rooms[i].get_center());
     }
 
     super_rect.grow_by(Math::max(super_rect.size.x, super_rect.size.y) / 2);
@@ -108,10 +108,10 @@ void DungenPathBuilder::_setup_triangulation()
     Vector2i corner2 = super_rect.position + super_rect.size;
     Vector2i corner3 = super_rect.position + (Vector2i(0, 1) * super_rect.size);
 
-    corners.push_back(memnew(DungenRoom(corner0)));
-    corners.push_back(memnew(DungenRoom(corner1)));
-    corners.push_back(memnew(DungenRoom(corner2)));
-    corners.push_back(memnew(DungenRoom(corner3)));
+    corners.push_back(DungenRoom(corner0));
+    corners.push_back(DungenRoom(corner1));
+    corners.push_back(DungenRoom(corner2));
+    corners.push_back(DungenRoom(corner3));
 
     triangulation.push_back(DungenTriangle(corners[0], corners[1], corners[2]));
     triangulation.push_back(DungenTriangle(corners[2], corners[3], corners[0]));
@@ -125,7 +125,7 @@ bool DungenPathBuilder::triangulate_point(int i)
         return true;
     }
 
-    DungenRoom *room = rooms[i];
+    DungenRoom room = rooms[i];
     Vector<DungenTriangle> bad_triangles;
 
     // find triangles whos circumcircle contains the rooms center
@@ -133,7 +133,7 @@ bool DungenPathBuilder::triangulate_point(int i)
     {
         DungenTriangle current_triangle = triangulation[i];
 
-        if (current_triangle.is_point_in_circumfrence(room->get_center()))
+        if (current_triangle.is_point_in_circumfrence(room.get_center()))
         {
             bad_triangles.push_back(current_triangle);
         }
@@ -219,7 +219,7 @@ void DungenPathBuilder::triangulate()
     UtilityFunctions::print("TRIANGULATION TIME ELAPSED ", (float)(clock() - triangulate_start) / CLOCKS_PER_SEC);
 }
 
-DungenRoom *DungenPathBuilder::_find_edge_parent(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom *room)
+DungenRoom DungenPathBuilder::_find_edge_parent(HashMap<DungenRoom, DungenDisjoinSet> &subsets, DungenRoom room)
 {
     if (subsets.get(room).parent == room)
     {
@@ -231,10 +231,10 @@ DungenRoom *DungenPathBuilder::_find_edge_parent(HashMap<DungenRoom *, DungenDis
     return subsets.get(room).parent;
 }
 
-void DungenPathBuilder::_union_subsets(HashMap<DungenRoom *, DungenDisjoinSet> &subsets, DungenRoom *room_a, DungenRoom *room_b)
+void DungenPathBuilder::_union_subsets(HashMap<DungenRoom, DungenDisjoinSet> &subsets, DungenRoom room_a, DungenRoom room_b)
 {
-    DungenRoom *parent_a = _find_edge_parent(subsets, room_a);
-    DungenRoom *parent_b = _find_edge_parent(subsets, room_b);
+    DungenRoom parent_a = _find_edge_parent(subsets, room_a);
+    DungenRoom parent_b = _find_edge_parent(subsets, room_b);
 
     if (subsets.get(parent_b).rank < subsets.get(parent_a).rank)
     {
@@ -309,8 +309,8 @@ bool DungenPathBuilder::find_next_spanning_edge()
             next_edge = all_edges[j];
         }
 
-        DungenRoom *room_a = _find_edge_parent(subsets, next_edge.a);
-        DungenRoom *room_b = _find_edge_parent(subsets, next_edge.b);
+        DungenRoom room_a = _find_edge_parent(subsets, next_edge.a);
+        DungenRoom room_b = _find_edge_parent(subsets, next_edge.b);
 
         if (room_a != room_b)
         {
@@ -355,8 +355,8 @@ void DungenPathBuilder::find_minimum_spanning_tree()
             continue;
         }
 
-        DungenRoom *room_a = _find_edge_parent(subsets, next_edge.a);
-        DungenRoom *room_b = _find_edge_parent(subsets, next_edge.b);
+        DungenRoom room_a = _find_edge_parent(subsets, next_edge.a);
+        DungenRoom room_b = _find_edge_parent(subsets, next_edge.b);
 
         if (room_a != room_b)
         {
@@ -399,11 +399,11 @@ Vector<Rect2i> DungenPathBuilder::get_path_rectangles()
     for (int i = 0; i < path_edges.size(); i++)
     {
         DungenEdge current_edge = path_edges[i];
-        DungenRoom *room_a = current_edge.a;
-        DungenRoom *room_b = current_edge.b;
+        DungenRoom room_a = current_edge.a;
+        DungenRoom room_b = current_edge.b;
 
-        Rect2i rect_a = room_a->get_rectangle();
-        Rect2i rect_b = room_b->get_rectangle();
+        Rect2i rect_a = room_a.get_rectangle();
+        Rect2i rect_b = room_b.get_rectangle();
         Vector2i edge_center = current_edge.get_center();
 
         if (

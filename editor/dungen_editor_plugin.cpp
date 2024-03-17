@@ -53,6 +53,10 @@ void DungenEditor::_initialize_main_layout()
 
 DungenEditor::DungenEditor()
 {
+    animation_timer = memnew(Timer);
+    add_child(animation_timer);
+    animation_timer->connect("timeout", callable_mp(this, &DungenEditor::_step));
+
     set_clip_contents(true);
 
     Ref<StyleBoxEmpty> empty_stylebox = memnew(StyleBoxEmpty);
@@ -180,24 +184,29 @@ void DungenEditor::_edit_dungen_config(Ref<DungenConfig> config)
     _regenerate();
 }
 
-void DungenEditor::_set_show_generation_animation(bool p_show) {
-    if (show_generation_animation == p_show) {
+void DungenEditor::_set_show_generation_animation(bool p_show)
+{
+    if (show_generation_animation == p_show)
+    {
         return;
     }
     show_generation_animation = p_show;
-    
+
     _regenerate();
 }
 
 void DungenEditor::_regenerate()
 {
 
-    if (show_generation_animation) {
+    if (show_generation_animation)
+    {
+        animation_timer->stop();
         dungen_instance->begin();
-        _step();
+        animation_timer->start(0.05);
     }
     else
     {
+        animation_timer->stop();
         dungen_instance->generate();
     }
 }
@@ -218,10 +227,9 @@ void DungenEditor::_step()
         default:
         {
             dungen_preview_panel->set_show_all(false);
+            animation_timer->stop();
         }
         }
-        Ref<SceneTreeTimer> timer = get_tree()->create_timer(0.1);
-        timer->connect("timeout", callable_mp(this, &DungenEditor::_step));
     }
     /*
     if (animation_iterator != dungen_instance->end()) {

@@ -80,17 +80,17 @@ void Dungen::set_config(const Ref<DungenConfig> &p_config)
     config = p_config;
 }
 
-Vector<DungenRoom *> Dungen::get_all_rooms() const
+Vector<DungenRoom> Dungen::get_all_rooms() const
 {
     return room_generator.get_all_rooms();
 }
 
-Vector<DungenRoom *> Dungen::get_map_rooms() const
+Vector<DungenRoom> Dungen::get_map_rooms() const
 {
     return room_generator.get_map_rooms();
 }
 
-Vector<DungenRoom *> Dungen::get_trimmed_rooms() const
+Vector<DungenRoom> Dungen::get_trimmed_rooms() const
 {
     return room_generator.get_trimmed_rooms();
 }
@@ -99,12 +99,12 @@ Dictionary Dungen::get_all()
 {
     Dictionary results;
 
-    Vector<DungenRoom *> map_rooms = room_generator.get_map_rooms();
+    Vector<DungenRoom> map_rooms = room_generator.get_map_rooms();
 
     Array room_rects_array;
     for (int i = 0; i < map_rooms.size(); i++)
     {
-        room_rects_array.push_back(map_rooms[i]->get_rectangle());
+        room_rects_array.push_back(map_rooms[i].get_rectangle());
     }
 
     Vector<Rect2i> path_rects = path_builder.get_path_rectangles();

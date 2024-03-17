@@ -42,14 +42,14 @@ namespace godot
         int total_area;
         int trimmed_area;
 
-        Vector<DungenRoom *> all_rooms;
-        Vector<DungenRoom *> map_rooms;
-        Vector<DungenRoom *> trimmed_rooms;
+        Vector<DungenRoom> all_rooms;
+        Vector<DungenRoom> map_rooms;
+        Vector<DungenRoom> trimmed_rooms;
 
         Vector2i generate_random_point_in_ellipse(Vector2i &spawn_area_dimensions);
         Vector2i generate_random_point_in_rectangle(Vector2i &spawn_area_dimensions);
 
-        DungenRoom *_generate_room();
+        DungenRoom _generate_room();
         void _generate_rooms();
 
         int _smart_has_overlapping_rooms();
@@ -57,7 +57,7 @@ namespace godot
         bool _smart_separate_rooms();
         void _smart_separation_iteration(int starting_room);
 
-        bool _smart_should_trim_room(DungenRoom *room, double minimum_area) const;
+        bool _smart_should_trim_room(DungenRoom room, double minimum_area) const;
         bool _smart_trim_one();
         void _smart_trim_rooms();
 
@@ -80,9 +80,9 @@ namespace godot
 
         void reset();
 
-        const Vector<DungenRoom *> &get_all_rooms() const { return all_rooms; };
-        const Vector<DungenRoom *> &get_map_rooms() const { return map_rooms; };
-        const Vector<DungenRoom *> &get_trimmed_rooms() const { return trimmed_rooms; };
+        const Vector<DungenRoom> &get_all_rooms() const { return all_rooms; };
+        const Vector<DungenRoom> &get_map_rooms() const { return map_rooms; };
+        const Vector<DungenRoom> &get_trimmed_rooms() const { return trimmed_rooms; };
     };
 }
 

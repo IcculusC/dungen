@@ -3,6 +3,8 @@
 
 #include <godot_cpp/classes/object.hpp>
 
+#include <godot_cpp/templates/safe_refcount.hpp>
+
 #include <godot_cpp/variant/color.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/rect2i.hpp>
@@ -11,53 +13,60 @@
 
 namespace godot
 {
-
-    class DungenRoom : public Object
+    class DungenRoom
     {
-        GDCLASS(DungenRoom, Object)
-
     private:
-        Color color;
-        Rect2i rectangle;
+        struct RoomData {
+            SafeRefCount refcount;
+
+            Color color;
+            Rect2i rectangle;
+        };
+
+        RoomData *room_data = nullptr;
+        void unref();
 
     protected:
         static void _bind_methods();
 
     public:
         DungenRoom();
-        DungenRoom(Vector2i _vector);
-        DungenRoom(Rect2i _rectangle);
+        DungenRoom(const Vector2i &p_vector);
+        DungenRoom(const Rect2i &p_rectangle);
+        DungenRoom(const DungenRoom &p_room);
         ~DungenRoom();
 
-        double get_area() const;
-        Vector2 get_center() const;
-        Vector2 get_size() const;
+        const double get_area() const;
+        const Vector2 get_center() const;
+        const Vector2 get_size() const;
 
         void set_position(const Vector2i p_position);
-        Vector2 get_position() const;
+        const Vector2 get_position() const;
 
         void set_color(const Color p_color);
-        Color get_color() const;
+        const Color get_color() const;
 
         void set_rectangle(const Rect2i p_rectangle);
-        Rect2i get_rectangle() const;
+        const Rect2i get_rectangle() const;
 
-        bool intersects(DungenRoom *other);
+        bool intersects(const DungenRoom &p_other) const;
 
-        bool operator==(DungenRoom *other) const;
-        bool operator!=(DungenRoom *other) const;
+        bool operator==(const DungenRoom &p_other) const;
+        bool operator!=(const DungenRoom &p_other) const;
+
+        void operator=(const DungenRoom &p_room);
 
         operator Variant() const
         {
             Dictionary result;
-            result["color"] = color;
-            result["rectangle"] = rectangle;
+            result["color"] = room_data->color;
+            result["rectangle"] = room_data->rectangle;
             return result;
         }
 
         operator Vector2i() const
         {
-            return rectangle.get_center();
+            return room_data->rectangle.get_center();
         }
     };
 

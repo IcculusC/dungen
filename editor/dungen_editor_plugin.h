@@ -23,6 +23,7 @@
 #include <godot_cpp/classes/style_box_flat.hpp>
 #include <godot_cpp/classes/texture2d.hpp>
 #include <godot_cpp/classes/theme.hpp>
+#include <godot_cpp/classes/timer.hpp>
 #include <godot_cpp/classes/v_box_container.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
 #include <godot_cpp/classes/scene_tree_timer.hpp>
@@ -49,6 +50,8 @@ namespace godot
     private:
         EditorPlugin *plugin;
         Dungen *dungen_instance;
+
+        Timer *animation_timer;
 
         FileDialog *save_dialog;
         FileDialog *load_dialog;

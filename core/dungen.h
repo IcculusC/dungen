@@ -73,9 +73,9 @@ namespace godot
 		double get_average_area() const { return room_generator.get_average_area(); };
 		double get_total_area() const { return room_generator.get_total_area(); };
 
-		Vector<DungenRoom *> get_all_rooms() const;
-		Vector<DungenRoom *> get_map_rooms() const;
-		Vector<DungenRoom *> get_trimmed_rooms() const;
+		Vector<DungenRoom> get_all_rooms() const;
+		Vector<DungenRoom> get_map_rooms() const;
+		Vector<DungenRoom> get_trimmed_rooms() const;
 		
 		Dictionary get_all();
 

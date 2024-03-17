@@ -1,7 +1,6 @@
 #include "register_types.h"
 
 #include "core/dungen_config.h"
-#include "core/dungen_room.h"
 #include "core/dungen.h"
 
 #ifdef TOOLS_ENABLED
@@ -21,7 +20,6 @@ using namespace godot;
 void initialize_dungen_module(ModuleInitializationLevel p_level) {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
 		GDREGISTER_CLASS(DungenConfig);
-		GDREGISTER_CLASS(DungenRoom);
 		GDREGISTER_CLASS(Dungen);
 	}
 
