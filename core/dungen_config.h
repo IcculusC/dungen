@@ -27,6 +27,8 @@ namespace godot
 		Vector2i spawn_area_dimensions;
 		DungenShape spawn_area_shape;
 
+		int step_size;
+
 		void emit_changed();
 
 	protected:
@@ -65,6 +67,9 @@ namespace godot
 
 		void set_spawn_area_shape(const DungenShape p_spawn_area_shape);
 		DungenShape get_spawn_area_shape() const { return spawn_area_shape; };
+
+		void set_step_size(const int p_step_size);
+		int get_step_size() const { return step_size; }
 	};
 
 }

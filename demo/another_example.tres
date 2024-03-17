@@ -4,6 +4,6 @@
 seed = 420.0
 generation_type = 1
 room_dimensions = Vector2i(20, 20)
-room_dimensions_sigma = Vector2i(10, 10)
+room_dimensions_sigma = Vector2i(3, 7)
 spawn_area_shape = 1
 room_minimum_dimensions = Vector2i(20, 20)

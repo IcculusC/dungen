@@ -2,4 +2,9 @@
 
 [resource]
 seed = 3.22133e+06
-room_count = 13.0
+generation_type = 1
+room_count = 37.0
+room_dimensions = Vector2i(15, 12)
+room_dimensions_sigma = Vector2i(3, 2)
+step_size = 16
+room_dimensions_trim_ratio = 0.866
