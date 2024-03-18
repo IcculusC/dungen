@@ -25,8 +25,8 @@ void Dungen::_bind_methods()
 }
 
 Dungen::Dungen()
-    : config(Ref<DungenConfig>(memnew(DungenConfig))),
-      rng(Ref<RandomNumberGenerator>(memnew(RandomNumberGenerator))),
+    : config(memnew(DungenConfig)),
+      rng(memnew(RandomNumberGenerator)),
       path_builder(DungenPathBuilder()),
       room_generator(DungenRoomGenerator(this->config, this->rng))
 {

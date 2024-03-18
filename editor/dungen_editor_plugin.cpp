@@ -59,9 +59,8 @@ DungenEditor::DungenEditor()
     
     animation_timer = memnew(Timer);
     add_child(animation_timer);
-    animation_timer->connect("timeout", callable_mp(this, &DungenEditor::_step));
 
-    dungen_instance = memnew(Dungen());
+    dungen_instance = memnew(Dungen);
     add_child(dungen_instance);
 
     _initialize_dialogs();
@@ -261,6 +260,8 @@ void DungenEditor::_notification(int p_what)
         dungen_editor_toolbar->connect("new_pressed", callable_mp(this, &DungenEditor::_new_config));
         dungen_editor_toolbar->connect("load_pressed", callable_mp(this, &DungenEditor::_show_file_dialog).bind(load_dialog));
         dungen_editor_toolbar->connect("save_pressed", callable_mp(this, &DungenEditor::_on_save_pressed));
+
+        animation_timer->connect("timeout", callable_mp(this, &DungenEditor::_step));
     }
 }
 

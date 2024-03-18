@@ -61,7 +61,7 @@ namespace godot
         void _smart_trim_rooms();
 
     public:
-        DungenRoomGenerator(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng);
+        DungenRoomGenerator(const Ref<DungenConfig> &config, const Ref<RandomNumberGenerator> &rng);
         ~DungenRoomGenerator();
 
         void set_config(const Ref<DungenConfig> &p_config);

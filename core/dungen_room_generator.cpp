@@ -2,7 +2,7 @@
 
 using namespace godot;
 
-DungenRoomGenerator::DungenRoomGenerator(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng)
+DungenRoomGenerator::DungenRoomGenerator(const Ref<DungenConfig> &config, const Ref<RandomNumberGenerator> &rng)
     : config(config), rng(rng)
 {
 }
