@@ -6,11 +6,13 @@
 using namespace godot;
 
 DungenPreviewer::DungenPreviewer()
+    : grid_size(8.0), show_grid(true), show_path_rectangles(true)
 {
-    for (auto &a : EDITOR_THEME()->get_font_list("EditorFonts")) {
+    for (auto &a : EDITOR_THEME()->get_font_list("EditorFonts"))
+    {
         UtilityFunctions::print(a);
     }
-    
+
     set_clip_contents(true);
 }
 DungenPreviewer::~DungenPreviewer()
@@ -39,6 +41,26 @@ void DungenPreviewer::set_zoom(const Vector2 &p_zoom)
     }
     zoom = p_zoom.clamp(Vector2(0.25, 0.25), Vector2(10, 10));
     emit_signal("zoom_changed");
+    queue_redraw();
+}
+
+void DungenPreviewer::set_grid_size(const double &p_size)
+{
+    if (grid_size == p_size)
+    {
+        return;
+    }
+    grid_size = p_size;
+    queue_redraw();
+}
+
+void DungenPreviewer::set_show_grid(bool p_show)
+{
+    if (show_grid == p_show)
+    {
+        return;
+    }
+    show_grid = p_show;
     queue_redraw();
 }
 
@@ -132,25 +154,28 @@ void DungenPreviewer::_draw()
 
     double zoom_factor = Math::max(1.0, 1.0 / zoom.x);
 
-    draw_line(Vector2(0, -control_size.y) * zoom_factor, Vector2(0, control_size.y) * zoom_factor, Color(0.1, 1.0, 0.1, 0.3), 1.0);
-    for (int i = 16; i < control_size.x / 2; i += 16)
+    if (show_grid)
     {
-        Vector2 start = Vector2(i, -control_size.y / 2) * zoom_factor;
-        Vector2 end = Vector2(i, control_size.y / 2) * zoom_factor;
-        draw_line(start, end, Color(0.7, 0.1, 1, 0.2), 1.0);
-        draw_line(Vector2(-1, 1) * start, Vector2(-1, 1) * end, Color(0.7, 0.1, 1, 0.2), 1.0);
-    }
+        draw_line(Vector2(0, -control_size.y) * zoom_factor, Vector2(0, control_size.y) * zoom_factor, Color(0.1, 1.0, 0.1, 0.3), 1.0);
+        for (int i = grid_size; i < control_size.x / 2; i += grid_size)
+        {
+            Vector2 start = Vector2(i, -control_size.y / 2) * zoom_factor;
+            Vector2 end = Vector2(i, control_size.y / 2) * zoom_factor;
+            draw_line(start, end, Color(0.7, 0.1, 1, 0.2), 1.0);
+            draw_line(Vector2(-1, 1) * start, Vector2(-1, 1) * end, Color(0.7, 0.1, 1, 0.2), 1.0);
+        }
 
-    draw_line(Vector2(-control_size.x, 0) * zoom_factor, Vector2(control_size.x, 0) * zoom_factor, Color(1.0, 0.1, 0.1, 0.4), 1.0);
-    for (int i = 16; i < control_size.x / 2; i += 16)
-    {
-        Vector2 start = Vector2(-control_size.x / 2, i) * zoom_factor;
-        Vector2 end = Vector2(control_size.x / 2, i) * zoom_factor;
-        draw_line(start, end, Color(0.7, 0.1, 1, 0.2), 1.0);
-        draw_line(Vector2(1, -1) * start, Vector2(1, -1) * end, Color(0.7, 0.1, 1, 0.2), 1.0);
-    }
+        draw_line(Vector2(-control_size.x, 0) * zoom_factor, Vector2(control_size.x, 0) * zoom_factor, Color(1.0, 0.1, 0.1, 0.4), 1.0);
+        for (int i = grid_size; i < control_size.x / 2; i += grid_size)
+        {
+            Vector2 start = Vector2(-control_size.x / 2, i) * zoom_factor;
+            Vector2 end = Vector2(control_size.x / 2, i) * zoom_factor;
+            draw_line(start, end, Color(0.7, 0.1, 1, 0.2), 1.0);
+            draw_line(Vector2(1, -1) * start, Vector2(1, -1) * end, Color(0.7, 0.1, 1, 0.2), 1.0);
+        }
 
-    draw_circle(Vector2i(0, 0), 1.0, Color::named("GOLD"));
+        draw_circle(Vector2i(0, 0), 1.0, Color::named("GOLD"));
+    }
 
     Vector<DungenRoom *> rooms = dungen_instance->get_map_rooms();
     Vector<DungenRoom *> trimmed_rooms = dungen_instance->get_trimmed_rooms();
@@ -262,40 +287,50 @@ void DungenPreviewer::_draw()
     }
 }
 
-void DungenPreviewer::_gui_input(const Ref<InputEvent> &event) {
+void DungenPreviewer::_gui_input(const Ref<InputEvent> &event)
+{
     Ref<InputEventMouseButton> mb = event;
 
-    if (mb.is_valid()) {
+    if (mb.is_valid())
+    {
         Vector2 scroll_vec = Vector2((mb->get_button_index() == MouseButton::MOUSE_BUTTON_WHEEL_RIGHT) - (mb->get_button_index() == MouseButton::MOUSE_BUTTON_WHEEL_LEFT), (mb->get_button_index() == MouseButton::MOUSE_BUTTON_WHEEL_DOWN) - (mb->get_button_index() == MouseButton::MOUSE_BUTTON_WHEEL_UP));
 
-        if (scroll_vec != Vector2() && mb->is_pressed())
+        if (scroll_vec != Vector2(0, 0) && mb->is_pressed())
         {
-            if (scroll_vec.y != 0) {
+            if (scroll_vec.y != 0)
+            {
                 Vector2 zoom_delta = scroll_vec.y >= 0 ? Vector2(0.25, 0.25) : Vector2(-0.25, -0.25);
                 set_zoom(zoom + zoom_delta);
             }
         }
 
         bool is_drag_event = mb->get_button_index() == MouseButton::MOUSE_BUTTON_LEFT;
-        
-        if (is_drag_event) {
-            if (mb->is_pressed()) {
+
+        if (is_drag_event)
+        {
+            if (mb->is_pressed())
+            {
                 dragging = true;
-            } else {
+            }
+            else
+            {
                 dragging = false;
             }
         }
     }
 
     Ref<InputEventMagnifyGesture> magnify_gesture = event;
-	if (magnify_gesture.is_valid()) {
+    if (magnify_gesture.is_valid())
+    {
         UtilityFunctions::print(magnify_gesture->get_factor());
     }
 
     Ref<InputEventMouseMotion> mm = event;
 
-    if (mm.is_valid()) {
-        if (dragging) {
+    if (mm.is_valid())
+    {
+        if (dragging)
+        {
             drag_origin += mm->get_relative();
         }
     }
@@ -303,7 +338,8 @@ void DungenPreviewer::_gui_input(const Ref<InputEvent> &event) {
     queue_redraw();
 }
 
-void DungenPreviewer::_bind_methods() {
+void DungenPreviewer::_bind_methods()
+{
     ADD_SIGNAL(MethodInfo("zoom_changed"));
 }
 

@@ -9,9 +9,31 @@ using namespace godot;
 DungenPreviewPanel::DungenPreviewPanel()
 {
     Ref<StyleBoxEmpty> empty_stylebox = memnew(StyleBoxEmpty);
-    
+
+    main_toolbar = memnew(HBoxContainer);
+    add_child(main_toolbar);
+
     dungen_zoom_widget = memnew(DungenZoomWidget);
-    add_child(dungen_zoom_widget);
+    main_toolbar->add_child(dungen_zoom_widget);
+
+    dungen_grid_widget = memnew(HBoxContainer);
+    main_toolbar->add_child(dungen_grid_widget);
+
+    dungen_grid_widget_label = memnew(Label);
+    dungen_grid_widget_label->set_text("Grid Size");
+    main_toolbar->add_child(dungen_grid_widget_label);
+
+    dungen_grid_widget_spin_box = memnew(SpinBox);
+    dungen_grid_widget_spin_box->set_min(8.0);
+    dungen_grid_widget_spin_box->set_max(64.0);
+    dungen_grid_widget_spin_box->set_step(8.0);
+    dungen_grid_widget_spin_box->set_custom_arrow_step(8.0);
+    main_toolbar->add_child(dungen_grid_widget_spin_box);
+
+    dungen_grid_show_checkbox = memnew(CheckBox);
+    dungen_grid_show_checkbox->set_text("Show Grid");
+    dungen_grid_show_checkbox->set_pressed(true);
+    main_toolbar->add_child(dungen_grid_show_checkbox);
 
     dungen_preview_wrapper = memnew(PanelContainer);
     dungen_preview_wrapper->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -31,6 +53,10 @@ void DungenPreviewPanel::set_dungen_instance(Dungen *dungen)
     ERR_FAIL_COND_MSG(!dungen, "Provided Dungen is null.");
 
     dungen_previewer->set_dungen_instance(dungen);
+}
+
+void DungenPreviewPanel::set_show_grid(bool p_show) {
+    dungen_previewer->set_show_grid(p_show);
 }
 
 void DungenPreviewPanel::set_show_all(bool p_show) {
@@ -84,6 +110,11 @@ void DungenPreviewPanel::_update_previewer_zoom(const Vector2 &p_amount)
     dungen_previewer->set_zoom(zoom);
 }
 
+void DungenPreviewPanel::_update_grid_size(const double &p_size) {
+    dungen_previewer->set_grid_size(p_size);
+}
+
+
 void DungenPreviewPanel::_notification(int p_what)
 {
     if (p_what == NOTIFICATION_READY)
@@ -92,6 +123,8 @@ void DungenPreviewPanel::_notification(int p_what)
         dungen_zoom_widget->connect("zoom_reset_pressed", callable_mp(this, &DungenPreviewPanel::_reset_previewer_zoom));
         dungen_zoom_widget->connect("zoom_in_pressed", callable_mp(this, &DungenPreviewPanel::_update_previewer_zoom).bind(Vector2(0.25, 0.25)));
         dungen_previewer->connect("zoom_changed", callable_mp(this, &DungenPreviewPanel::_update_zoom_reset_button));
+        dungen_grid_widget_spin_box->connect("value_changed", callable_mp(this, &DungenPreviewPanel::_update_grid_size));
+        dungen_grid_show_checkbox->connect("toggled", callable_mp(this, &DungenPreviewPanel::set_show_grid));
         _update_previewer_zoom(Vector2(3, 3));
     }
 }

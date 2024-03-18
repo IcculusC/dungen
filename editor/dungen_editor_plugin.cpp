@@ -210,6 +210,7 @@ void DungenEditor::_regenerate()
     }
     else
     {
+        dungen_preview_panel->set_show_all(false);
         animation_timer->stop();
         dungen_instance->generate();
     }
@@ -304,7 +305,6 @@ DungenEditorPlugin::DungenEditorPlugin() {
 }
 
 DungenEditorPlugin::~DungenEditorPlugin() {
-    dungen_editor = nullptr;
 }
 
 void DungenEditorPlugin::_bind_methods() {}

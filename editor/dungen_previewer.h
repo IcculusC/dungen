@@ -38,6 +38,9 @@ namespace godot
         bool show_path_edges;
         bool show_path_rectangles;
 
+        bool show_grid;
+        double grid_size;
+
         Vector2 drag_origin = Vector2(0, 0);
         bool dragging = false;
 
@@ -54,6 +57,9 @@ namespace godot
 
         void set_zoom(const Vector2 &p_zoom);
         const Vector2 get_zoom() const { return zoom; };
+
+        void set_grid_size(const double &p_size);
+        void set_show_grid(bool p_show);
 
         void set_show_all(bool p_show);
         void set_show_trimmed_rooms(bool p_show);
