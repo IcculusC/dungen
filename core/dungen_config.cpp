@@ -4,124 +4,61 @@
 
 using namespace godot;
 
-void DungenConfig::set_seed(const double p_seed)
-{
-    if (seed == p_seed)
-    {
-        return;
+#define SET_AND_EMIT_CHANGED(m_old, m_new) \
+    if (m_old != m_new)            \
+    {                              \
+        m_old = m_new;             \
+        emit_changed();            \
     }
 
-    seed = p_seed;
-
-    emit_changed();
+void DungenConfig::set_seed(const double p_seed)
+{
+    SET_AND_EMIT_CHANGED(seed, p_seed)
 }
 
 void DungenConfig::set_generation_type(const DungenType p_generation_type)
 {
-    if (generation_type == p_generation_type)
-    {
-        return;
-    }
-
-    generation_type = p_generation_type;
-
-    emit_changed();
+    SET_AND_EMIT_CHANGED(generation_type, p_generation_type)
 }
 
 void DungenConfig::set_room_count(const double p_room_count)
 {
-    if (room_count == p_room_count)
-    {
-        return;
-    }
-
-    room_count = p_room_count;
-
-    emit_changed();
+    SET_AND_EMIT_CHANGED(room_count, p_room_count)
 }
 
 void DungenConfig::set_room_dimensions(const Vector2i p_room_dimensions)
 {
-    if (room_dimensions == p_room_dimensions)
-    {
-        return;
-    }
-
-    room_dimensions = p_room_dimensions;
-
-    emit_changed();
+    SET_AND_EMIT_CHANGED(room_dimensions, p_room_dimensions)
 }
 
 void DungenConfig::set_room_dimensions_sigma(const Vector2i p_room_dimensions_sigma)
 {
-    if (room_dimensions_sigma == p_room_dimensions_sigma)
-    {
-        return;
-    }
-
-    room_dimensions_sigma = p_room_dimensions_sigma;
-
-    emit_changed();
+    SET_AND_EMIT_CHANGED(room_dimensions_sigma, p_room_dimensions_sigma)
 }
 
-void DungenConfig::set_room_dimensions_trim_ratio(double p_room_dimensions_trim_ratio)
+void DungenConfig::set_room_dimensions_trim_ratio(const double p_room_dimensions_trim_ratio)
 {
-    if (room_dimensions_trim_ratio == p_room_dimensions_trim_ratio)
-    {
-        return;
-    }
-
-    room_dimensions_trim_ratio = p_room_dimensions_trim_ratio;
-
-    emit_changed();
+    SET_AND_EMIT_CHANGED(room_dimensions_trim_ratio, p_room_dimensions_trim_ratio)
 }
 
 void DungenConfig::set_room_minimum_dimensions(const Vector2i p_room_minimum_dimensions)
 {
-    if (room_minimum_dimensions == p_room_minimum_dimensions)
-    {
-        return;
-    }
-
-    room_minimum_dimensions = p_room_minimum_dimensions;
-
-    emit_changed();
+    SET_AND_EMIT_CHANGED(room_minimum_dimensions, p_room_minimum_dimensions)
 }
 
 void DungenConfig::set_spawn_area_dimensions(const Vector2i p_spawn_area_dimensions)
 {
-    if (spawn_area_dimensions == p_spawn_area_dimensions)
-    {
-        return;
-    }
-
-    spawn_area_dimensions = p_spawn_area_dimensions;
-
-    emit_changed();
+    SET_AND_EMIT_CHANGED(spawn_area_dimensions, p_spawn_area_dimensions)
 }
 
 void DungenConfig::set_spawn_area_shape(const DungenShape p_spawn_area_shape)
 {
-    if (spawn_area_shape == p_spawn_area_shape)
-    {
-        return;
-    }
-
-    spawn_area_shape = p_spawn_area_shape;
-
-    emit_changed();
+    SET_AND_EMIT_CHANGED(spawn_area_shape, p_spawn_area_shape)
 }
 
 void DungenConfig::set_step_size(const int p_step_size)
 {
-    if (step_size == p_step_size)
-    {
-        return;
-    }
-
-    step_size = p_step_size;
-
-    emit_changed();
+    SET_AND_EMIT_CHANGED(step_size, p_step_size)
 }
 
 DungenConfig::DungenConfig()
