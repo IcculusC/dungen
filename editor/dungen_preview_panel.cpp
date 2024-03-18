@@ -69,21 +69,19 @@ void DungenPreviewPanel::refresh()
 
 void DungenPreviewPanel::_update_zoom_reset_button()
 {
-    String zoom_factor = rtos((dungen_previewer->get_scale().x / 1.0) * 100);
+    String zoom_factor = rtos((dungen_previewer->get_zoom().x / 1.0) * 100);
     dungen_zoom_widget->set_text(zoom_factor + " %");
 }
 
 void DungenPreviewPanel::_reset_previewer_zoom()
 {
-    dungen_previewer->set_scale(Vector2(1, 1));
-    _update_zoom_reset_button();
+    dungen_previewer->set_zoom(Vector2(1, 1));
 }
 
-void DungenPreviewPanel::_update_previewer_zoom(Vector2 amount)
+void DungenPreviewPanel::_update_previewer_zoom(const Vector2 &p_amount)
 {
-    Vector2 zoom = (dungen_previewer->get_scale() + amount).clamp(Vector2(0.25, 0.25), Vector2(10, 10));
-    dungen_previewer->set_scale(zoom);
-    _update_zoom_reset_button();
+    Vector2 zoom = dungen_previewer->get_zoom() + p_amount;
+    dungen_previewer->set_zoom(zoom);
 }
 
 void DungenPreviewPanel::_notification(int p_what)
@@ -93,11 +91,8 @@ void DungenPreviewPanel::_notification(int p_what)
         dungen_zoom_widget->connect("zoom_out_pressed", callable_mp(this, &DungenPreviewPanel::_update_previewer_zoom).bind(Vector2(-0.25, -0.25)));
         dungen_zoom_widget->connect("zoom_reset_pressed", callable_mp(this, &DungenPreviewPanel::_reset_previewer_zoom));
         dungen_zoom_widget->connect("zoom_in_pressed", callable_mp(this, &DungenPreviewPanel::_update_previewer_zoom).bind(Vector2(0.25, 0.25)));
-        _update_previewer_zoom(Vector2(2, 2));
-    }
-    if (p_what == NOTIFICATION_RESIZED)
-    {
-        _reset_previewer_zoom();
+        dungen_previewer->connect("zoom_changed", callable_mp(this, &DungenPreviewPanel::_update_zoom_reset_button));
+        _update_previewer_zoom(Vector2(3, 3));
     }
 }
 

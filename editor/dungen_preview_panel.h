@@ -33,7 +33,7 @@ namespace godot
 
         void _reset_previewer_zoom();
         void _update_zoom_reset_button();
-        void _update_previewer_zoom(Vector2 amount);
+        void _update_previewer_zoom(const Vector2 &p_amount);
 
     protected:
         static void _bind_methods();

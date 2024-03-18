@@ -1,14 +1,20 @@
 #ifdef TOOLS_ENABLED
 
 #include "dungen_previewer.h"
+#include "dungen_editor_macros.h"
 
 using namespace godot;
 
 DungenPreviewer::DungenPreviewer()
 {
+    for (auto &a : EDITOR_THEME()->get_font_list("EditorFonts")) {
+        UtilityFunctions::print(a);
+    }
+    
     set_clip_contents(true);
 }
-DungenPreviewer::~DungenPreviewer() {
+DungenPreviewer::~DungenPreviewer()
+{
     dungen_instance = nullptr;
 }
 
@@ -22,6 +28,17 @@ void DungenPreviewer::set_dungen_instance(Dungen *dungen)
     {
         dungen_instance->connect("generation_complete", callable_mp(this, &DungenPreviewer::_generation_complete));
     }
+    queue_redraw();
+}
+
+void DungenPreviewer::set_zoom(const Vector2 &p_zoom)
+{
+    if (zoom == p_zoom)
+    {
+        return;
+    }
+    zoom = p_zoom.clamp(Vector2(0.25, 0.25), Vector2(10, 10));
+    emit_signal("zoom_changed");
     queue_redraw();
 }
 
@@ -104,7 +121,36 @@ void DungenPreviewer::_draw()
 
     ERR_FAIL_COND_MSG(!dungen_instance, "Dungen is null.");
 
-    set_pivot_offset(get_size() / 2);
+    Vector2 control_size = get_size();
+    Vector2 control_center = control_size / 2.0;
+
+    set_pivot_offset(control_center);
+
+    draw_set_transform(control_center + drag_origin, 0, zoom);
+
+    Ref<Font> theme_italic = EDITOR_THEME()->get_font("doc_italic", "EditorFonts");
+
+    double zoom_factor = Math::max(1.0, 1.0 / zoom.x);
+
+    draw_line(Vector2(0, -control_size.y) * zoom_factor, Vector2(0, control_size.y) * zoom_factor, Color(0.1, 1.0, 0.1, 0.3), 1.0);
+    for (int i = 16; i < control_size.x / 2; i += 16)
+    {
+        Vector2 start = Vector2(i, -control_size.y / 2) * zoom_factor;
+        Vector2 end = Vector2(i, control_size.y / 2) * zoom_factor;
+        draw_line(start, end, Color(0.7, 0.1, 1, 0.2), 1.0);
+        draw_line(Vector2(-1, 1) * start, Vector2(-1, 1) * end, Color(0.7, 0.1, 1, 0.2), 1.0);
+    }
+
+    draw_line(Vector2(-control_size.x, 0) * zoom_factor, Vector2(control_size.x, 0) * zoom_factor, Color(1.0, 0.1, 0.1, 0.4), 1.0);
+    for (int i = 16; i < control_size.x / 2; i += 16)
+    {
+        Vector2 start = Vector2(-control_size.x / 2, i) * zoom_factor;
+        Vector2 end = Vector2(control_size.x / 2, i) * zoom_factor;
+        draw_line(start, end, Color(0.7, 0.1, 1, 0.2), 1.0);
+        draw_line(Vector2(1, -1) * start, Vector2(1, -1) * end, Color(0.7, 0.1, 1, 0.2), 1.0);
+    }
+
+    draw_circle(Vector2i(0, 0), 1.0, Color::named("GOLD"));
 
     Vector<DungenRoom *> rooms = dungen_instance->get_map_rooms();
     Vector<DungenRoom *> trimmed_rooms = dungen_instance->get_trimmed_rooms();
@@ -119,22 +165,23 @@ void DungenPreviewer::_draw()
 
     for (int i = 0; i < all_rooms.size(); i++)
     {
-        bounds.expand_to((all_rooms[i])->get_center());
+        bounds = bounds.merge(all_rooms[i]->get_rectangle());
     }
 
-    bounds.grow_by(Math::max(bounds.size.x, bounds.size.y) / 2);
+    // bounds.grow_by(Math::max(bounds.size.x, bounds.size.y) / 2);
+    bounds.grow_by(10.0);
 
-    Vector2 center = get_size() / 2;
-
-    bounds.set_position(bounds.position + center);
+    draw_string(theme_italic, Vector2(bounds.position.x + bounds.size.x / 2 - 15, bounds.position.y - 8), itos(bounds.size.x), HORIZONTAL_ALIGNMENT_CENTER, 30, 10);
+    draw_string(theme_italic, Vector2(bounds.position.x + bounds.size.x + 8, bounds.position.y + bounds.size.y / 2), itos(bounds.size.y), HORIZONTAL_ALIGNMENT_CENTER, -1, 10);
+    draw_rect(bounds, Color(0.5, 0.8, 0.2, .3));
+    draw_rect(bounds, Color(0.5, 0.8, 0.2, .8).darkened(0.2), false, 1.0);
 
     if (show_path_rectangles)
     {
         Vector<Rect2i> path_rectangles = dungen_instance->get_path_builder().get_path_rectangles();
         for (int i = 0; i < path_rectangles.size(); i++)
         {
-            Rect2 current_rect = Rect2(path_rectangles[i]);
-            current_rect.set_position(current_rect.get_position() + center);
+            Rect2 current_rect = path_rectangles[i];
             draw_rect(current_rect, Color::named("DODGERBLUE"));
         }
     }
@@ -143,34 +190,32 @@ void DungenPreviewer::_draw()
     {
         for (int i = 0; i < all_rooms.size(); i++)
         {
-            DungenRoom *current_room = (all_rooms[i]);
-            Rect2 rect_copy_hopefully = Rect2i(current_room->get_rectangle());
-            rect_copy_hopefully.set_position(rect_copy_hopefully.get_position() + center);
-            draw_rect(rect_copy_hopefully, current_room->get_color());
-            draw_rect(rect_copy_hopefully, Color::named("ORANGE"), false, 1.0);
-            draw_circle(rect_copy_hopefully.get_center(), 1.0, Color::named("BLUE"));
+            DungenRoom *current_room = all_rooms[i];
+            Rect2i rect = current_room->get_rectangle();
+            Color color = current_room->get_color();
+            draw_rect(rect, color);
+            draw_rect(rect, color.darkened(0.2), false, 1.0);
         }
     }
 
     for (int i = 0; i < rooms.size(); i++)
     {
-        DungenRoom *current_room = (rooms[i]);
-        Rect2 rect_copy_hopefully = Rect2i(current_room->get_rectangle());
-        rect_copy_hopefully.set_position(rect_copy_hopefully.get_position() + center);
-        draw_rect(rect_copy_hopefully, current_room->get_color());
-        draw_rect(rect_copy_hopefully, Color::named("STEELBLUE"), false, 1.0);
-        draw_circle(rect_copy_hopefully.get_center(), 1.0, Color::named("BLUE"));
+        DungenRoom *current_room = rooms[i];
+        Rect2 rect = current_room->get_rectangle();
+        Color color = current_room->get_color();
+        draw_rect(rect, current_room->get_color());
+        draw_rect(rect, color.darkened(0.2), false, 1.0);
     }
 
     if (show_trimmed_rooms)
     {
         for (int i = 0; i < trimmed_rooms.size(); i++)
         {
-            DungenRoom *current_room = (trimmed_rooms[i]);
-            Rect2 rect_copy_hopefully = Rect2(current_room->get_rectangle());
-            rect_copy_hopefully.set_position(rect_copy_hopefully.get_position() + center);
-            draw_rect(rect_copy_hopefully, current_room->get_color());
-            draw_rect(rect_copy_hopefully, Color::named("STEELBLUE"), false, 1.0);
+            DungenRoom *current_room = trimmed_rooms[i];
+            Rect2i rect = current_room->get_rectangle();
+            Color color = current_room->get_color();
+            draw_rect(rect, color);
+            draw_rect(rect, color.darkened(0.2), false, 1.0);
         }
     }
 
@@ -180,9 +225,9 @@ void DungenPreviewer::_draw()
         for (int i = 0; i < triangulation.size(); i++)
         {
             DungenTriangle t = triangulation[i];
-            Vector2 a = t.a->get_center() + center;
-            Vector2 b = t.b->get_center() + center;
-            Vector2 c = t.c->get_center() + center;
+            Vector2 a = t.a->get_center();
+            Vector2 b = t.b->get_center();
+            Vector2 c = t.c->get_center();
 
             draw_line(a, b, Color::named("LIGHTCYAN"), 1.0, false);
             draw_line(b, c, Color::named("LIGHTCYAN"), 1.0, false);
@@ -196,8 +241,8 @@ void DungenPreviewer::_draw()
         for (int i = 0; i < minimum_spanning_tree.size(); i++)
         {
             DungenEdge e = minimum_spanning_tree[i];
-            Vector2 a = e.a->get_center() + center;
-            Vector2 b = e.b->get_center() + center;
+            Vector2 a = e.a->get_center();
+            Vector2 b = e.b->get_center();
 
             draw_line(a, b, Color::named("DARKORANGE"), 1.0, false);
         }
@@ -209,25 +254,57 @@ void DungenPreviewer::_draw()
         for (int i = 0; i < paths.size(); i++)
         {
             DungenEdge e = paths[i];
-            Vector2 a = e.a->get_center() + center;
-            Vector2 b = e.b->get_center() + center;
+            Vector2 a = e.a->get_center();
+            Vector2 b = e.b->get_center();
 
             draw_line(a, b, Color::named("GOLD"), 1.0, false);
         }
     }
-
-    if (show_path_rectangles)
-    {
-        Vector<Rect2i> path_rectangles = dungen_instance->get_path_builder().get_path_rectangles();
-        for (int i = 0; i < path_rectangles.size(); i++)
-        {
-            Rect2 current_rect = Rect2(path_rectangles[i]);
-            current_rect.set_position(current_rect.get_position() + center);
-            draw_rect(current_rect, Color::named("GREEN"));
-        }
-    }
 }
 
-void DungenPreviewer::_bind_methods() {}
+void DungenPreviewer::_gui_input(const Ref<InputEvent> &event) {
+    Ref<InputEventMouseButton> mb = event;
+
+    if (mb.is_valid()) {
+        Vector2 scroll_vec = Vector2((mb->get_button_index() == MouseButton::MOUSE_BUTTON_WHEEL_RIGHT) - (mb->get_button_index() == MouseButton::MOUSE_BUTTON_WHEEL_LEFT), (mb->get_button_index() == MouseButton::MOUSE_BUTTON_WHEEL_DOWN) - (mb->get_button_index() == MouseButton::MOUSE_BUTTON_WHEEL_UP));
+
+        if (scroll_vec != Vector2() && mb->is_pressed())
+        {
+            if (scroll_vec.y != 0) {
+                Vector2 zoom_delta = scroll_vec.y >= 0 ? Vector2(0.25, 0.25) : Vector2(-0.25, -0.25);
+                set_zoom(zoom + zoom_delta);
+            }
+        }
+
+        bool is_drag_event = mb->get_button_index() == MouseButton::MOUSE_BUTTON_LEFT;
+        
+        if (is_drag_event) {
+            if (mb->is_pressed()) {
+                dragging = true;
+            } else {
+                dragging = false;
+            }
+        }
+    }
+
+    Ref<InputEventMagnifyGesture> magnify_gesture = event;
+	if (magnify_gesture.is_valid()) {
+        UtilityFunctions::print(magnify_gesture->get_factor());
+    }
+
+    Ref<InputEventMouseMotion> mm = event;
+
+    if (mm.is_valid()) {
+        if (dragging) {
+            drag_origin += mm->get_relative();
+        }
+    }
+
+    queue_redraw();
+}
+
+void DungenPreviewer::_bind_methods() {
+    ADD_SIGNAL(MethodInfo("zoom_changed"));
+}
 
 #endif // TOOLS_ENABLED
