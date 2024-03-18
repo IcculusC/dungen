@@ -5,6 +5,15 @@
 
 using namespace godot;
 
+
+#define SET_AND_DRAW(m_old, m_new) \
+    if (m_old != m_new) \
+    { \
+        m_old = m_new; \
+        queue_redraw(); \
+    }
+
+
 DungenPreviewer::DungenPreviewer()
     : grid_size(8.0), show_grid(true), show_path_rectangles(true)
 {
@@ -46,82 +55,42 @@ void DungenPreviewer::set_zoom(const Vector2 &p_zoom)
 
 void DungenPreviewer::set_grid_size(const double &p_size)
 {
-    if (grid_size == p_size)
-    {
-        return;
-    }
-    grid_size = p_size;
-    queue_redraw();
+    SET_AND_DRAW(grid_size, p_size)
 }
 
 void DungenPreviewer::set_show_grid(bool p_show)
-{
-    if (show_grid == p_show)
-    {
-        return;
-    }
-    show_grid = p_show;
-    queue_redraw();
+{   
+    SET_AND_DRAW(show_grid, p_show)
 }
 
 void DungenPreviewer::set_show_all(bool p_show)
 {
-    if (show_all == p_show)
-    {
-        return;
-    }
-    show_all = p_show;
-    queue_redraw();
+    SET_AND_DRAW(show_all, p_show)
 }
 
 void DungenPreviewer::set_show_trimmed_rooms(bool p_show)
 {
-    if (show_trimmed_rooms == p_show)
-    {
-        return;
-    }
-    show_trimmed_rooms = p_show;
-    queue_redraw();
+    SET_AND_DRAW(show_trimmed_rooms, p_show)
 }
 
 void DungenPreviewer::set_show_triangulation(bool p_show)
 {
-    if (show_triangulation == p_show)
-    {
-        return;
-    }
-    show_triangulation = p_show;
-    queue_redraw();
+    SET_AND_DRAW(show_triangulation, p_show)
 }
 
 void DungenPreviewer::set_show_minimum_spanning_tree(bool p_show)
 {
-    if (show_minimum_spanning_tree == p_show)
-    {
-        return;
-    }
-    show_minimum_spanning_tree = p_show;
-    queue_redraw();
+    SET_AND_DRAW(show_minimum_spanning_tree, p_show)
 }
 
 void DungenPreviewer::set_show_path_edges(bool p_show)
 {
-    if (show_path_edges == p_show)
-    {
-        return;
-    }
-    show_path_edges = p_show;
-    queue_redraw();
+    SET_AND_DRAW(show_path_edges, p_show)
 }
 
 void DungenPreviewer::set_show_path_rectangles(bool p_show)
 {
-    if (show_path_rectangles == p_show)
-    {
-        return;
-    }
-    show_path_rectangles = p_show;
-    queue_redraw();
+    SET_AND_DRAW(show_path_rectangles, p_show)
 }
 
 void DungenPreviewer::_generation_complete(double p_time)

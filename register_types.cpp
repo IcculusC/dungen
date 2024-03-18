@@ -27,8 +27,6 @@ void initialize_dungen_module(ModuleInitializationLevel p_level) {
 
 #ifdef TOOLS_ENABLED
 	if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
-		UtilityFunctions::print("EDITOR INITIALIZED");
-
 		GDREGISTER_CLASS(DungenPreviewer)
 		GDREGISTER_CLASS(DungenZoomWidget)
 		GDREGISTER_CLASS(DungenPreviewPanel)

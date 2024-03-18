@@ -11,7 +11,6 @@
 
 namespace godot
 {
-
     class DungenRoom : public Object
     {
         GDCLASS(DungenRoom, Object)
@@ -60,7 +59,6 @@ namespace godot
             return rectangle.get_center();
         }
     };
-
 }
 
 #endif // DUNGEN_ROOM_H
