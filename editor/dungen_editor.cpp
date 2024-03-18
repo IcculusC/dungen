@@ -1,7 +1,5 @@
 #include "dungen_editor.h"
 
-
-
 void DungenEditor::_initialize_dialogs()
 {
     save_dialog = memnew(FileDialog);
@@ -264,4 +262,3 @@ void DungenEditor::_notification(int p_what)
 }
 
 void DungenEditor::_bind_methods() {}
-

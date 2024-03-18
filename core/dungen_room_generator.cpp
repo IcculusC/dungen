@@ -6,7 +6,8 @@ DungenRoomGenerator::DungenRoomGenerator(const Ref<DungenConfig> &config, const 
     : config(config), rng(rng)
 {
 }
-DungenRoomGenerator::~DungenRoomGenerator() {
+DungenRoomGenerator::~DungenRoomGenerator()
+{
     reset();
 }
 
@@ -165,7 +166,7 @@ DungenRoom *DungenRoomGenerator::_generate_room()
             Vector2i(-1, 1),
             Vector2i(1, -1)};
         int direction = rng->randi_range(0, 7);
-        current_walk_position += directions[direction] * config->get_step_size(); 
+        current_walk_position += directions[direction] * config->get_step_size();
         room_position = current_walk_position;
         break;
     }

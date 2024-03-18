@@ -23,7 +23,7 @@
 
 namespace godot
 {
-    class DungenPreviewPanel : public VBoxContainer 
+    class DungenPreviewPanel : public VBoxContainer
     {
         GDCLASS(DungenPreviewPanel, VBoxContainer)
 
@@ -58,7 +58,7 @@ namespace godot
         void set_dungen_instance(Dungen *dungen);
 
         void set_show_grid(bool p_show);
-        
+
         void set_show_all(bool p_show);
         void set_show_trimmed_rooms(bool p_show);
         void set_show_triangulation(bool p_show);

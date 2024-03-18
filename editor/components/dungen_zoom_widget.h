@@ -14,7 +14,7 @@
 
 namespace godot
 {
-    class DungenZoomWidget : public HBoxContainer 
+    class DungenZoomWidget : public HBoxContainer
     {
         GDCLASS(DungenZoomWidget, HBoxContainer)
 
@@ -22,7 +22,7 @@ namespace godot
         Button *zoom_out_btn;
         Button *zoom_reset_btn;
         Button *zoom_in_btn;
-    
+
     protected:
         static void _bind_methods();
         void _notification(int p_what);
@@ -33,7 +33,7 @@ namespace godot
         void set_text(const String &p_text);
 
         DungenZoomWidget();
-        ~DungenZoomWidget(); 
+        ~DungenZoomWidget();
     };
 }
 

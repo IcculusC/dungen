@@ -1,7 +1,6 @@
 #ifndef DUNGEN_H
 #define DUNGEN_H
 
-
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/random_number_generator.hpp>
 #include <godot_cpp/classes/ref.hpp>
@@ -20,7 +19,6 @@
 #include "dungen_room.h"
 #include "dungen_room_generator.h"
 #include "dungen_path_builder.h"
-
 
 namespace godot
 {
@@ -72,7 +70,7 @@ namespace godot
 		Vector<DungenRoom *> get_all_rooms() const;
 		Vector<DungenRoom *> get_map_rooms() const;
 		Vector<DungenRoom *> get_trimmed_rooms() const;
-		
+
 		Dictionary get_all();
 
 		int get_phase() const { return int(phase); };

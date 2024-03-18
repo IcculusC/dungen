@@ -1,7 +1,6 @@
 #ifndef DUNGEN_ROOM_GENERATOR_H
 #define DUNGEN_ROOM_GENERATOR_H
 
-
 #include <godot_cpp/classes/random_number_generator.hpp>
 #include <godot_cpp/classes/ref.hpp>
 
@@ -15,7 +14,6 @@
 #include "enums.h"
 #include "dungen_config.h"
 #include "dungen_room.h"
-
 
 namespace godot
 {

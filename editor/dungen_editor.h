@@ -29,7 +29,6 @@
 #include "components/dungen_editor_toolbar.h"
 #include "dungen_preview_panel.h"
 
-
 namespace godot
 {
     class DungenEditor : public Control

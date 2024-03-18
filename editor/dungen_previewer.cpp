@@ -5,14 +5,12 @@
 
 using namespace godot;
 
-
 #define SET_AND_DRAW(m_old, m_new) \
-    if (m_old != m_new) \
-    { \
-        m_old = m_new; \
-        queue_redraw(); \
+    if (m_old != m_new)            \
+    {                              \
+        m_old = m_new;             \
+        queue_redraw();            \
     }
-
 
 DungenPreviewer::DungenPreviewer()
     : grid_size(8.0), show_grid(true), show_path_rectangles(true)
@@ -59,7 +57,7 @@ void DungenPreviewer::set_grid_size(const double &p_size)
 }
 
 void DungenPreviewer::set_show_grid(bool p_show)
-{   
+{
     SET_AND_DRAW(show_grid, p_show)
 }
 

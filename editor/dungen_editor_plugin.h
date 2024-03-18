@@ -3,7 +3,6 @@
 #ifndef DUNGEN_EDITOR_PLUGIN_H
 #define DUNGEN_EDITOR_PLUGIN_H
 
-
 #include <godot_cpp/core/error_macros.hpp>
 
 #include <godot_cpp/classes/ref.hpp>
@@ -14,8 +13,6 @@
 
 #include "../core/dungen.h"
 #include "dungen_editor.h"
-
-
 
 namespace godot
 {

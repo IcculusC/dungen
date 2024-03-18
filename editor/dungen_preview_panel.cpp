@@ -55,11 +55,13 @@ void DungenPreviewPanel::set_dungen_instance(Dungen *dungen)
     dungen_previewer->set_dungen_instance(dungen);
 }
 
-void DungenPreviewPanel::set_show_grid(bool p_show) {
+void DungenPreviewPanel::set_show_grid(bool p_show)
+{
     dungen_previewer->set_show_grid(p_show);
 }
 
-void DungenPreviewPanel::set_show_all(bool p_show) {
+void DungenPreviewPanel::set_show_all(bool p_show)
+{
     dungen_previewer->set_show_all(p_show);
 }
 
@@ -110,10 +112,10 @@ void DungenPreviewPanel::_update_previewer_zoom(const Vector2 &p_amount)
     dungen_previewer->set_zoom(zoom);
 }
 
-void DungenPreviewPanel::_update_grid_size(const double &p_size) {
+void DungenPreviewPanel::_update_grid_size(const double &p_size)
+{
     dungen_previewer->set_grid_size(p_size);
 }
-
 
 void DungenPreviewPanel::_notification(int p_what)
 {
