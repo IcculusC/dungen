@@ -1,22 +1,21 @@
 #ifndef DUNGEN_ROOM_GENERATOR_H
 #define DUNGEN_ROOM_GENERATOR_H
 
+
 #include <godot_cpp/classes/random_number_generator.hpp>
 #include <godot_cpp/classes/ref.hpp>
-#include <godot_cpp/classes/scene_tree.hpp>
 
 #include <godot_cpp/templates/vector.hpp>
 
-#include <godot_cpp/variant/array.hpp>
-#include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/rect2i.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/variant/vector2.hpp>
 #include <godot_cpp/variant/vector2i.hpp>
 
+#include "enums.h"
 #include "dungen_config.h"
 #include "dungen_room.h"
-#include "enums.h"
+
 
 namespace godot
 {

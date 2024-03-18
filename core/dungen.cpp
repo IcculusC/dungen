@@ -31,6 +31,7 @@ Dungen::Dungen()
       room_generator(DungenRoomGenerator(this->config, this->rng))
 {
     rng->set_seed(config->get_seed());
+    generate();
 }
 
 Dungen::~Dungen()

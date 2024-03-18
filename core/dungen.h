@@ -1,11 +1,7 @@
 #ifndef DUNGEN_H
 #define DUNGEN_H
 
-#include <godot_cpp/core/math.hpp>
 
-#include <godot_cpp/core/defs.hpp>
-
-#include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/random_number_generator.hpp>
 #include <godot_cpp/classes/ref.hpp>
@@ -17,14 +13,14 @@
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/rect2i.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
-#include <godot_cpp/variant/vector2.hpp>
-#include <godot_cpp/variant/vector2i.hpp>
+#include <godot_cpp/variant/variant.hpp>
 
+#include "enums.h"
 #include "dungen_config.h"
-#include "dungen_path_builder.h"
 #include "dungen_room.h"
 #include "dungen_room_generator.h"
-#include "enums.h"
+#include "dungen_path_builder.h"
+
 
 namespace godot
 {

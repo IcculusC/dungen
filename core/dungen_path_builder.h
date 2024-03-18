@@ -1,20 +1,22 @@
 #ifndef DUNGEN_PATH_BUILDER_H
 #define DUNGEN_PATH_BUILDER_H
 
+
 #include <godot_cpp/core/error_macros.hpp>
 
-#include <godot_cpp/classes/geometry2d.hpp>
 #include <godot_cpp/classes/ref.hpp>
 
 #include <godot_cpp/templates/hash_map.hpp>
 #include <godot_cpp/templates/vector.hpp>
 
 #include <godot_cpp/variant/utility_functions.hpp>
+#include <godot_cpp/variant/rect2.hpp>
 #include <godot_cpp/variant/rect2i.hpp>
 #include <godot_cpp/variant/vector2.hpp>
 #include <godot_cpp/variant/vector2i.hpp>
 
 #include "dungen_room.h"
+
 
 namespace godot
 {
