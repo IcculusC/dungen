@@ -2,11 +2,11 @@
 
 using namespace godot;
 
-DungenRoomGenerator::DungenRoomGenerator(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng)
-    : config(config), rng(rng)
+DungenRoomGenerator::DungenRoomGenerator()
 {
 }
-DungenRoomGenerator::~DungenRoomGenerator() {
+DungenRoomGenerator::~DungenRoomGenerator()
+{
     reset();
 }
 
@@ -17,6 +17,16 @@ void DungenRoomGenerator::set_config(const Ref<DungenConfig> &p_config)
         return;
     }
     config = p_config;
+    reset();
+}
+
+void DungenRoomGenerator::set_random_number_generator(const Ref<RandomNumberGenerator> &p_rng)
+{
+    if (rng == p_rng)
+    {
+        return;
+    }
+    rng = p_rng;
     reset();
 }
 
@@ -102,7 +112,7 @@ void DungenRoomGenerator::reset()
     current_walk_position = Vector2(0, 0);
 }
 
-Vector2i DungenRoomGenerator::generate_random_point_in_rectangle(Vector2i &dimensions)
+Vector2i DungenRoomGenerator::generate_random_point_in_rectangle(const Vector2i &dimensions)
 {
     Vector2i half_size = dimensions / 2;
 
@@ -111,7 +121,7 @@ Vector2i DungenRoomGenerator::generate_random_point_in_rectangle(Vector2i &dimen
         rng->randi_range(-half_size.y, half_size.y));
 }
 
-Vector2i DungenRoomGenerator::generate_random_point_in_ellipse(Vector2i &dimensions)
+Vector2i DungenRoomGenerator::generate_random_point_in_ellipse(const Vector2i &dimensions)
 {
     double t = 2 * Math_PI * rng->randf();
     double u = rng->randf() + rng->randf();
@@ -165,7 +175,7 @@ DungenRoom *DungenRoomGenerator::_generate_room()
             Vector2i(-1, 1),
             Vector2i(1, -1)};
         int direction = rng->randi_range(0, 7);
-        current_walk_position += directions[direction] * config->get_step_size(); 
+        current_walk_position += directions[direction] * config->get_step_size();
         room_position = current_walk_position;
         break;
     }

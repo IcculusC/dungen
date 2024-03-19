@@ -3,20 +3,17 @@
 
 #include <godot_cpp/classes/random_number_generator.hpp>
 #include <godot_cpp/classes/ref.hpp>
-#include <godot_cpp/classes/scene_tree.hpp>
 
 #include <godot_cpp/templates/vector.hpp>
 
-#include <godot_cpp/variant/array.hpp>
-#include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/rect2i.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/variant/vector2.hpp>
 #include <godot_cpp/variant/vector2i.hpp>
 
+#include "enums.h"
 #include "dungen_config.h"
 #include "dungen_room.h"
-#include "enums.h"
 
 namespace godot
 {
@@ -46,8 +43,8 @@ namespace godot
         Vector<DungenRoom *> map_rooms;
         Vector<DungenRoom *> trimmed_rooms;
 
-        Vector2i generate_random_point_in_ellipse(Vector2i &spawn_area_dimensions);
-        Vector2i generate_random_point_in_rectangle(Vector2i &spawn_area_dimensions);
+        Vector2i generate_random_point_in_ellipse(const Vector2i &spawn_area_dimensions);
+        Vector2i generate_random_point_in_rectangle(const Vector2i &spawn_area_dimensions);
 
         DungenRoom *_generate_room();
         void _generate_rooms();
@@ -62,10 +59,11 @@ namespace godot
         void _smart_trim_rooms();
 
     public:
-        DungenRoomGenerator(Ref<DungenConfig> &config, Ref<RandomNumberGenerator> &rng);
+        DungenRoomGenerator();
         ~DungenRoomGenerator();
 
         void set_config(const Ref<DungenConfig> &p_config);
+        void set_random_number_generator(const Ref<RandomNumberGenerator> &p_rng);
 
         void generate();
 

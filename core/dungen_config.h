@@ -2,6 +2,7 @@
 #define DUNGEN_CONFIG_H
 
 #include <godot_cpp/classes/resource.hpp>
+
 #include <godot_cpp/variant/vector2i.hpp>
 
 #include "enums.h"
@@ -29,8 +30,6 @@ namespace godot
 
 		int step_size;
 
-		void emit_changed();
-
 	protected:
 		static void _bind_methods();
 
@@ -55,7 +54,7 @@ namespace godot
 		void set_room_dimensions_sigma(const Vector2i p_room_dimensions_sigma);
 		Vector2i get_room_dimensions_sigma() const { return room_dimensions_sigma; }
 
-		void set_room_dimensions_trim_ratio(double p_room_dimensions_trim_ratio);
+		void set_room_dimensions_trim_ratio(const double p_room_dimensions_trim_ratio);
 		double get_room_dimensions_trim_ratio() const { return room_dimensions_trim_ratio; }
 
 		void set_room_minimum_dimensions(const Vector2i p_room_minimum_dimensions);

@@ -11,7 +11,6 @@
 
 namespace godot
 {
-
     class DungenRoom : public Object
     {
         GDCLASS(DungenRoom, Object)
@@ -42,7 +41,7 @@ namespace godot
         void set_rectangle(const Rect2i p_rectangle);
         Rect2i get_rectangle() const;
 
-        bool intersects(DungenRoom *other);
+        bool intersects(DungenRoom *other) const;
 
         bool operator==(DungenRoom *other) const;
         bool operator!=(DungenRoom *other) const;
@@ -60,7 +59,6 @@ namespace godot
             return rectangle.get_center();
         }
     };
-
 }
 
 #endif // DUNGEN_ROOM_H
