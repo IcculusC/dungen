@@ -2,8 +2,7 @@
 
 using namespace godot;
 
-DungenRoomGenerator::DungenRoomGenerator(const Ref<DungenConfig> &config, const Ref<RandomNumberGenerator> &rng)
-    : config(config), rng(rng)
+DungenRoomGenerator::DungenRoomGenerator()
 {
 }
 DungenRoomGenerator::~DungenRoomGenerator()
@@ -18,6 +17,16 @@ void DungenRoomGenerator::set_config(const Ref<DungenConfig> &p_config)
         return;
     }
     config = p_config;
+    reset();
+}
+
+void DungenRoomGenerator::set_random_number_generator(const Ref<RandomNumberGenerator> &p_rng)
+{
+    if (rng == p_rng)
+    {
+        return;
+    }
+    rng = p_rng;
     reset();
 }
 

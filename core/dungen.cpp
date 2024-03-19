@@ -28,9 +28,11 @@ Dungen::Dungen()
     : config(memnew(DungenConfig)),
       rng(memnew(RandomNumberGenerator)),
       path_builder(DungenPathBuilder()),
-      room_generator(DungenRoomGenerator(this->config, this->rng))
+      room_generator(DungenRoomGenerator())
 {
     rng->set_seed(config->get_seed());
+    room_generator.set_config(this->config);
+    room_generator.set_random_number_generator(this->rng);
     generate();
 }
 
