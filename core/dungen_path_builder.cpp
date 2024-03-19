@@ -406,24 +406,23 @@ Vector<Rect2i> DungenPathBuilder::get_path_rectangles()
         Rect2i rect_b = room_b->get_rectangle();
         Vector2i edge_center = current_edge.get_center();
 
-        if (
-            ((edge_center.x > rect_a.position.x && edge_center.x < rect_a.get_end().x) &&
-             (edge_center.x > rect_b.position.x && edge_center.x < rect_b.get_end().x)) /* ||
-                                                                                         */
-        )
+        if (((edge_center.x > rect_a.position.x && edge_center.x < rect_a.position.x + rect_a.size.x) &&
+             (edge_center.x > rect_b.position.x && edge_center.x < rect_b.position.x + rect_b.size.x)))
         {
+            if (rect_a.position.y + rect_a.size.y == rect_b.position.y || rect_b.position.y + rect_b.size.y == rect_a.position.y) {
+                continue;
+            }
+
             Vector2i start_position;
             Vector2i end_position;
             if (rect_a.position.y > rect_b.position.y)
             {
-                start_position = Vector2i(edge_center.x,
-                                          rect_a.position.y);
+                start_position = Vector2i(edge_center.x, rect_a.position.y);
                 end_position = Vector2i(edge_center.x, rect_b.position.y + rect_b.size.y);
             }
             else
             {
-                start_position = Vector2i(edge_center.x,
-                                          rect_b.position.y);
+                start_position = Vector2i(edge_center.x, rect_b.position.y);
                 end_position = Vector2i(edge_center.x, rect_a.position.y + rect_a.size.y);
             }
 
@@ -442,18 +441,20 @@ Vector<Rect2i> DungenPathBuilder::get_path_rectangles()
         else if ((edge_center.y > rect_a.position.y && edge_center.y < rect_a.get_end().y) &&
                  (edge_center.y > rect_b.position.y && edge_center.y < rect_b.get_end().y))
         {
+            if (rect_a.position.x + rect_a.size.x == rect_b.position.x || rect_b.position.x + rect_b.size.x == rect_a.position.x) {
+                continue;
+            }
+
             Vector2i start_position;
             Vector2i end_position;
             if (rect_a.position.x > rect_b.position.x)
             {
-                start_position = Vector2i(rect_a.position.x,
-                                          edge_center.y);
+                start_position = Vector2i(rect_a.position.x, edge_center.y);
                 end_position = Vector2i(rect_b.position.x + rect_b.size.x, edge_center.y);
             }
             else
             {
-                start_position = Vector2i(rect_b.position.x,
-                                          edge_center.y);
+                start_position = Vector2i(rect_b.position.x, edge_center.y);
                 end_position = Vector2i(rect_a.position.x + rect_a.size.x, edge_center.y);
             }
 
@@ -475,41 +476,44 @@ Vector<Rect2i> DungenPathBuilder::get_path_rectangles()
 
             Rect2i path_rect_a = Rect2i();
 
+            Vector2 a_center = rect_a.get_center();
+            Vector2 b_center = rect_b.get_center();
+
             bool ax_bx = rect_a.get_center().x > rect_b.get_center().x;
             bool ay_by = rect_a.get_center().y > rect_b.get_center().y;
 
-            if (ax_bx)
+            if (a_center.x > b_center.x)
             {
                 //  [b] [a]
                 start_position_b = Vector2(rect_b.position.x + rect_b.size.x, rect_b.get_center().y);
-                if (ay_by)
+                if (a_center.y > b_center.y)
                 {
                     //  [b]  *
                     //      [a]
-                    start_position_a = Vector2(rect_a.get_center().x, rect_a.position.y);
+                    start_position_a = Vector2(a_center.x, rect_a.position.y);
                 }
                 else
                 {
                     //      [a]
                     //  [b]  *
-                    start_position_a = Vector2(rect_a.get_center().x, rect_a.position.y + rect_a.size.y);
+                    start_position_a = Vector2(a_center.x, rect_a.position.y + rect_a.size.y);
                 }
             }
             else
             {
                 // [a] [b]
-                start_position_b = Vector2(rect_b.position.x, rect_b.get_center().y);
-                if (ay_by)
+                start_position_b = Vector2(rect_b.position.x, b_center.y);
+                if (a_center.y > b_center.y)
                 {
                     //  *  [b]
                     // [a]
-                    start_position_a = Vector2(rect_a.get_center().x, rect_a.position.y);
+                    start_position_a = Vector2(a_center.x, rect_a.position.y);
                 }
                 else
                 {
                     //  [a]
                     //   *  [b]
-                    start_position_a = Vector2(rect_a.get_center().x, rect_a.position.y + rect_a.size.y);
+                    start_position_a = Vector2(a_center.x, rect_a.position.y + rect_a.size.y);
                 }
             }
 
