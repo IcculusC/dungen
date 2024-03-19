@@ -229,6 +229,7 @@ void DungenEditor::_step()
             dungen_preview_panel->set_show_all(false);
             break;
         case 3:
+            break;
         default:
         {
             animation_timer->stop();
