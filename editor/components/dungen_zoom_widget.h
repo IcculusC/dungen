@@ -27,7 +27,7 @@ namespace godot
         static void _bind_methods();
         void _notification(int p_what);
 
-        void _emit_pressed(String p_which);
+        void _emit_pressed(const String &p_what);
 
     public:
         void set_text(const String &p_text);

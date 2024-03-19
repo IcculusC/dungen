@@ -52,7 +52,7 @@ void DungenZoomWidget::_bind_methods()
     ADD_SIGNAL(MethodInfo("zoom_in_pressed"));
 }
 
-void DungenZoomWidget::_emit_pressed(String p_what)
+void DungenZoomWidget::_emit_pressed(const String &p_what)
 {
     emit_signal(p_what);
 }
